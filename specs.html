@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1a365d">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Spezifikationen &ndash; Jerico RH02374</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="gallery.css">
+    <script src="version.js"></script>
+    <script src="changelog.js"></script>
+    <script src="findings.js"></script>
+    <script src="gallery.js"></script>
+    <script src="field-sync.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-row">
+        <a href="index.html" class="header-title" style="text-decoration:none;color:white;"><span class="ht-name">Jerico Dog Box<span class="ht-sub">RH02374</span></span><span class="ht-version" id="appVersion" onclick="openChangelog()" title="Release-Dokumentation"></span></a>
+        <a class="nav-item" href="index.html">&#128202; Übersicht</a>
+        <a class="nav-item active" href="specs.html">&#128295; Spezifikationen</a>
+        <a class="nav-item" href="build-log.html">&#128736; Zusammenbau</a>
+
+        <button id="langToggle" onclick="toggleLang()" style="width:36px;min-width:36px;height:44px;border:none;background:none;cursor:pointer;font-size:1.1rem;border-left:1px solid rgba(255,255,255,0.15);" title="DE / EN">&#127465;&#127466;</button>
+        <div style="position:relative;">
+            <button class="header-gear" onclick="toggleToolMenu()" id="toolMenuBtn">&#9881;</button>
+            <div id="toolMenu" style="display:none;position:absolute;right:0;top:100%;margin-top:2px;background:white;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,0.25);min-width:180px;z-index:200;overflow:hidden;">
+                <button onclick="syncFromCloud();closeToolMenu()" id="syncBtn" style="display:block;width:100%;text-align:left;padding:0.5rem 0.75rem;border:none;background:none;color:var(--text);font-size:0.78rem;cursor:pointer;">&#9729; Cloud Sync</button>
+                <div style="height:1px;background:#e2e8f0;margin:0.2rem 0;"></div>
+                <button onclick="openSettings();closeToolMenu()" style="display:block;width:100%;text-align:left;padding:0.5rem 0.75rem;border:none;background:none;color:var(--text);font-size:0.78rem;cursor:pointer;">&#9881; Einstellungen</button>
+                <div style="height:1px;background:#e2e8f0;margin:0.2rem 0;"></div>
+                <button onclick="saveData();closeToolMenu()" style="display:block;width:100%;text-align:left;padding:0.5rem 0.75rem;border:none;background:none;color:var(--text);font-size:0.78rem;cursor:pointer;">&#128190; Speichern</button>
+                <button onclick="exportJSON();closeToolMenu()" style="display:block;width:100%;text-align:left;padding:0.5rem 0.75rem;border:none;background:none;color:var(--text);font-size:0.78rem;cursor:pointer;">&#128229; Export</button>
+                <button onclick="document.getElementById('importFile').click();closeToolMenu()" style="display:block;width:100%;text-align:left;padding:0.5rem 0.75rem;border:none;background:none;color:var(--text);font-size:0.78rem;cursor:pointer;">&#128228; Import</button>
+                <button onclick="window.print();closeToolMenu()" style="display:block;width:100%;text-align:left;padding:0.5rem 0.75rem;border:none;background:none;color:var(--text);font-size:0.78rem;cursor:pointer;">&#128424; Drucken</button>
+                <div style="height:1px;background:#e2e8f0;margin:0.2rem 0;"></div>
+                <button type="button" class="menu-version" onclick="openChangelog();closeToolMenu()" title="Release-Dokumentation">Version <span class="app-version"></span> &rsaquo;</button>
+            </div>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+    </div>
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Suchen... (Strg+F)" oninput="doSearch()" onkeydown="searchKeyHandler(event)">
+        <div class="search-nav" id="searchNav" style="display:none;">
+            <button onclick="searchJump(-1)" title="Zur&uuml;ck">&#9650;</button>
+            <span class="search-count" id="searchCount"></span>
+            <button onclick="searchJump(1)" title="Weiter">&#9660;</button>
+            <button onclick="clearSearch()" title="Schliessen" style="margin-left:0.2rem;">&#10005;</button>
+        </div>
+        <div id="subResults" style="display:none;position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #e2e8f0;border-radius:8px;max-height:300px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:100;padding:0.5rem;font-size:0.8rem;"></div>
+    </div>
+    <div class="save-status" id="saveStatus"><span id="syncBadge"></span></div>
+</div>
+
+<div class="container" id="mainContent">
+<div class="info-box">Alle Werte stammen aus der OEM-Prim&auml;rliteratur von Jerico (Klasse A). Messwertfelder sind zum Eintragen der eigenen Ergebnisse gedacht &ndash; sie werden lokal gespeichert und mit dem Build Log geteilt.</div>
+    <div class="group-divider" id="grp-getriebe">
+        <span>&#128295; Getriebe</span>
+        <button class="group-toggle" onclick="toggleGroup(this, 'grp-getriebe')">Alles einklappen</button>
+    </div>
+
+<div class="section" id="sec-ident">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#127380;</span>
+        <h2>1. Identifikation</h2>
+    </div>
+    <div class="section-body">
+        <div class="spec-item"><span class="spec-label">Seriennummer</span><span class="spec-value"><strong>RH02374</strong></span></div>
+        <div class="spec-item"><span class="spec-label">Hersteller</span><span class="spec-value">Jerico Performance Products (Division of Hemmingson Ent., Inc.)</span></div>
+        <div class="spec-item"><span class="spec-label">Aufgebaut von</span><span class="spec-value">Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use)</span></div>
+        <div class="spec-item"><span class="spec-label">Typ</span><span class="spec-value">Oval Road Race, Revision 2 (Dog Ring Low)</span></div>
+        <div class="spec-item"><span class="spec-label">Geh&auml;usetyp</span><span class="spec-value">Top Loader Only &ndash; visuell best&auml;tigt &#10004;</span></div>
+        <div class="spec-item"><span class="spec-label">Eingangswelle</span><span class="spec-value">Ford Input Shaft &#10004;</span></div>
+        <div class="spec-item"><span class="spec-label">Eingangswelle Splines</span><span class="spec-value">26 Spline &ndash; &#9888; Validierung ausstehend</span></div>
+        <div class="spec-item"><span class="spec-label">Ausgangs-Yoke</span><span class="spec-value">32 Tooth &ndash; &#9888; Validierung ausstehend</span></div>
+        <div class="spec-item"><span class="spec-label">Geh&auml;usematerial</span><span class="spec-value">Aluminium oder Magnesium &ndash; &#9888; zu verifizieren</span></div>
+        <div class="spec-item"><span class="spec-label">Herstellerstatus</span><span class="spec-value">&#9888; Jerico wahrscheinlich inaktiv &ndash; Beschaffung nur &uuml;ber Restbest&auml;nde</span></div>
+
+        <div class="form-group"><label>Splines gez&auml;hlt (Messwert)</label><input type="text" data-field="spec_spline_count" placeholder="26" oninput="autoSave()" style="width:120px;"></div>
+        <div class="form-group"><label>Yoke-Z&auml;hne gez&auml;hlt (Messwert)</label><input type="text" data-field="spec_yoke_count" placeholder="32" oninput="autoSave()" style="width:120px;"></div>
+        <div class="form-group"><label>Material bestimmt</label><input type="text" data-field="spec_case_material" placeholder="Alu / Magnesium" oninput="autoSave()" style="width:160px;"></div>
+        <div class="comp-photo-strip" data-comp-gallery="spec_ident_photos" data-thumbs="4">
+            <div class="thumb-row"></div>
+            <div class="comp-photo-actions">
+                <button type="button" class="comp-photo-btn" onclick="openGallery('spec_ident_photos')">&#128444; <span id="spec_ident_photos-count">0</span> Fotos Typenschild</button>
+                <button type="button" class="comp-photo-btn" onclick="addPhoto('spec_ident_photos')">&#128247; Foto hinzuf&uuml;gen</button>
+                <button type="button" class="comp-photo-btn" onclick="addYouTube('spec_ident_photos')" style="border-color:rgba(255,0,0,0.3);">&#9654; YouTube</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section" id="sec-ratios">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#9881;</span>
+        <h2>2. &Uuml;bersetzungen &amp; Zahnradzahlen</h2>
+    </div>
+    <div class="section-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Stufe</th><th>Z&auml;hne</th><th>Ratio</th></tr></thead><tbody><tr><td>Main Drive</td><td>22 / 27</td><td>0.815</td></tr><tr><td>1. Gang</td><td>33 / 17</td><td>2.588</td></tr><tr><td>2. Gang</td><td>27 / 21</td><td>1.714</td></tr><tr><td>3. Gang</td><td>24 / 24</td><td>1.182</td></tr><tr><td>4. Gang</td><td>&mdash;</td><td>1.000 (direkt)</td></tr></tbody></table></div>
+        <div class="comp-box">
+            <div class="comp-toggle" onclick="toggleComp(this)">Vergleich mit dem Ford Toploader</div>
+            <div class="comp-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Gang</th><th>Jerico RH02374</th><th>Toploader Close</th><th>Toploader Wide</th></tr></thead><tbody><tr><td>1.</td><td><strong>2.588</strong></td><td>2.32</td><td>2.78</td></tr><tr><td>2.</td><td><strong>1.714</strong></td><td>1.69</td><td>1.93</td></tr><tr><td>3.</td><td><strong>1.182</strong></td><td>1.29</td><td>1.36</td></tr><tr><td>4.</td><td><strong>1.000</strong></td><td>1.00</td><td>1.00</td></tr></tbody></table></div>
+        <div class="info-box"><strong>&#9888; Keine Bewertung ohne Datenbasis:</strong> Welche &Uuml;bersetzung auf welcher Strecke die richtige ist, l&auml;sst sich erst mit Motor-Kennlinie (Dyno), Fahrzeuggewicht und realen Streckendaten beurteilen. Die Zahlen hier sind reine Zahnradzahlen.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section" id="sec-dims">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128207;</span>
+        <h2>3. Abmessungen &amp; Einbau-Kompatibilit&auml;t</h2>
+    </div>
+    <div class="section-body">
+        <div class="spec-item"><span class="spec-label">Gesamtl&auml;nge Jerico</span><span class="spec-value">22&quot; / 56 cm</span></div>
+        <div class="spec-item"><span class="spec-label">Gesamtl&auml;nge Ford Toploader</span><span class="spec-value">26&quot; / 61 cm (lt. David Kee)</span></div>
+        <div class="spec-item"><span class="spec-label">Differenz</span><span class="spec-value">&minus;4&quot; / &minus;10 cm &rarr; <strong>neue Kardanwelle erforderlich</strong></span></div>
+        <div class="spec-item"><span class="spec-label">L&auml;nge Welle bis Dichtung</span><span class="spec-value">&#10067; unbekannt &ndash; nach Einbau messen</span></div>
+        <div class="spec-item"><span class="spec-label">Schalthebel-Position</span><span class="spec-value">anpassbar 14,5&quot; bis 25&quot; ab Bellhousing</span></div>
+
+        <div class="comp-box">
+            <div class="comp-toggle" onclick="toggleComp(this)">Einbau-Kompatibilit&auml;t</div>
+            <div class="comp-body">
+        <div class="spec-item"><span class="spec-label">Bellhousing</span><span class="spec-value">&#10004; passt (Ford Input Shaft verbaut)</span></div>
+        <div class="spec-item"><span class="spec-label">Schwungrad (Alu)</span><span class="spec-value">&#10004; wiederverwendbar</span></div>
+        <div class="spec-item"><span class="spec-label">Druckplatte &amp; Kupplungsscheibe</span><span class="spec-value">&#10004; wiederverwendbar</span></div>
+        <div class="spec-item"><span class="spec-label">Schalthebel</span><span class="spec-value">&#10004; Position anpassbar</span></div>
+        <div class="spec-item"><span class="spec-label">Kardanwelle</span><span class="spec-value">&#10008; neue Welle erforderlich (4&quot; k&uuml;rzer)</span></div>
+        <div class="spec-item"><span class="spec-label">Ausr&uuml;cklager</span><span class="spec-value">&#9888; Typ und Retainer-Durchmesser noch zu kl&auml;ren</span></div>
+        <div class="spec-item"><span class="spec-label">Schaltgest&auml;nge</span><span class="spec-value">&#9888; Bohrmuster Jerico &ne; Toploader, Anpassung n&ouml;tig</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="group-divider" id="grp-montage">
+        <span>&#128736; Montagedaten</span>
+        <button class="group-toggle" onclick="toggleGroup(this, 'grp-montage')">Alles einklappen</button>
+    </div>
+
+<div class="section" id="sec-torque">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128295;</span>
+        <h2>4. Anzugsmomente</h2>
+    </div>
+    <div class="section-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Schraube / Position</th><th>lb./ft</th><th>Nm</th></tr></thead><tbody><tr><td>R&uuml;ckw&auml;rtsgang-Schaltgabel-Klemmschraube (5/16-24 &times; 1&quot;)</td><td>28</td><td><strong>38</strong></td></tr><tr><td>3-4 Schaltgabel-Klemmschraube (5/16-24 &times; 1&frac14;&quot;, Loctite)</td><td>28</td><td><strong>38</strong></td></tr><tr><td>1-2 Schaltgabel-Klemmschraube (5/16-24 &times; &frac34;&quot;, Loctite)</td><td>28</td><td><strong>38</strong></td></tr><tr><td>Zweiteiliger Hinterlager-Halteclip (1/4-28 &times; &#8542;&quot;)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Seitliche Detentschraube (3/8-16 &times; &frac12;&quot; mit AN-Scheibe)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Vorderer Lagerflansch (5/16-18 &times; 1&quot; mit AN-Scheiben)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Tail Housing (7/16-14 &times; 1&frac12;&quot;)</td><td>25 &rarr; 35</td><td><strong>34 &rarr; 47</strong></td></tr><tr><td>&Ouml;lpumpen-Adapterplatte (7/16-14 &times; 1&frac12;&quot;)</td><td>25 &rarr; 35</td><td><strong>34 &rarr; 47</strong></td></tr><tr><td>Oberer Deckel (5/16-18 &times; 1&quot;)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Bodendeckel (5/16-18 &times; 1&quot;) &ndash; entf&auml;llt bei Top Loader Only</td><td>22</td><td>30</td></tr><tr><td>&Ouml;lpumpe an Tail Housing (1/4-20 &times; 1&quot;)</td><td>35 &rarr; 60 &rarr; 90 lb./<strong>in</strong></td><td><strong>4 &rarr; 6,8 &rarr; 10,2</strong></td></tr></tbody></table></div>
+        <div class="info-box">Die Pumpenschrauben werden in <strong>lb./in</strong> angegeben, nicht lb./ft &ndash; 90 lb./in sind 10,2 Nm, nicht 122 Nm. Nach jeder Stufe die Hauptwelle drehen und auf Klemmen pr&uuml;fen.</div>
+    </div>
+</div>
+
+<div class="section" id="sec-lubes">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128167;</span>
+        <h2>5. Schmierstoffe &amp; Dichtmittel</h2>
+    </div>
+    <div class="section-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Anwendung</th><th>Betriebsmittel</th></tr></thead><tbody><tr><td>Alle Zahnrad-Lagerfl&auml;chen, Nadellager</td><td><strong>Mobil 1 75W90</strong></td></tr><tr><td>Schaltfingerdichtungen, Anlauffl&auml;chen, Lagerbohrungen</td><td><strong>Mobil 1 Universal Grease</strong></td></tr><tr><td>Schaltfingerwellen, Schaltschienen</td><td><strong>Mobil 1 75W90</strong></td></tr><tr><td>Viton O-Ring beim Einbau</td><td>d&uuml;nner &Ouml;lfilm</td></tr><tr><td>Andere O-Ringe</td><td><strong>trocken einbauen</strong></td></tr><tr><td>Vorderer Lagerflansch / Tail Housing Dichtfl&auml;chen</td><td><strong>Hylomar Gasket Maker</strong></td></tr><tr><td>Adapterplatte &Ouml;lpumpe</td><td>Hylomar oder Loctite Ultra Black</td></tr><tr><td>Hinterdichtung im Geh&auml;use</td><td>d&uuml;nne Silikonschicht</td></tr><tr><td>Schaltgabel-Klemmschrauben 1-2 und 3-4</td><td><strong>Loctite</strong></td></tr></tbody></table></div>
+        <div class="info-box">&bdquo;&Ouml;l&ldquo; bedeutet in der gesamten Montageanleitung <strong>Mobil 1 75W90</strong>.</div>
+    </div>
+</div>
+
+<div class="section" id="sec-parts">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128300;</span>
+        <h2>6. Lager, Sicherungen &amp; Kleinteile</h2>
+    </div>
+    <div class="section-body">
+        <div class="spec-item"><span class="spec-label">Nadeln Eingangswelle</span><span class="spec-value"><strong>15 St&uuml;ck</strong></span></div>
+        <div class="spec-item"><span class="spec-label">Nadeln R&uuml;ckw&auml;rtsgang-Zwischenrad (#C407Q)</span><span class="spec-value"><strong>44 St&uuml;ck</strong> (22 je Seite)</span></div>
+        <div class="spec-item"><span class="spec-label">Nadeln Vorgelegewelle (#C1086Q)</span><span class="spec-value"><strong>56 St&uuml;ck</strong> (28 je Seite)</span></div>
+        <div class="spec-item"><span class="spec-label">Anlaufscheiben R&uuml;ckw&auml;rtsgang</span><span class="spec-value">#RNTA &ndash; scharfe Kanten nach innen</span></div>
+        <div class="spec-item"><span class="spec-label">Anlaufscheiben Vorgelegewelle</span><span class="spec-value">#CNT-A &ndash; innen scharfe Kanten nach oben, aussen nach innen</span></div>
+        <div class="spec-item"><span class="spec-label">Sicherungsring vorderes Lager</span><span class="spec-value">#5100-177</span></div>
+        <div class="spec-item"><span class="spec-label">Sicherungsring 3-4 Nabe</span><span class="spec-value">#5100-131</span></div>
+        <div class="spec-item"><span class="spec-label">Spirolox 1-2 Nabe</span><span class="spec-value">#RST-187 / #RS-187</span></div>
+        <div class="spec-item"><span class="spec-label">Kurze Detentfeder</span><span class="spec-value">#SDP-A</span></div>
+        <div class="spec-item"><span class="spec-label">Abstandsring vor dem vorderen Lager</span><span class="spec-value"><strong>3,625&quot; (92,1 mm)</strong></span></div>
+        <div class="spec-item"><span class="spec-label">Verschlussstopfen 3-4 Schienenbohrung</span><span class="spec-value">9/16&quot;</span></div>
+        <div class="spec-item"><span class="spec-label">Hinterdichtung Road Race</span><span class="spec-value">#44 Schlauchklemme + zwei Metallhalter</span></div>
+
+        <div class="comp-box">
+            <div class="comp-toggle" onclick="toggleComp(this)">Dog Rings und Schiebemuffen</div>
+            <div class="comp-body">
+        <div class="spec-item"><span class="spec-label">Dog Ring 2. Gang</span><span class="spec-value">34 Z&auml;hne, Keilwelle, auf Innennabe (gr&ouml;sserer ID)</span></div>
+        <div class="spec-item"><span class="spec-label">Dog Ring 3. Gang</span><span class="spec-value">37 Z&auml;hne, Keilwelle, auf Innennabe (kleinerer ID)</span></div>
+        <div class="spec-item"><span class="spec-label">Dog Ring Eingangswelle</span><span class="spec-value">37 Z&auml;hne</span></div>
+        <div class="spec-item"><span class="spec-label">Einbaurichtung</span><span class="spec-value">breite Zahnfl&auml;che <strong>nach aussen, weg vom Zahnrad</strong></span></div>
+        <div class="spec-item"><span class="spec-label">Neuere Ausf&uuml;hrung</span><span class="spec-value">gefaste Fl&auml;che liegt am Zahnrad an</span></div>
+        <div class="spec-item"><span class="spec-label">Verschleissgrenze Z&auml;hne</span><span class="spec-value">ersetzen ab 3/32&quot;&ndash;1/8&quot; (2,4&ndash;3,2 mm) Abrundung</span></div>
+        <div class="spec-item"><span class="spec-label">Verschleissgrenze Einr&uuml;cknasen</span><span class="spec-value">ersetzen ab 3/32&quot;&ndash;1/8&quot; (2,4&ndash;3,2 mm) Abrundung</span></div>
+            </div>
+        </div>
+        <div class="comp-box">
+            <div class="comp-toggle" onclick="toggleComp(this)">Grenzwerte Hauptwelle</div>
+            <div class="comp-body">
+        <div class="spec-item"><span class="spec-label">Schlag normal</span><span class="spec-value">max. 0,0015&quot; (0,038 mm) je Lagersitz</span></div>
+        <div class="spec-item"><span class="spec-label">Schlag nach Richten</span><span class="spec-value">max. 0,003&quot; (0,076 mm) je Lagersitz</span></div>
+        <div class="spec-item"><span class="spec-label">Messaufnahme</span><span class="spec-value">V-Bl&ouml;cke an hinterem Lagersitz und vorderem Eingangswellen-Nadellagersitz</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+    <div class="group-divider" id="grp-betrieb">
+        <span>&#127937; Betrieb</span>
+        <button class="group-toggle" onclick="toggleGroup(this, 'grp-betrieb')">Alles einklappen</button>
+    </div>
+
+<div class="section" id="sec-cooling">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#10052;</span>
+        <h2>7. K&uuml;hlsystem &amp; &Ouml;lpumpe</h2>
+    </div>
+    <div class="section-body">
+        <div class="spec-item"><span class="spec-label">&Ouml;lkreislauf</span><span class="spec-value">Pump OUT &rarr; K&uuml;hler &rarr; Filter (LF-100) &rarr; Pump IN</span></div>
+        <div class="spec-item"><span class="spec-label">K&uuml;hler-Position</span><span class="spec-value">OUT oben / IN unten (Best Choice laut A-02)</span></div>
+        <div class="spec-item"><span class="spec-label">Jerico &Ouml;lpumpe</span><span class="spec-value">-8AN auf 1/2&quot; Hose Barb &ndash; 2&times; gerade, 2&times; 90&deg;</span></div>
+        <div class="spec-item"><span class="spec-label">Derale &Ouml;lk&uuml;hler</span><span class="spec-value">-8AN auf 1/2&quot; Hose Barb &ndash; 2&times; gerade (im Lieferumfang)</span></div>
+        <div class="spec-item"><span class="spec-label">Derale Inline Fan Thermostat</span><span class="spec-value">-8AN</span></div>
+        <div class="spec-item"><span class="spec-label">K&uuml;hlerpflicht</span><span class="spec-value">&#10004; <strong>Ja</strong> &ndash; &bdquo;on a road course, a cooler is a must&ldquo; (A-02)</span></div>
+
+        <div class="comp-box">
+            <div class="comp-toggle" onclick="toggleComp(this)">&Ouml;lpumpe Single Stage &ndash; Teileliste</div>
+            <div class="comp-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Sym</th><th>Part Number</th><th>Anz.</th></tr></thead><tbody><tr><td>A</td><td>0T01OP</td><td>1</td></tr><tr><td>B</td><td>0T02OP</td><td>1</td></tr><tr><td>C</td><td>0T03OP</td><td>1</td></tr><tr><td>D</td><td>0T04OP</td><td>1</td></tr><tr><td>E</td><td>0T01OPO</td><td>2</td></tr><tr><td>F</td><td>0T01OPI</td><td>2</td></tr><tr><td>G</td><td>0T01OPS</td><td>1</td></tr><tr><td>H</td><td>0T01OPSR</td><td>1</td></tr><tr><td>I</td><td>0T01OPSB</td><td>1</td></tr><tr><td>J</td><td>1/4-20X1SH</td><td>5</td></tr><tr><td>K</td><td>0T01OPTI</td><td>5</td></tr><tr><td>L</td><td>1/4-20X1</td><td>10</td></tr></tbody></table></div>
+            </div>
+        </div>
+        <div class="comp-box">
+            <div class="comp-toggle" onclick="toggleComp(this)">&Ouml;lpumpen-&Uuml;berholung (Anhang 2, Single Stage)</div>
+            <div class="comp-body">
+            <ul style="font-size:0.82rem;">
+                <li>Vier 1/4-20 &times; 1&quot; Schrauben der Pumpenabschlussplatte entfernen</li>
+                <li>10-32 &times; &#8542;&quot; Schraube des Laufradwellen-Halters entfernen</li>
+                <li>Laufradwelle aus der Pumpe herausdr&uuml;cken</li>
+                <li>F&uuml;nf 1/4-28 &times; 1&#8539;&quot; Schrauben vom Pumpengeh&auml;use entfernen, beide Stufen von der Trennplatte l&ouml;sen</li>
+                <li>Pumpenzahnr&auml;der aus dem Geh&auml;use der ersten Stufe entnehmen</li>
+                <li>Alle Teile vor der Inspektion waschen und trocknen</li>
+            </ul>
+            </div>
+        </div>
+        <div class="comp-photo-strip" data-comp-gallery="spec_cooling_photos" data-thumbs="4">
+            <div class="thumb-row"></div>
+            <div class="comp-photo-actions">
+                <button type="button" class="comp-photo-btn" onclick="openGallery('spec_cooling_photos')">&#128444; <span id="spec_cooling_photos-count">0</span> Fotos K&uuml;hlsystem</button>
+                <button type="button" class="comp-photo-btn" onclick="addPhoto('spec_cooling_photos')">&#128247; Foto hinzuf&uuml;gen</button>
+                <button type="button" class="comp-photo-btn" onclick="addYouTube('spec_cooling_photos')" style="border-color:rgba(255,0,0,0.3);">&#9654; YouTube</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="section" id="sec-oil">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128738;</span>
+        <h2>8. &Ouml;l, Bef&uuml;llung &amp; Einfahren</h2>
+    </div>
+    <div class="section-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Punkt</th><th>Vorgabe</th></tr></thead><tbody><tr><td>&Ouml;lsorte</td><td><strong>Synthetic Multi-Viscosity 75W90</strong> &ndash; kein Straight 90W</td></tr><tr><td>Menge</td><td>ca. <strong>2 Quarts (~1,9 l)</strong></td></tr><tr><td>F&uuml;llstand</td><td>3/4&quot; unter der seitlichen Einf&uuml;ll&ouml;ffnung &ndash; nicht &uuml;berf&uuml;llen</td></tr><tr><td>K&uuml;hler</td><td><strong>Pflicht</strong> auf dem Road Course</td></tr><tr><td>Vorw&auml;rmung</td><td>Hinterachse aufbocken, h&ouml;chster Gang, warm laufen lassen</td></tr><tr><td>Einfahren</td><td>langsam im Fahrerlager, alle G&auml;nge be- und entlasten</td></tr><tr><td>&Ouml;lwechsel nach Einfahren</td><td>vor dem ersten Renneinsatz</td></tr><tr><td>&Ouml;lwechsel nach erstem Renntag</td><td>Pflicht</td></tr><tr><td>Bellhousing-Ausrichtung</td><td>vor Einbau verifizieren</td></tr><tr><td>Getriebelager</td><td>nur flexibles Gummilager, nie starr</td></tr></tbody></table></div>
+        <div class="info-box"><strong>&#9888; Dog Ring heisst Kupplungsschlupf:</strong> Beim Schalten muss die Kupplung kurz schlupfen d&uuml;rfen. Kein Schlupf = Getriebeschaden.</div>
+    </div>
+</div>
+
+<div class="section" id="sec-open">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#9888;</span>
+        <h2>9. Offene Validierungen</h2>
+    </div>
+    <div class="section-body">
+        <div class="info-box">Diese Punkte blockieren Teile des Zusammenbaus. Abgehakt wird im <a href="build-log.html">Build Log</a>, hier steht der Stand.</div>
+        <div class="form-group"><label>Input Shaft Splines validiert (26?)</label><input type="text" data-field="open_splines" placeholder="gemessen / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Output Yoke validiert (32?)</label><input type="text" data-field="open_yoke" placeholder="gemessen / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>L&auml;nge Welle bis Dichtung</label><input type="text" data-field="open_seal_length" placeholder="mm / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Kardanwellenl&auml;nge nach Einbau</label><input type="text" data-field="open_driveshaft" placeholder="mm / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Ausr&uuml;cklager-Typ gekl&auml;rt</label><input type="text" data-field="open_tob" placeholder="Typ / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Schaltgest&auml;nge-Anpassung gekl&auml;rt</label><input type="text" data-field="open_linkage" placeholder="L&ouml;sung / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Geh&auml;usematerial verifiziert (Essigtest)</label><input type="text" data-field="open_material" placeholder="Alu / Mg / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Zustand aller Teile dokumentiert</label><input type="text" data-field="open_condition" placeholder="ja / offen" oninput="autoSave()" style="width:100%;"></div>
+    </div>
+</div>
+
+<div class="section" id="sec-sources">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128218;</span>
+        <h2>10. Quellenregister</h2>
+    </div>
+    <div class="section-body">
+        <div class="spec-item"><span class="spec-label">A-01 &ndash; Assembly/Disassembly Manual</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/jerico-manual.pdf" target="_blank" rel="noopener">jerico-manual.pdf</a></span></div>
+        <div class="spec-item"><span class="spec-label">A-02 &ndash; Break-In &amp; Operating Instructions</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/breakin-instruction-sheet.pdf" target="_blank" rel="noopener">breakin-instruction-sheet.pdf</a></span></div>
+        <div class="spec-item"><span class="spec-label">A-03 &ndash; Gear Ratio Chart 4-Speed</span><span class="spec-value"><a href="https://www.jericoperformance.com/4speed_chart.pdf" target="_blank" rel="noopener">4speed_chart.pdf</a></span></div>
+        <div class="spec-item"><span class="spec-label">A-04 &ndash; Transmission Guide (Service Center)</span><span class="spec-value"><a href="https://www.jericoperformance.com/transmission_guide.pdf" target="_blank" rel="noopener">transmission_guide.pdf</a></span></div>
+
+        <div class="info-box"><strong>Quellenklassen:</strong> A = OEM-Prim&auml;rliteratur (verbindlich), B = verifizierte Sekund&auml;rquellen, C = Erfahrungswissen (nie allein g&uuml;ltig). Alle Angaben auf dieser Seite stammen aus Klasse A.</div>
+        <div class="info-box">Bei Widerspr&uuml;chen zwischen deutscher &Uuml;bersetzung und englischem Original gilt immer das <strong>englische Original (A-01)</strong>. In Kapitel 3 und 6 der deutschen Fassung sind die Aufz&auml;hlungen besch&auml;digt (&bdquo;1. Gang&ldquo; statt 3./2./1.) &ndash; die Schritte im Build Log folgen dem Original.</div>
+    </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="modal-overlay" id="settingsModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9000;align-items:center;justify-content:center;">
+    <div style="background:white;border-radius:12px;padding:1.5rem;max-width:420px;width:calc(100vw - 32px);box-shadow:0 8px 30px rgba(0,0,0,0.3);">
+        <h3 style="margin:0 0 0.75rem;font-size:1rem;color:var(--primary);">GitHub-Einstellungen</h3>
+        <div class="status-line" id="connectionStatus" style="font-size:0.78rem;margin-bottom:0.5rem;"></div>
+        <label for="ghToken" style="font-size:0.78rem;font-weight:600;">GitHub Personal Access Token</label>
+        <input type="password" id="ghToken" placeholder="github_pat_..." style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
+        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.5rem;">GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens<br>Berechtigung: <strong>Gists (Read and Write)</strong> und <strong>Contents (Read and Write)</strong> f&uuml;r dieses Repository (Foto-Upload).</div>
+        <label for="ghGistId" style="font-size:0.78rem;font-weight:600;">Gist-ID f&uuml;r den Ger&auml;teabgleich</label>
+        <input type="text" id="ghGistId" placeholder="z.B. 4f3c... oder komplette Gist-URL" style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
+        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.75rem;">Eigener Gist f&uuml;r dieses Getriebe &ndash; <strong>nicht</strong> der des Motor-Builds, sonst mischen sich die Daten. Ohne Gist-ID bleibt alles lokal auf diesem Ger&auml;t.</div>
+        <div style="display:flex;gap:0.4rem;justify-content:flex-end;">
+            <button onclick="disconnectGist()" style="padding:0.4rem 0.8rem;border:1px solid #e53e3e;background:white;color:#e53e3e;border-radius:6px;cursor:pointer;font-size:0.78rem;">Trennen</button>
+            <button onclick="closeSettings()" style="padding:0.4rem 0.8rem;border:1px solid var(--border);background:white;color:var(--text);border-radius:6px;cursor:pointer;font-size:0.78rem;">Abbrechen</button>
+            <button onclick="saveSettings()" style="padding:0.4rem 0.8rem;border:none;background:var(--primary-light);color:white;border-radius:6px;cursor:pointer;font-size:0.78rem;">Verbinden</button>
+        </div>
+    </div>
+</div>
+
+<div class="fab-stack">
+    <button class="fab-btn glossary" onclick="showGuide('guide-glossary')" title="Glossar">&#128214;</button>
+    <button class="fab-btn" onclick="document.getElementById('convPanel').classList.toggle('open')" title="Einheiten-Umrechner">&#8644;</button>
+</div>
+<div class="converter-panel" id="convPanel">
+    <div style="display:flex;justify-content:space-between;align-items:center;"><h4>&#8644; Einheiten-Umrechner</h4><button onclick="document.getElementById('convPanel').classList.remove('open')" style="background:none;border:none;font-size:1.2rem;cursor:pointer;color:#718096;">&times;</button></div>
+    <strong style="font-size:0.75rem;">Drehmoment gross (lb./ft)</strong>
+    <div class="converter-row">
+        <input type="number" id="convFtlbs" placeholder="lb./ft" oninput="document.getElementById('convNm').value=this.value?(this.value*1.3558).toFixed(1):''">
+        <span class="conv-label">lb./ft</span>
+        <span>&harr;</span>
+        <input type="number" id="convNm" placeholder="Nm" oninput="document.getElementById('convFtlbs').value=this.value?(this.value/1.3558).toFixed(1):''">
+        <span class="conv-label">Nm</span>
+    </div>
+    <div class="converter-sep"></div>
+    <strong style="font-size:0.75rem;">Drehmoment klein (lb./in) &ndash; &Ouml;lpumpe</strong>
+    <div class="converter-row">
+        <input type="number" id="convLbin" placeholder="lb./in" oninput="document.getElementById('convNmSmall').value=this.value?(this.value*0.113).toFixed(2):''">
+        <span class="conv-label">lb./in</span>
+        <span>&harr;</span>
+        <input type="number" id="convNmSmall" placeholder="Nm" oninput="document.getElementById('convLbin').value=this.value?(this.value/0.113).toFixed(1):''">
+        <span class="conv-label">Nm</span>
+    </div>
+    <div class="converter-sep"></div>
+    <strong style="font-size:0.75rem;">L&auml;nge / Spiel</strong>
+    <div class="converter-row">
+        <input type="number" id="convInch" step="0.0001" placeholder="inch" oninput="document.getElementById('convMm').value=this.value?(this.value*25.4).toFixed(3):''">
+        <span class="conv-label">inch</span>
+        <span>&harr;</span>
+        <input type="number" id="convMm" step="0.001" placeholder="mm" oninput="document.getElementById('convInch').value=this.value?(this.value/25.4).toFixed(4):''">
+        <span class="conv-label">mm</span>
+    </div>
+    <div class="converter-sep"></div>
+    <strong style="font-size:0.75rem;">Volumen</strong>
+    <div class="converter-row">
+        <input type="number" id="convQt" step="0.1" placeholder="quart" oninput="document.getElementById('convL').value=this.value?(this.value*0.9464).toFixed(2):''">
+        <span class="conv-label">qt</span>
+        <span>&harr;</span>
+        <input type="number" id="convL" step="0.01" placeholder="Liter" oninput="document.getElementById('convQt').value=this.value?(this.value/0.9464).toFixed(2):''">
+        <span class="conv-label">l</span>
+    </div>
+</div>
+
+<div class="guide-overlay" id="guide-glossary">
+    <div class="glossary-search">
+        <div class="glossary-search-row">
+            <button class="guide-back" onclick="hideGuide('guide-glossary')">&larr;</button>
+            <input type="search" id="glossarySearch" placeholder="Begriff suchen..." oninput="filterGlossary()">
+            <span class="glossary-count"></span>
+        </div>
+        <div class="glossary-cat-nav" id="glossaryCatNav">
+            <button class="glossary-cat-btn active" onclick="filterCategory(this,'all')" data-cat="all">Alle</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-grund')" data-cat="cat-grund">Grundbegriffe</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-wellen')" data-cat="cat-wellen">Wellen &amp; Zahnr&auml;der</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-schaltung')" data-cat="cat-schaltung">Schaltung</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-lager')" data-cat="cat-lager">Lager &amp; Sicherungen</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-betrieb')" data-cat="cat-betrieb">Betriebsstoffe &amp; Dichtmittel</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-messen')" data-cat="cat-messen">Messen &amp; Pr&uuml;fen</button>
+            <button class="glossary-cat-btn" onclick="filterCategory(this,'cat-abk')" data-cat="cat-abk">Abk&uuml;rzungen &amp; Teilenummern</button>
+        </div>
+    </div>
+    <div class="glossary-body" id="glossaryBody">
+        <div class="glossary-category" data-cat="cat-grund">
+            <div class="glossary-category-title">1. Grundbegriffe</div>
+            <div class="glossary-entry" data-search="dog box klauengetriebe renngetriebe synchron">
+                <div class="glossary-term">Dog Box (Klauengetriebe)</div>
+                <div class="glossary-field" data-fidx="1"><span class="glossary-field-label">Was ist das?</span> Ein Getriebe ohne Synchronringe. Die G&auml;nge werden &uuml;ber Klauen (Dogs) formschl&uuml;ssig verbunden.</div>
+                <div class="glossary-field" data-fidx="1"><span class="glossary-field-label">Einfach gesagt:</span> Statt sanft anzugleichen rasten die Z&auml;hne hart ineinander &ndash; schnell, laut, verschleissfreudig bei falscher Bedienung.</div>
+                <div class="glossary-field" data-fidx="1"><span class="glossary-field-label">Warum?</span> Schaltzeit und Belastbarkeit. Ein Synchronring w&auml;re das schwache Glied im Rennbetrieb.</div>
+                <div class="glossary-related">Verwandt: Dog Ring, Schiebemuffe, Kupplungsschlupf</div>
+            </div>
+            <div class="glossary-entry" data-search="dog ring klauenring mitnehmer 34 37 zaehne keilwelle">
+                <div class="glossary-term">Dog Ring (Klauenring)</div>
+                <div class="glossary-field" data-fidx="2"><span class="glossary-field-label">Was ist das?</span> Der aufgekeilte Ring mit den Mitnehmerklauen, &uuml;ber den ein Gang eingelegt wird. Im RH02374: 34 Z&auml;hne am 2. Gang, 37 Z&auml;hne am 3. Gang und auf der Eingangswelle.</div>
+                <div class="glossary-field" data-fidx="2"><span class="glossary-field-label">Einbaurichtung:</span> Die <strong>breitere Zahnfl&auml;che zeigt nach aussen, weg vom Zahnrad</strong>. Neuere Ringe: die gefaste Fl&auml;che liegt am Zahnrad an.</div>
+                <div class="glossary-field" data-fidx="2"><span class="glossary-field-label">Warum?</span> Falsch herum eingebaut springt das Getriebe unter Last aus dem Gang.</div>
+                <div class="glossary-related">Verwandt: Spirolox, Schiebemuffe, Innennabe</div>
+            </div>
+            <div class="glossary-entry" data-search="top loader bottom loader gehaeuse deckel bodendeckel">
+                <div class="glossary-term">Top Loader / Bottom Loader</div>
+                <div class="glossary-field" data-fidx="3"><span class="glossary-field-label">Was ist das?</span> Wo das Innenleben ins Geh&auml;use kommt: nur von oben (Top Loader Only) oder zus&auml;tzlich durch einen Bodendeckel.</div>
+                <div class="glossary-field" data-fidx="3"><span class="glossary-field-label">Am RH02374:</span> Top Loader Only &ndash; visuell best&auml;tigt. Deshalb entf&auml;llt Schritt 9 der Zerlegung (kein Bodendeckel, kein Sicherungsring am Hauptantriebsclusterrad).</div>
+                <div class="glossary-related">Verwandt: Top Cover, Bodendeckel</div>
+            </div>
+            <div class="glossary-entry" data-search="oval road race revision 2 dog ring low typ">
+                <div class="glossary-term">Oval Road Race (Rev. 2)</div>
+                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Was ist das?</span> Die Bauvariante des RH02374: Oval/Road Race, Revision 2, Dog Ring Low.</div>
+                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Folge:</span> Im Manual gelten die Abschnitte &bdquo;Winston Cup und Road Race&ldquo; &ndash; nicht die Drag-Race-Varianten.</div>
+                <div class="glossary-related">Verwandt: Kuehlerpflicht, 75W90</div>
+            </div>
+        </div>
+        <div class="glossary-category" data-cat="cat-wellen">
+            <div class="glossary-category-title">2. Wellen &amp; Zahnr&auml;der</div>
+            <div class="glossary-entry" data-search="input shaft eingangswelle spline keilwelle kupplung 26">
+                <div class="glossary-term">Eingangswelle (Input Shaft)</div>
+                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Was ist das?</span> Die Welle von der Kupplung ins Getriebe. Tr&auml;gt den 37-Z&auml;hne-Dog-Ring und das Hauptantriebsritzel.</div>
+                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Am RH02374:</span> Ford Input Shaft, 26 Spline &ndash; <strong>noch zu validieren</strong> (nachz&auml;hlen).</div>
+                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Drehrichtung:</span> Motordrehrichtung = Eingangswelle im Uhrzeigersinn.</div>
+                <div class="glossary-related">Verwandt: Main Drive, Pilotlager, Bellhousing</div>
+            </div>
+            <div class="glossary-entry" data-search="main shaft hauptwelle ausgangswelle schlag rundlauf">
+                <div class="glossary-term">Hauptwelle (Main Shaft)</div>
+                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Was ist das?</span> Die Ausgangswelle, auf der 1., 2. und 3. Gang mit ihren Nadellagern sitzen.</div>
+                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Grenzwerte:</span> Schlag je Lagersitz max. <strong>0,0015&quot; (0,038 mm)</strong>, nach dem Richten max. <strong>0,003&quot; (0,076 mm)</strong>.</div>
+                <div class="glossary-related">Verwandt: Nadellager, Anlaufscheibe, V-Bloecke</div>
+            </div>
+            <div class="glossary-entry" data-search="cluster countershaft vorgelegewelle zahnradsatz">
+                <div class="glossary-term">Vorgelegewelle (Cluster Shaft)</div>
+                <div class="glossary-field" data-fidx="7"><span class="glossary-field-label">Was ist das?</span> Der Zahnradsatz unterhalb der Hauptwelle, der die Drehzahl von der Eingangswelle auf die G&auml;nge &uuml;bersetzt.</div>
+                <div class="glossary-field" data-fidx="7"><span class="glossary-field-label">Achtung beim Einbau:</span> Die Welle darf <strong>nie tiefer als b&uuml;ndig</strong> mit der hinteren Geh&auml;usefl&auml;che eingeschlagen werden &ndash; sonst fehlt dem hinteren Nadellager der W&auml;rmeausdehnungsspielraum.</div>
+                <div class="glossary-related">Verwandt: Sicherungsring, O-Ring, C1086Q</div>
+            </div>
+            <div class="glossary-entry" data-search="main drive hauptantrieb 22 27 uebersetzung ritzel">
+                <div class="glossary-term">Main Drive (Hauptantrieb)</div>
+                <div class="glossary-field" data-fidx="8"><span class="glossary-field-label">Was ist das?</span> Das Zahnradpaar Eingangswelle/Vorgelegewelle, das alle G&auml;nge gemeinsam durchlaufen.</div>
+                <div class="glossary-field" data-fidx="8"><span class="glossary-field-label">Am RH02374:</span> 22 / 27 Z&auml;hne = Faktor 0,815.</div>
+                <div class="glossary-related">Verwandt: Gear Ratio, Ratio Chart</div>
+            </div>
+        </div>
+        <div class="glossary-category" data-cat="cat-schaltung">
+            <div class="glossary-category-title">3. Schaltung</div>
+            <div class="glossary-entry" data-search="slider schiebemuffe muffe einrueckklauen nabe">
+                <div class="glossary-term">Schiebemuffe (Slider)</div>
+                <div class="glossary-field" data-fidx="9"><span class="glossary-field-label">Was ist das?</span> Die axial verschiebbare Muffe auf der Nabe, die in den Dog Ring des Gangs einrastet.</div>
+                <div class="glossary-field" data-fidx="9"><span class="glossary-field-label">Verschleissgrenze:</span> Ersetzen, wenn die Einr&uuml;cknasen mehr als <strong>3/32&quot; bis 1/8&quot; (2,4&ndash;3,2 mm)</strong> abgerundet sind.</div>
+                <div class="glossary-related">Verwandt: Dog Ring, Schaltgabel, 1-2 Nabe</div>
+            </div>
+            <div class="glossary-entry" data-search="schaltgabel shift fork schaltschiene rail klemmschraube loctite">
+                <div class="glossary-term">Schaltgabel / Schaltschiene</div>
+                <div class="glossary-field" data-fidx="10"><span class="glossary-field-label">Was ist das?</span> Die Gabel greift in die Schiebemuffe, die Schiene f&uuml;hrt sie. Beide sind mit einer Kegelkopf-Klemmschraube verbunden.</div>
+                <div class="glossary-field" data-fidx="10"><span class="glossary-field-label">Anzug:</span> Alle drei Klemmschrauben <strong>28 lb./ft (38 Nm)</strong>, 1-2 und 3-4 mit Loctite.</div>
+                <div class="glossary-related">Verwandt: Detent, Interlock</div>
+            </div>
+            <div class="glossary-entry" data-search="detent rastierung feder kugel sdp-a magnet">
+                <div class="glossary-term">Detent (Rastierung)</div>
+                <div class="glossary-field" data-fidx="11"><span class="glossary-field-label">Was ist das?</span> Federbelasteter Stift, der die Schaltschiene in ihrer Stellung h&auml;lt.</div>
+                <div class="glossary-field" data-fidx="11"><span class="glossary-field-label">Praxis:</span> Einsetzen mit Taschenmagnet; ein Tropfen &Ouml;l h&auml;lt den Detent beim Abziehen des Magneten durch Unterdruck in der Bohrung.</div>
+                <div class="glossary-related">Verwandt: Interlock-Pruefung, SDP-A</div>
+            </div>
+            <div class="glossary-entry" data-search="interlock verriegelung zwei gaenge gleichzeitig pruefung">
+                <div class="glossary-term">Detent Interlock</div>
+                <div class="glossary-field" data-fidx="12"><span class="glossary-field-label">Was ist das?</span> Die Sperre, die verhindert, dass zwei G&auml;nge gleichzeitig eingelegt werden.</div>
+                <div class="glossary-field" data-fidx="12"><span class="glossary-field-label">Pr&uuml;fung:</span> F&uuml;nf Punkte nach dem Zusammenbau. L&auml;sst sich ein zweiter Gang einlegen, fehlt ein Detent zwischen diesen Schienen.</div>
+                <div class="glossary-related">Verwandt: Detent, Schaltgabel</div>
+            </div>
+        </div>
+        <div class="glossary-category" data-cat="cat-lager">
+            <div class="glossary-category-title">4. Lager &amp; Sicherungen</div>
+            <div class="glossary-entry" data-search="nadellager caged needle bearing kaefig c407q c1086q nadeln">
+                <div class="glossary-term">Nadellager (Caged Needle Bearing)</div>
+                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Was ist das?</span> Lager aus losen oder gek&auml;figten Nadeln zwischen Welle und Zahnrad.</div>
+                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Z&auml;hlungen am RH02374:</span> Eingangswelle 15 Nadeln; R&uuml;ckw&auml;rtsgang-Zwischenrad #C407Q 44 Nadeln (22 je Seite); Vorgelegewelle #C1086Q 56 Nadeln (28 je Seite).</div>
+                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Regel:</span> Geht eine Nadel verloren, wird <strong>der ganze Satz</strong> ersetzt &ndash; nie eine einzelne.</div>
+                <div class="glossary-related">Verwandt: Anlaufscheibe, RNTA, CNT-A</div>
+            </div>
+            <div class="glossary-entry" data-search="spirolox sicherungsring rst-187 rs-187 sperrhaken nut">
+                <div class="glossary-term">Spirolox</div>
+                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Was ist das?</span> Ein gewickelter Sicherungsring ohne &Ouml;sen, der in einer Nut liegt.</div>
+                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Einbau:</span> Linken Sperrhaken flachdr&uuml;cken, gleichm&auml;ssig um den Umfang einf&uuml;hren, obere rechte Kante mit kleinem Schraubendreher im 45&deg;-Winkel einschlagen, danach Sperrhaken zur&uuml;cksetzen.</div>
+                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Teile:</span> #RST-187 an der 1-2 Nabe, je einer je Dog-Ring-Nabe.</div>
+                <div class="glossary-related">Verwandt: Dog Ring, Sicherungsring</div>
+            </div>
+            <div class="glossary-entry" data-search="anlaufscheibe thrust washer rnta cnt-a scharfe kante">
+                <div class="glossary-term">Anlaufscheibe (Thrust Washer)</div>
+                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Was ist das?</span> Scheibe, die die Axialkraft aufnimmt und die Nadeln in Position h&auml;lt.</div>
+                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Einbaurichtung:</span> R&uuml;ckw&auml;rtsgang-Zwischenrad (#RNTA): scharfe Kanten nach innen zu den Nadeln. Vorgelegewelle (#CNT-A): erste Scheibe scharfe Kanten nach oben, zweite nach innen.</div>
+                <div class="glossary-related">Verwandt: Nadellager</div>
+            </div>
+            <div class="glossary-entry" data-search="abstandsring spacer 3.625 92.1 vorderes lager">
+                <div class="glossary-term">Abstandsring 3,625&quot;</div>
+                <div class="glossary-field" data-fidx="16"><span class="glossary-field-label">Was ist das?</span> Der Ring, der vor dem vorderen Lager sitzt (92,1 mm).</div>
+                <div class="glossary-field" data-fidx="16"><span class="glossary-field-label">Wann?</span> Beim Zusammenbau Top Loader Only vor dem Einsetzen des vorderen Lagers auflegen.</div>
+                <div class="glossary-related">Verwandt: Halteclip, 5100-177</div>
+            </div>
+        </div>
+        <div class="glossary-category" data-cat="cat-betrieb">
+            <div class="glossary-category-title">5. Betriebsstoffe &amp; Dichtmittel</div>
+            <div class="glossary-entry" data-search="oel 75w90 synthetic getriebeoel mobil 1 menge fuellstand">
+                <div class="glossary-term">75W90 Synthetic</div>
+                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Vorgabe:</span> Synthetic Multi-Viscosity Gear Oil 75W90. <strong>Kein Straight 90W.</strong></div>
+                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Menge:</span> Ca. 2 Quarts (~1,9 l), F&uuml;llstand 3/4&quot; unterhalb der seitlichen Einf&uuml;ll&ouml;ffnung. Nicht &uuml;berf&uuml;llen &ndash; erzeugt Hitze.</div>
+                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Im Manual:</span> &bdquo;&Ouml;l&ldquo; in der Montageanleitung bedeutet Mobil 1 75W90.</div>
+                <div class="glossary-related">Verwandt: Break-In, Kuehler</div>
+            </div>
+            <div class="glossary-entry" data-search="fett grease schaltfinger dichtung lagerbohrung montage">
+                <div class="glossary-term">Mobil 1 Universal Grease</div>
+                <div class="glossary-field" data-fidx="18"><span class="glossary-field-label">Wof&uuml;r?</span> Schaltfingerdichtungen, Anlauffl&auml;chen, Lagerbohrungen und zum Kleben der losen Nadeln beim Einlegen.</div>
+                <div class="glossary-related">Verwandt: Nadellager, Schaltfinger</div>
+            </div>
+            <div class="glossary-entry" data-search="hylomar dichtmittel gasket maker silikon loctite ultra black">
+                <div class="glossary-term">Hylomar</div>
+                <div class="glossary-field" data-fidx="19"><span class="glossary-field-label">Wof&uuml;r?</span> Dichtfl&auml;chen von vorderem Lagerflansch und Tail Housing (Raupe). Adapterplatte der &Ouml;lpumpe: Hylomar oder Loctite Ultra Black.</div>
+                <div class="glossary-field" data-fidx="19"><span class="glossary-field-label">Achtung:</span> &Uuml;berschuss entfernen &ndash; sonst Ausrichtungsfehler am Flansch.</div>
+                <div class="glossary-related">Verwandt: Silikon, Hinterdichtung</div>
+            </div>
+        </div>
+        <div class="glossary-category" data-cat="cat-messen">
+            <div class="glossary-category-title">6. Messen &amp; Pr&uuml;fen</div>
+            <div class="glossary-entry" data-search="schlag runout rundlauf messuhr v-bloecke richten">
+                <div class="glossary-term">Schlag (Runout)</div>
+                <div class="glossary-field" data-fidx="20"><span class="glossary-field-label">Messung:</span> Hauptwelle in V-Bl&ouml;cken am hinteren Lagersitz und am vorderen Eingangswellen-Nadellagersitz.</div>
+                <div class="glossary-field" data-fidx="20"><span class="glossary-field-label">Grenzwerte:</span> Normal max. 0,0015&quot; (0,038 mm) je Lagersitz, nach dem Richten max. 0,003&quot; (0,076 mm).</div>
+                <div class="glossary-related">Verwandt: Hauptwelle, Messuhr</div>
+            </div>
+            <div class="glossary-entry" data-search="verschleiss klauen abgerundet 3/32 1/8 dog ring slider">
+                <div class="glossary-term">Verschleissgrenze Klauen</div>
+                <div class="glossary-field" data-fidx="21"><span class="glossary-field-label">Regel:</span> Dog Rings und Schiebemuffen ersetzen, wenn Z&auml;hne bzw. Einr&uuml;cknasen mehr als 3/32&quot; bis 1/8&quot; (2,4&ndash;3,2 mm) abgerundet sind.</div>
+                <div class="glossary-related">Verwandt: Dog Ring, Slider</div>
+            </div>
+            <div class="glossary-entry" data-search="aluminium magnesium essigtest strahlen waermeausdehnung">
+                <div class="glossary-term">Gehaeusematerial</div>
+                <div class="glossary-field" data-fidx="22"><span class="glossary-field-label">Warum wichtig?</span> Aluminium und Magnesium dehnen sich unterschiedlich aus und vertragen unterschiedliche Strahl- und Lackvorbehandlung.</div>
+                <div class="glossary-field" data-fidx="22"><span class="glossary-field-label">Folge im Manual:</span> Road Race: #44 Schlauchklemme plus zwei Metallhalter an der Hinterdichtung gegen Dichtungsverlust.</div>
+                <div class="glossary-related">Verwandt: Tail Housing, Hinterdichtung</div>
+            </div>
+        </div>
+        <div class="glossary-category" data-cat="cat-abk">
+            <div class="glossary-category-title">7. Abk&uuml;rzungen &amp; Teilenummern</div>
+            <div class="glossary-entry" data-search="rh02374 seriennummer serial tex racing">
+                <div class="glossary-term">RH02374</div>
+                <div class="glossary-field" data-fidx="23"><span class="glossary-field-label">Bedeutung:</span> Seriennummer dieses Getriebes. Aufgebaut von Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use).</div>
+                <div class="glossary-related">Verwandt: Identifikation</div>
+            </div>
+            <div class="glossary-entry" data-search="a-01 a-02 a-03 a-04 quellen klasse a oem">
+                <div class="glossary-term">A-01 bis A-04</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Bedeutung:</span> Quellenkennung aus dem Notion-Quellenregister: A-01 Assembly Manual, A-02 Break-In Sheet, A-03 Gear Ratio Chart, A-04 Transmission Guide.</div>
+                <div class="glossary-related">Verwandt: Quellen</div>
+            </div>
+            <div class="glossary-entry" data-search="5100-177 5100-131 sicherungsring snap ring">
+                <div class="glossary-term">#5100-177 / #5100-131</div>
+                <div class="glossary-field" data-fidx="25"><span class="glossary-field-label">Bedeutung:</span> Sicherungsring vorderes Lager (#5100-177) und Sicherungsring der 3-4 Nabe (#5100-131).</div>
+                <div class="glossary-related">Verwandt: Spirolox, Halteclip</div>
+            </div>
+            <div class="glossary-entry" data-search="c407q c1086q rnta cnt-a sdp-a teilenummern">
+                <div class="glossary-term">#C407Q / #C1086Q / #RNTA / #CNT-A / #SDP-A</div>
+                <div class="glossary-field" data-fidx="26"><span class="glossary-field-label">Bedeutung:</span> Nadels&auml;tze (C407Q R&uuml;ckw&auml;rtsgang, C1086Q Vorgelegewelle), Anlaufscheiben (RNTA, CNT-A) und die kurze Detentfeder (SDP-A).</div>
+                <div class="glossary-related">Verwandt: Nadellager, Detent</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="search.js"></script>
+<script>if (typeof initUnifiedSearch === 'function') initUnifiedSearch();</script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  browser-tests:
+    name: Browser-Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Abhaengigkeiten installieren
+        run: npm install --no-audit --no-fund
+
+      - name: Chromium installieren
+        run: npx playwright install --with-deps chromium
+
+      - name: UI-Tests (Version, Aufbau, Kapitelstatus, Messwerte)
+        run: node tests/ui.test.mjs
