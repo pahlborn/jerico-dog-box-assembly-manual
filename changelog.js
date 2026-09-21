@@ -13,6 +13,21 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v3',
+      date: '2026-09-21',
+      title: 'Gegen die Original-PDFs geprueft',
+      changes: [
+        { type: 'fix', text: 'Kupplungsschlupf: Der Satz "CLUTCH SLIPPAGE IS A MUST" steht im Break-In-Sheet ausschliesslich unter "FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY". Er stand hier als allgemeine Vorgabe fuer das Road-Race-Getriebe - das war eine Fehluebertragung und ist entfernt. An seiner Stelle steht, woher der Satz stammt und dass Schaltstrategie und Kupplungsbenutzung fuer dieses Getriebe noch zu klaeren sind.' },
+        { type: 'fix', text: 'Hauptwellen-Schlag: 0,0015" ist im Original der Durchschnittswert einer brauchbaren Welle ("will average"), nicht der Grenzwert. Eine Grenze nennt Jerico nur fuer die gerichtete Welle: hoechstens 0,003" je Lagersitz.' },
+        { type: 'fix', text: 'Vorgelegewelle: Das Original erlaubt buendig bis wenige Tausendstel Zoll unter der hinteren Gehaeuseflaeche. Die Anleitung sagte "niemals tiefer als buendig" - zu streng. Die Folge weiteren Eintreibens benennt das Manual praezise: der Waermeausdehnungsspielraum des hinteren Nadellager-Clusters geht verloren.' },
+        { type: 'fix', text: 'Herstellerstatus: Die Behauptung "Jerico wahrscheinlich inaktiv" war unbelegt und ist raus. Stattdessen Kontaktdaten und der geprueste Stand.' },
+        { type: 'fix', text: 'Kardanwelle: Die Laenge wird nach dem Einbau bei definierter Fahrhoehe gemessen, nicht aus der Differenz zweier nomineller Getriebelaengen abgeleitet.' },
+        { type: 'neu', text: 'Quellenklassen: Jede Angabe traegt jetzt, wo es darauf ankommt, ihre Herkunft - OEM-Vorgabe, Ist-Befund, Messwert, Ableitung, Sekundaerquelle oder noch zu validieren. Die pauschale Aussage "alle Werte stammen aus der OEM-Primaerliteratur" war falsch.' },
+        { type: 'neu', text: 'Oel: Herstellervorgabe (synthetisches 75W90) und das im Manual verwendete Produkt (Mobil 1) sind getrennt ausgewiesen.' },
+        { type: 'neu', text: 'Glossareintrag zur Kupplungsfrage und Originalzitate bei Schlagwerten und Einbautiefe.' }
+      ]
+    },
+    {
       version: 'v2',
       date: '2026-09-21',
       title: 'Offline-Betrieb auf der veroeffentlichten Seite',

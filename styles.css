@@ -692,3 +692,19 @@ mark.search-hl.active { background: #ed8936; color: white; }
    vor dem ersten Javascript, sonst stuenden beim Laden beide Fassungen da. */
 html[lang="de"] span.en { display: none; }
 html[lang="en"] span.de { display: none; }
+
+/* ---- Quellenklassen ----
+   Nicht jede Angabe in einer Werkstattdokumentation hat dasselbe Gewicht. Das
+   Zeichen hinter einer Aussage sagt, worauf sie beruht: OEM-Vorgabe, Befund am
+   Getriebe, eigener Messwert, Ableitung, Sekundaerquelle oder noch offen. */
+.src {
+    display: inline-block; min-width: 1.15rem; padding: 0 0.28rem; margin-left: 0.3rem;
+    border-radius: 4px; font-size: 0.62rem; font-weight: 700; line-height: 1.5;
+    text-align: center; vertical-align: middle; cursor: help;
+}
+.src-a { background: #c6f6d5; color: #22543d; }   /* OEM-Vorgabe */
+.src-b { background: #bee3f8; color: #2a4365; }   /* Ist-Befund */
+.src-c { background: #e9d8fd; color: #44337a; }   /* Messwert */
+.src-d { background: #feebc8; color: #7b341e; }   /* Ableitung */
+.src-e { background: #e2e8f0; color: #2d3748; }   /* Sekundaerquelle */
+.src-f { background: #fed7d7; color: #742a2a; }   /* noch zu validieren */

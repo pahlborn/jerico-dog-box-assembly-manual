@@ -79,6 +79,9 @@
     <strong>Arbeitsgrundlage:</strong> Jerico <em>Assembly/Disassembly Manual</em> (A-01), Variante <strong>Winston Cup / Top Loader Only, Oval Road Race</strong> mit &Ouml;lpumpe &ndash; erg&auml;nzt um die Einfahrvorgaben aus dem <em>Break-In &amp; Operating Instructions Sheet</em> (A-02).
     Bei Widerspr&uuml;chen zwischen deutscher &Uuml;bersetzung und englischem Original gilt das <strong>englische Original</strong>.
 </div>
+<div class="info-box">
+    <strong>Was hier Vorgabe ist und was nicht.</strong> Arbeitsschritte, Anzugsmomente, Einbaurichtungen, Schmierstellen, Nadelz&auml;hlungen und Verschlei&szlig;grenzen stammen aus der Prim&auml;rliteratur. Davon zu unterscheiden sind Angaben zu <em>diesem</em> Getriebe (Ist-Befunde), eigene Messwerte, Ableitungen und noch offene Punkte &ndash; diese sind im Text benannt und auf der Seite <a href="specs.html#sec-open">Spezifikationen</a> mit Quellenklasse gef&uuml;hrt. Phase 1 besteht fast vollst&auml;ndig aus solchen offenen Punkten.
+</div>
 
 <div id="phase1">
 <div class="phase-banner p1" onclick="togglePhase('phase1body')">
@@ -271,7 +274,7 @@
             <div class="guide-block"><h4 class="measure">Sollwerte &amp; Messwerte (Target Values)</h4>
                 <div class="spec-line"><span>Gesamtl&auml;nge Jerico (Literatur)</span><span class="spec-val">22&quot; / 56 cm</span></div>
                 <div class="spec-line"><span>Ford Toploader zum Vergleich</span><span class="spec-val">26&quot; / 61 cm</span></div>
-                <div class="spec-line"><span>Differenz</span><span class="spec-val">&minus;4&quot; / &minus;10 cm &rarr; neue Kardanwelle</span></div>
+                <div class="spec-line"><span>Differenz, nominell</span><span class="spec-val">ca. &minus;4&quot; / &minus;10 cm &ndash; Anhaltspunkt, kein Kardanwellenmass</span></div>
                 <div class="spec-line"><span>L&auml;nge Welle bis Dichtung</span><span class="spec-val">&#10067; unbekannt &ndash; messen</span></div>
                 <div class="guide-input-row" style="margin-top:0.4rem;">
                     <div><label>Gesamtl&auml;nge gemessen:</label><input type="text" data-field="p1_len_total" placeholder="mm" oninput="autoSave()" style="width:80px;"></div>
@@ -281,7 +284,7 @@
             </div>
             <div class="guide-block"><h4 class="tips">Praxis-Tipps (Practical Tips)</h4>
                 <ul>
-                <li><span class="de">Die Kardanwellenl&auml;nge erst nach dem Einbau endg&uuml;ltig ausmessen &ndash; Motorlage und Getriebelager verschieben das Mass.</span><span class="en">Only measure the final driveshaft length after installation &ndash; engine position and gearbox mount change it.</span></li>
+                <li><span class="de">Die beiden Gesamtl&auml;ngen stammen aus Sekund&auml;rquellen und sind hier nur ein Anhaltspunkt. Das Kardanwellenmass wird nach dem Einbau bei definierter Fahrh&ouml;he genommen &ndash; Motorlage, Getriebelager, Yoke und Einschubweg bestimmen es, nicht die Differenz zweier Katalogl&auml;ngen.</span><span class="en">Both overall lengths come from secondary sources and are a rough indication only. The driveshaft dimension is taken after installation at a defined ride height &ndash; engine position, gearbox mount, yoke and slip travel decide it, not the difference between two catalogue lengths.</span></li>
                 </ul>
             </div>
         </div>
@@ -916,8 +919,8 @@
                 </ol>
             </div>
             <div class="guide-block"><h4 class="measure">Sollwerte &amp; Messwerte (Target Values)</h4>
-                <div class="spec-line"><span>Schlag normal</span><span class="spec-val">max. 0,0015&quot; (0,038 mm) je Lagersitz</span></div>
-                <div class="spec-line"><span>Schlag nach Richten</span><span class="spec-val">max. 0,003&quot; (0,076 mm) je Lagersitz</span></div>
+                <div class="spec-line"><span>Schlag im Normalfall</span><span class="spec-val">im Mittel ca. 0,0015&quot; (0,038 mm) je Lagersitz &ndash; Durchschnitt, kein Grenzwert</span></div>
+                <div class="spec-line"><span>Schlag nach dem Richten</span><span class="spec-val">darf 0,003&quot; (0,076 mm) je Lagersitz nicht &uuml;berschreiten</span></div>
                 <div class="guide-input-row" style="margin-top:0.4rem;">
                     <div><label>Schlag hinten:</label><input type="text" data-field="p3_runout_rear" placeholder=".0010" oninput="autoSave()" style="width:70px;"></div>
                     <div><label>Schlag vorn:</label><input type="text" data-field="p3_runout_front" placeholder=".0010" oninput="autoSave()" style="width:70px;"></div>
@@ -927,7 +930,8 @@
             </div>
             <div class="guide-block"><h4 class="tips">Praxis-Tipps (Practical Tips)</h4>
                 <ul>
-                <li><span class="de">&Uuml;ber 0,003&quot; nach dem Richten ist die Welle Ausschuss &ndash; sie l&auml;uft sonst das Nadellager aus.</span><span class="en">Above 0.003&quot; after straightening the shaft is scrap &ndash; it will wipe out the needle bearing.</span></li>
+                <li><span class="de">Originalwortlaut: &bdquo;Normal shaft runout will average 0.0015&quot; per any one journal. If straightening after any event described above, shaft runout should not exceed 0.003&quot; per any one journal.&ldquo; Die 0,0015&quot; sind der &uuml;bliche Wert einer brauchbaren Welle, nicht die Verschleissgrenze &ndash; eine Ausschlussgrenze nennt Jerico nur f&uuml;r die gerichtete Welle.</span><span class="en">Original wording: &bdquo;Normal shaft runout will average 0.0015&quot; per any one journal. If straightening after any event described above, shaft runout should not exceed 0.003&quot; per any one journal.&ldquo; The 0.0015&quot; is the typical value of a serviceable shaft, not the wear limit &ndash; Jerico states a hard limit only for a straightened shaft.</span></li>
+                <li><span class="de">Deutlich &uuml;ber dem &uuml;blichen Wert und doch unter 0,003&quot;: Ursache suchen (Schadensereignis, Lagersitz) statt nur die Zahl abzuhaken.</span><span class="en">Clearly above the typical value yet under 0.003&quot;: look for the cause (a failure event, a damaged journal) rather than just ticking the number off.</span></li>
                 </ul>
             </div>
             <div class="guide-block"><h4 class="photo">Fotodokumentation (Photo Documentation)</h4>
@@ -1172,7 +1176,7 @@
             </div>
             <div class="guide-block"><h4 class="tips">Praxis-Tipps (Practical Tips)</h4>
                 <ul>
-                <li><span class="de">Jerico ist nach aktuellem Stand wahrscheinlich inaktiv &ndash; Beschaffung nur &uuml;ber Restbest&auml;nde. Fr&uuml;h bestellen.</span><span class="en">Jerico is most likely inactive by now &ndash; parts only from remaining stock. Order early.</span></li>
+                <li><span class="de">Jerico Performance Products ist als Betrieb weiterhin gelistet (Concord NC, +1 704-782-4343) und bietet neben Getrieben auch Inspektion und Reparatur an. Die Website war zuletzt nicht erreichbar &ndash; Verf&uuml;gbarkeit und Lieferzeit vor der Planung telefonisch kl&auml;ren.</span><span class="en">Jerico Performance Products is still listed as an operating business (Concord NC, +1 704-782-4343) and offers inspection and repair alongside transmissions. Their website was unreachable at last check &ndash; confirm availability and lead time by phone before planning around it.</span></li>
                 </ul>
             </div>
         </div>
@@ -1771,14 +1775,15 @@
                 </ol>
             </div>
             <div class="guide-block"><h4 class="measure">Sollwerte &amp; Messwerte (Target Values)</h4>
-                <div class="spec-line"><span>Einbautiefe Vorgelegewelle</span><span class="spec-val">b&uuml;ndig mit der hinteren Geh&auml;usefl&auml;che, <strong>niemals tiefer</strong></span></div>
+                <div class="spec-line"><span>Einbautiefe Vorgelegewelle</span><span class="spec-val">b&uuml;ndig mit der hinteren Geh&auml;usefl&auml;che bis h&ouml;chstens <strong>wenige Tausendstel Zoll tiefer</strong></span></div>
                 <div class="guide-input-row" style="margin-top:0.4rem;">
                     <div><label>Gemessener &Uuml;berstand:</label><input type="text" data-field="p6_cs_depth" placeholder="mm" oninput="autoSave()" style="width:70px;"></div>
                 </div>
             </div>
             <div class="guide-block"><h4 class="tips">Praxis-Tipps (Practical Tips)</h4>
                 <ul>
-                <li><span class="de">Wird die Welle tiefer als b&uuml;ndig eingeschlagen, ist der W&auml;rmeausdehnungsspielraum des hinteren Nadellager-Clusters vernichtet &ndash; die Folge ist ein Totalschaden im Betrieb.</span><span class="en">Driven below flush, the thermal expansion allowance of the rear needle bearing cluster is destroyed &ndash; the result is catastrophic failure in service.</span></li>
+                <li><span class="de">Originalwortlaut: &bdquo;be extremely certain not to drive the counter shaft any more than flush to a few thousandths deeper than the main case&rsquo;s rear surface&ldquo;. B&uuml;ndig bis wenige Tausendstel darunter ist also zul&auml;ssig &ndash; erst weiteres Eintreiben ist der Fehler.</span><span class="en">Original wording: &bdquo;be extremely certain not to drive the counter shaft any more than flush to a few thousandths deeper than the main case&rsquo;s rear surface&ldquo;. Flush to a few thousandths below is allowed &ndash; only driving it further is the mistake.</span></li>
+                <li><span class="de">Was dabei verloren geht, benennt das Manual ausdr&uuml;cklich: der Spielraum f&uuml;r die W&auml;rmeausdehnung des hinteren Nadellager-Clusters, mit Katastrophenversagen genau dieses Lagers als Folge.</span><span class="en">What is lost is named in the manual: the clearance allowed for heat expansion of the rear needle bearing cluster, with catastrophic failure of that bearing cluster as the result.</span></li>
                 </ul>
             </div>
         </div>
@@ -2019,7 +2024,7 @@
                 <li><span class="de">Hinteres Getriebelager: <strong>nur ein flexibles Gummilager</strong>, niemals starr; es darf die L&auml;ngsbewegung des Motors nicht blockieren</span><span class="en">Rear transmission mount: <strong>a flexible rubber mount only</strong>, never rigid; it must not block the engine’s fore-aft movement</span></li>
                 <li><span class="de">Bei Motorplatten vorne und hinten: kein hinteres Getriebelager erforderlich; wird doch eines verwendet, dann sehr weich</span><span class="en">With engine plates front and rear: no rear mount required; if one is used, make it very soft</span></li>
                 <li><span class="de">Querstabilisatoren am Motor montieren, um Seitenversatz zu verhindern</span><span class="en">Fit lateral stabilisers to the engine to prevent side movement</span></li>
-                <li><span class="de">Kardanwelle neu anfertigen lassen &ndash; das Jerico baut ca. 4&quot; (10 cm) k&uuml;rzer als der Toploader</span><span class="en">Have a new driveshaft made &ndash; the Jerico is about 4&quot; (10 cm) shorter than the Toploader</span></li>
+                <li><span class="de">Kardanwellenl&auml;nge <strong>erst nach dem endg&uuml;ltigen Einbau bei definierter Fahrh&ouml;he messen</strong> &ndash; sie folgt nicht aus der Differenz der nominellen Getriebel&auml;ngen, sondern aus Motorlage, Bellhousing, Getriebeposition, Lage von Yoke-Aufnahme und Pinion-Flansch sowie dem erforderlichen Einschubweg des Slip Yoke</span><span class="en">Measure the driveshaft <strong>only after final installation at a defined ride height</strong> &ndash; the length does not follow from the difference of two nominal transmission lengths but from engine position, bellhousing, transmission position, yoke and pinion flange location and the slip yoke travel required</span></li>
                 </ol>
             </div>
             <div class="guide-block"><h4 class="measure">Sollwerte &amp; Messwerte (Target Values)</h4>
@@ -2063,7 +2068,7 @@
             <div class="guide-block"><h4 class="tips">Praxis-Tipps (Practical Tips)</h4>
                 <ul>
                 <li><span class="de">Niemals den Antriebsstrang betreiben, wenn das Fahrzeug auf Unterstellb&ouml;cken steht und die Hinterachse unter der normalen Fahrh&ouml;he h&auml;ngt &ndash; das verschleisst die Kardangelenke erheblich.</span><span class="en">Never run the driveline with the car on stands and the rear axle hanging below normal ride height &ndash; it wears the universal joints badly.</span></li>
-                <li><span class="de">Dog Ring heisst: die Kupplung muss beim Schalten kurz schlupfen d&uuml;rfen. Kein Schlupf = Getriebeschaden.</span><span class="en">Dog ring means the clutch must be allowed to slip briefly when shifting. No slip = transmission damage.</span></li>
+                <li><span class="de"><strong>Zur Kupplungsbenutzung:</strong> Der oft zitierte Satz &bdquo;CLUTCH SLIPPAGE IS A MUST&ldquo; steht im Break-In-Sheet ausschlie&szlig;lich unter <em>FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY</em> und betrifft dort die Abstimmung der Kupplung eines clutchless Drag-Race-Getriebes. F&uuml;r dieses Oval/Road-Race-Getriebe ist daraus <strong>keine</strong> Vorgabe abzuleiten &ndash; Schaltstrategie und Kupplungsbenutzung sind anhand der dafür vorgesehenen Jerico-Unterlagen oder belastbarer Road-Race-Erfahrung zu kl&auml;ren.</span><span class="en"><strong>On clutch use:</strong> The often-quoted &bdquo;CLUTCH SLIPPAGE IS A MUST&ldquo; appears in the break-in sheet only under <em>FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY</em>, where it concerns dialling in the clutch of a clutchless drag race box. Nothing follows from it for this oval/road race transmission &ndash; shift strategy and clutch use must be established from the applicable Jerico material or sound road race experience.</span></li>
                 </ul>
             </div>
         </div>
@@ -2162,7 +2167,7 @@
                 <div class="glossary-field" data-fidx="1"><span class="glossary-field-label">Was ist das?</span> Ein Getriebe ohne Synchronringe. Die G&auml;nge werden &uuml;ber Klauen (Dogs) formschl&uuml;ssig verbunden.</div>
                 <div class="glossary-field" data-fidx="1"><span class="glossary-field-label">Einfach gesagt:</span> Statt sanft anzugleichen rasten die Z&auml;hne hart ineinander &ndash; schnell, laut, verschleissfreudig bei falscher Bedienung.</div>
                 <div class="glossary-field" data-fidx="1"><span class="glossary-field-label">Warum?</span> Schaltzeit und Belastbarkeit. Ein Synchronring w&auml;re das schwache Glied im Rennbetrieb.</div>
-                <div class="glossary-related">Verwandt: Dog Ring, Schiebemuffe, Kupplungsschlupf</div>
+                <div class="glossary-related">Verwandt: Dog Ring, Schiebemuffe, Innennabe</div>
             </div>
             <div class="glossary-entry" data-search="dog ring klauenring mitnehmer 34 37 zaehne keilwelle">
                 <div class="glossary-term">Dog Ring (Klauenring)</div>
@@ -2177,10 +2182,17 @@
                 <div class="glossary-field" data-fidx="3"><span class="glossary-field-label">Am RH02374:</span> Top Loader Only &ndash; visuell best&auml;tigt. Deshalb entf&auml;llt Schritt 9 der Zerlegung (kein Bodendeckel, kein Sicherungsring am Hauptantriebsclusterrad).</div>
                 <div class="glossary-related">Verwandt: Top Cover, Bodendeckel</div>
             </div>
+            <div class="glossary-entry" data-search="kupplung schlupf clutch slippage clutchless drag race">
+                <div class="glossary-term">Kupplungsschlupf &ndash; wof&uuml;r die Regel gilt</div>
+                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Der Satz:</span> &bdquo;CLUTCH SLIPPAGE IS A MUST&ldquo; steht im Jerico Break-In-Sheet.</div>
+                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Wo er steht:</span> Ausschlie&szlig;lich unter der &Uuml;berschrift <em>FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY</em> &ndash; im Abschnitt zur Abstimmung der Kupplung eines <strong>clutchless Drag-Race-Getriebes</strong>.</div>
+                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Folge f&uuml;r RH02374:</span> Daraus l&auml;sst sich <strong>keine</strong> allgemeine Vorgabe f&uuml;r dieses Oval/Road-Race-Getriebe ableiten. Schaltstrategie und Kupplungsbenutzung sind gesondert zu kl&auml;ren.</div>
+                <div class="glossary-related">Verwandt: Dog Box, Break-In</div>
+            </div>
             <div class="glossary-entry" data-search="oval road race revision 2 dog ring low typ">
                 <div class="glossary-term">Oval Road Race (Rev. 2)</div>
-                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Was ist das?</span> Die Bauvariante des RH02374: Oval/Road Race, Revision 2, Dog Ring Low.</div>
-                <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Folge:</span> Im Manual gelten die Abschnitte &bdquo;Winston Cup und Road Race&ldquo; &ndash; nicht die Drag-Race-Varianten.</div>
+                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Was ist das?</span> Die Bauvariante des RH02374: Oval/Road Race, Revision 2, Dog Ring Low.</div>
+                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Folge:</span> Im Manual gelten die Abschnitte &bdquo;Winston Cup und Road Race&ldquo; &ndash; nicht die Drag-Race-Varianten.</div>
                 <div class="glossary-related">Verwandt: Kuehlerpflicht, 75W90</div>
             </div>
         </div>
@@ -2188,27 +2200,27 @@
             <div class="glossary-category-title">2. Wellen &amp; Zahnr&auml;der</div>
             <div class="glossary-entry" data-search="input shaft eingangswelle spline keilwelle kupplung 26">
                 <div class="glossary-term">Eingangswelle (Input Shaft)</div>
-                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Was ist das?</span> Die Welle von der Kupplung ins Getriebe. Tr&auml;gt den 37-Z&auml;hne-Dog-Ring und das Hauptantriebsritzel.</div>
-                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Am RH02374:</span> Ford Input Shaft, 26 Spline &ndash; <strong>noch zu validieren</strong> (nachz&auml;hlen).</div>
-                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Drehrichtung:</span> Motordrehrichtung = Eingangswelle im Uhrzeigersinn.</div>
+                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Was ist das?</span> Die Welle von der Kupplung ins Getriebe. Tr&auml;gt den 37-Z&auml;hne-Dog-Ring und das Hauptantriebsritzel.</div>
+                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Am RH02374:</span> Ford Input Shaft, 26 Spline &ndash; <strong>noch zu validieren</strong> (nachz&auml;hlen).</div>
+                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Drehrichtung:</span> Motordrehrichtung = Eingangswelle im Uhrzeigersinn.</div>
                 <div class="glossary-related">Verwandt: Main Drive, Pilotlager, Bellhousing</div>
             </div>
             <div class="glossary-entry" data-search="main shaft hauptwelle ausgangswelle schlag rundlauf">
                 <div class="glossary-term">Hauptwelle (Main Shaft)</div>
-                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Was ist das?</span> Die Ausgangswelle, auf der 1., 2. und 3. Gang mit ihren Nadellagern sitzen.</div>
-                <div class="glossary-field" data-fidx="6"><span class="glossary-field-label">Grenzwerte:</span> Schlag je Lagersitz max. <strong>0,0015&quot; (0,038 mm)</strong>, nach dem Richten max. <strong>0,003&quot; (0,076 mm)</strong>.</div>
+                <div class="glossary-field" data-fidx="7"><span class="glossary-field-label">Was ist das?</span> Die Ausgangswelle, auf der 1., 2. und 3. Gang mit ihren Nadellagern sitzen.</div>
+                <div class="glossary-field" data-fidx="7"><span class="glossary-field-label">Schlagwerte:</span> Eine brauchbare Welle hat <strong>im Mittel ca. 0,0015&quot; (0,038 mm)</strong> Schlag je Lagersitz &ndash; das ist der &uuml;bliche Wert, keine Grenze. Nach dem Richten nennt Jerico eine harte Grenze: <strong>h&ouml;chstens 0,003&quot; (0,076 mm)</strong> je Lagersitz.</div>
                 <div class="glossary-related">Verwandt: Nadellager, Anlaufscheibe, V-Bloecke</div>
             </div>
             <div class="glossary-entry" data-search="cluster countershaft vorgelegewelle zahnradsatz">
                 <div class="glossary-term">Vorgelegewelle (Cluster Shaft)</div>
-                <div class="glossary-field" data-fidx="7"><span class="glossary-field-label">Was ist das?</span> Der Zahnradsatz unterhalb der Hauptwelle, der die Drehzahl von der Eingangswelle auf die G&auml;nge &uuml;bersetzt.</div>
-                <div class="glossary-field" data-fidx="7"><span class="glossary-field-label">Achtung beim Einbau:</span> Die Welle darf <strong>nie tiefer als b&uuml;ndig</strong> mit der hinteren Geh&auml;usefl&auml;che eingeschlagen werden &ndash; sonst fehlt dem hinteren Nadellager der W&auml;rmeausdehnungsspielraum.</div>
+                <div class="glossary-field" data-fidx="8"><span class="glossary-field-label">Was ist das?</span> Der Zahnradsatz unterhalb der Hauptwelle, der die Drehzahl von der Eingangswelle auf die G&auml;nge &uuml;bersetzt.</div>
+                <div class="glossary-field" data-fidx="8"><span class="glossary-field-label">Achtung beim Einbau:</span> Das hintere Ende darf <strong>b&uuml;ndig bis h&ouml;chstens wenige Tausendstel Zoll unter</strong> der hinteren Geh&auml;usefl&auml;che sitzen. Weiter eingetrieben fehlt dem hinteren Nadellager-Cluster der W&auml;rmeausdehnungsspielraum &ndash; mit Versagen genau dieses Lagers als Folge.</div>
                 <div class="glossary-related">Verwandt: Sicherungsring, O-Ring, C1086Q</div>
             </div>
             <div class="glossary-entry" data-search="main drive hauptantrieb 22 27 uebersetzung ritzel">
                 <div class="glossary-term">Main Drive (Hauptantrieb)</div>
-                <div class="glossary-field" data-fidx="8"><span class="glossary-field-label">Was ist das?</span> Das Zahnradpaar Eingangswelle/Vorgelegewelle, das alle G&auml;nge gemeinsam durchlaufen.</div>
-                <div class="glossary-field" data-fidx="8"><span class="glossary-field-label">Am RH02374:</span> 22 / 27 Z&auml;hne = Faktor 0,815.</div>
+                <div class="glossary-field" data-fidx="9"><span class="glossary-field-label">Was ist das?</span> Das Zahnradpaar Eingangswelle/Vorgelegewelle, das alle G&auml;nge gemeinsam durchlaufen.</div>
+                <div class="glossary-field" data-fidx="9"><span class="glossary-field-label">Am RH02374:</span> 22 / 27 Z&auml;hne = Faktor 0,815.</div>
                 <div class="glossary-related">Verwandt: Gear Ratio, Ratio Chart</div>
             </div>
         </div>
@@ -2216,26 +2228,26 @@
             <div class="glossary-category-title">3. Schaltung</div>
             <div class="glossary-entry" data-search="slider schiebemuffe muffe einrueckklauen nabe">
                 <div class="glossary-term">Schiebemuffe (Slider)</div>
-                <div class="glossary-field" data-fidx="9"><span class="glossary-field-label">Was ist das?</span> Die axial verschiebbare Muffe auf der Nabe, die in den Dog Ring des Gangs einrastet.</div>
-                <div class="glossary-field" data-fidx="9"><span class="glossary-field-label">Verschleissgrenze:</span> Ersetzen, wenn die Einr&uuml;cknasen mehr als <strong>3/32&quot; bis 1/8&quot; (2,4&ndash;3,2 mm)</strong> abgerundet sind.</div>
+                <div class="glossary-field" data-fidx="10"><span class="glossary-field-label">Was ist das?</span> Die axial verschiebbare Muffe auf der Nabe, die in den Dog Ring des Gangs einrastet.</div>
+                <div class="glossary-field" data-fidx="10"><span class="glossary-field-label">Verschleissgrenze:</span> Ersetzen, wenn die Einr&uuml;cknasen mehr als <strong>3/32&quot; bis 1/8&quot; (2,4&ndash;3,2 mm)</strong> abgerundet sind.</div>
                 <div class="glossary-related">Verwandt: Dog Ring, Schaltgabel, 1-2 Nabe</div>
             </div>
             <div class="glossary-entry" data-search="schaltgabel shift fork schaltschiene rail klemmschraube loctite">
                 <div class="glossary-term">Schaltgabel / Schaltschiene</div>
-                <div class="glossary-field" data-fidx="10"><span class="glossary-field-label">Was ist das?</span> Die Gabel greift in die Schiebemuffe, die Schiene f&uuml;hrt sie. Beide sind mit einer Kegelkopf-Klemmschraube verbunden.</div>
-                <div class="glossary-field" data-fidx="10"><span class="glossary-field-label">Anzug:</span> Alle drei Klemmschrauben <strong>28 lb./ft (38 Nm)</strong>, 1-2 und 3-4 mit Loctite.</div>
+                <div class="glossary-field" data-fidx="11"><span class="glossary-field-label">Was ist das?</span> Die Gabel greift in die Schiebemuffe, die Schiene f&uuml;hrt sie. Beide sind mit einer Kegelkopf-Klemmschraube verbunden.</div>
+                <div class="glossary-field" data-fidx="11"><span class="glossary-field-label">Anzug:</span> Alle drei Klemmschrauben <strong>28 lb./ft (38 Nm)</strong>, 1-2 und 3-4 mit Loctite.</div>
                 <div class="glossary-related">Verwandt: Detent, Interlock</div>
             </div>
             <div class="glossary-entry" data-search="detent rastierung feder kugel sdp-a magnet">
                 <div class="glossary-term">Detent (Rastierung)</div>
-                <div class="glossary-field" data-fidx="11"><span class="glossary-field-label">Was ist das?</span> Federbelasteter Stift, der die Schaltschiene in ihrer Stellung h&auml;lt.</div>
-                <div class="glossary-field" data-fidx="11"><span class="glossary-field-label">Praxis:</span> Einsetzen mit Taschenmagnet; ein Tropfen &Ouml;l h&auml;lt den Detent beim Abziehen des Magneten durch Unterdruck in der Bohrung.</div>
+                <div class="glossary-field" data-fidx="12"><span class="glossary-field-label">Was ist das?</span> Federbelasteter Stift, der die Schaltschiene in ihrer Stellung h&auml;lt.</div>
+                <div class="glossary-field" data-fidx="12"><span class="glossary-field-label">Praxis:</span> Einsetzen mit Taschenmagnet; ein Tropfen &Ouml;l h&auml;lt den Detent beim Abziehen des Magneten durch Unterdruck in der Bohrung.</div>
                 <div class="glossary-related">Verwandt: Interlock-Pruefung, SDP-A</div>
             </div>
             <div class="glossary-entry" data-search="interlock verriegelung zwei gaenge gleichzeitig pruefung">
                 <div class="glossary-term">Detent Interlock</div>
-                <div class="glossary-field" data-fidx="12"><span class="glossary-field-label">Was ist das?</span> Die Sperre, die verhindert, dass zwei G&auml;nge gleichzeitig eingelegt werden.</div>
-                <div class="glossary-field" data-fidx="12"><span class="glossary-field-label">Pr&uuml;fung:</span> F&uuml;nf Punkte nach dem Zusammenbau. L&auml;sst sich ein zweiter Gang einlegen, fehlt ein Detent zwischen diesen Schienen.</div>
+                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Was ist das?</span> Die Sperre, die verhindert, dass zwei G&auml;nge gleichzeitig eingelegt werden.</div>
+                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Pr&uuml;fung:</span> F&uuml;nf Punkte nach dem Zusammenbau. L&auml;sst sich ein zweiter Gang einlegen, fehlt ein Detent zwischen diesen Schienen.</div>
                 <div class="glossary-related">Verwandt: Detent, Schaltgabel</div>
             </div>
         </div>
@@ -2243,28 +2255,28 @@
             <div class="glossary-category-title">4. Lager &amp; Sicherungen</div>
             <div class="glossary-entry" data-search="nadellager caged needle bearing kaefig c407q c1086q nadeln">
                 <div class="glossary-term">Nadellager (Caged Needle Bearing)</div>
-                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Was ist das?</span> Lager aus losen oder gek&auml;figten Nadeln zwischen Welle und Zahnrad.</div>
-                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Z&auml;hlungen am RH02374:</span> Eingangswelle 15 Nadeln; R&uuml;ckw&auml;rtsgang-Zwischenrad #C407Q 44 Nadeln (22 je Seite); Vorgelegewelle #C1086Q 56 Nadeln (28 je Seite).</div>
-                <div class="glossary-field" data-fidx="13"><span class="glossary-field-label">Regel:</span> Geht eine Nadel verloren, wird <strong>der ganze Satz</strong> ersetzt &ndash; nie eine einzelne.</div>
+                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Was ist das?</span> Lager aus losen oder gek&auml;figten Nadeln zwischen Welle und Zahnrad.</div>
+                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Z&auml;hlungen am RH02374:</span> Eingangswelle 15 Nadeln; R&uuml;ckw&auml;rtsgang-Zwischenrad #C407Q 44 Nadeln (22 je Seite); Vorgelegewelle #C1086Q 56 Nadeln (28 je Seite).</div>
+                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Regel:</span> Geht eine Nadel verloren, wird <strong>der ganze Satz</strong> ersetzt &ndash; nie eine einzelne.</div>
                 <div class="glossary-related">Verwandt: Anlaufscheibe, RNTA, CNT-A</div>
             </div>
             <div class="glossary-entry" data-search="spirolox sicherungsring rst-187 rs-187 sperrhaken nut">
                 <div class="glossary-term">Spirolox</div>
-                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Was ist das?</span> Ein gewickelter Sicherungsring ohne &Ouml;sen, der in einer Nut liegt.</div>
-                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Einbau:</span> Linken Sperrhaken flachdr&uuml;cken, gleichm&auml;ssig um den Umfang einf&uuml;hren, obere rechte Kante mit kleinem Schraubendreher im 45&deg;-Winkel einschlagen, danach Sperrhaken zur&uuml;cksetzen.</div>
-                <div class="glossary-field" data-fidx="14"><span class="glossary-field-label">Teile:</span> #RST-187 an der 1-2 Nabe, je einer je Dog-Ring-Nabe.</div>
+                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Was ist das?</span> Ein gewickelter Sicherungsring ohne &Ouml;sen, der in einer Nut liegt.</div>
+                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Einbau:</span> Linken Sperrhaken flachdr&uuml;cken, gleichm&auml;ssig um den Umfang einf&uuml;hren, obere rechte Kante mit kleinem Schraubendreher im 45&deg;-Winkel einschlagen, danach Sperrhaken zur&uuml;cksetzen.</div>
+                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Teile:</span> #RST-187 an der 1-2 Nabe, je einer je Dog-Ring-Nabe.</div>
                 <div class="glossary-related">Verwandt: Dog Ring, Sicherungsring</div>
             </div>
             <div class="glossary-entry" data-search="anlaufscheibe thrust washer rnta cnt-a scharfe kante">
                 <div class="glossary-term">Anlaufscheibe (Thrust Washer)</div>
-                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Was ist das?</span> Scheibe, die die Axialkraft aufnimmt und die Nadeln in Position h&auml;lt.</div>
-                <div class="glossary-field" data-fidx="15"><span class="glossary-field-label">Einbaurichtung:</span> R&uuml;ckw&auml;rtsgang-Zwischenrad (#RNTA): scharfe Kanten nach innen zu den Nadeln. Vorgelegewelle (#CNT-A): erste Scheibe scharfe Kanten nach oben, zweite nach innen.</div>
+                <div class="glossary-field" data-fidx="16"><span class="glossary-field-label">Was ist das?</span> Scheibe, die die Axialkraft aufnimmt und die Nadeln in Position h&auml;lt.</div>
+                <div class="glossary-field" data-fidx="16"><span class="glossary-field-label">Einbaurichtung:</span> R&uuml;ckw&auml;rtsgang-Zwischenrad (#RNTA): scharfe Kanten nach innen zu den Nadeln. Vorgelegewelle (#CNT-A): erste Scheibe scharfe Kanten nach oben, zweite nach innen.</div>
                 <div class="glossary-related">Verwandt: Nadellager</div>
             </div>
             <div class="glossary-entry" data-search="abstandsring spacer 3.625 92.1 vorderes lager">
                 <div class="glossary-term">Abstandsring 3,625&quot;</div>
-                <div class="glossary-field" data-fidx="16"><span class="glossary-field-label">Was ist das?</span> Der Ring, der vor dem vorderen Lager sitzt (92,1 mm).</div>
-                <div class="glossary-field" data-fidx="16"><span class="glossary-field-label">Wann?</span> Beim Zusammenbau Top Loader Only vor dem Einsetzen des vorderen Lagers auflegen.</div>
+                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Was ist das?</span> Der Ring, der vor dem vorderen Lager sitzt (92,1 mm).</div>
+                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Wann?</span> Beim Zusammenbau Top Loader Only vor dem Einsetzen des vorderen Lagers auflegen.</div>
                 <div class="glossary-related">Verwandt: Halteclip, 5100-177</div>
             </div>
         </div>
@@ -2272,20 +2284,20 @@
             <div class="glossary-category-title">5. Betriebsstoffe &amp; Dichtmittel</div>
             <div class="glossary-entry" data-search="oel 75w90 synthetic getriebeoel mobil 1 menge fuellstand">
                 <div class="glossary-term">75W90 Synthetic</div>
-                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Vorgabe:</span> Synthetic Multi-Viscosity Gear Oil 75W90. <strong>Kein Straight 90W.</strong></div>
-                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Menge:</span> Ca. 2 Quarts (~1,9 l), F&uuml;llstand 3/4&quot; unterhalb der seitlichen Einf&uuml;ll&ouml;ffnung. Nicht &uuml;berf&uuml;llen &ndash; erzeugt Hitze.</div>
-                <div class="glossary-field" data-fidx="17"><span class="glossary-field-label">Im Manual:</span> &bdquo;&Ouml;l&ldquo; in der Montageanleitung bedeutet Mobil 1 75W90.</div>
+                <div class="glossary-field" data-fidx="18"><span class="glossary-field-label">Vorgabe:</span> Synthetic Multi-Viscosity Gear Oil SAE 75W90. <strong>Kein Straight 90W.</strong> Verbindlich ist die Spezifikation, nicht die Marke.</div>
+                <div class="glossary-field" data-fidx="18"><span class="glossary-field-label">Menge:</span> Ca. 2 Quarts (~1,9 l), F&uuml;llstand 3/4&quot; unterhalb der seitlichen Einf&uuml;ll&ouml;ffnung. Nicht &uuml;berf&uuml;llen &ndash; erzeugt Hitze.</div>
+                <div class="glossary-field" data-fidx="18"><span class="glossary-field-label">Im Manual:</span> Die Montageanleitung meint mit &bdquo;&Ouml;l&ldquo; durchgehend das dort verwendete Produkt Mobil 1 75W90.</div>
                 <div class="glossary-related">Verwandt: Break-In, Kuehler</div>
             </div>
             <div class="glossary-entry" data-search="fett grease schaltfinger dichtung lagerbohrung montage">
                 <div class="glossary-term">Mobil 1 Universal Grease</div>
-                <div class="glossary-field" data-fidx="18"><span class="glossary-field-label">Wof&uuml;r?</span> Schaltfingerdichtungen, Anlauffl&auml;chen, Lagerbohrungen und zum Kleben der losen Nadeln beim Einlegen.</div>
+                <div class="glossary-field" data-fidx="19"><span class="glossary-field-label">Wof&uuml;r?</span> Schaltfingerdichtungen, Anlauffl&auml;chen, Lagerbohrungen und zum Kleben der losen Nadeln beim Einlegen.</div>
                 <div class="glossary-related">Verwandt: Nadellager, Schaltfinger</div>
             </div>
             <div class="glossary-entry" data-search="hylomar dichtmittel gasket maker silikon loctite ultra black">
                 <div class="glossary-term">Hylomar</div>
-                <div class="glossary-field" data-fidx="19"><span class="glossary-field-label">Wof&uuml;r?</span> Dichtfl&auml;chen von vorderem Lagerflansch und Tail Housing (Raupe). Adapterplatte der &Ouml;lpumpe: Hylomar oder Loctite Ultra Black.</div>
-                <div class="glossary-field" data-fidx="19"><span class="glossary-field-label">Achtung:</span> &Uuml;berschuss entfernen &ndash; sonst Ausrichtungsfehler am Flansch.</div>
+                <div class="glossary-field" data-fidx="20"><span class="glossary-field-label">Wof&uuml;r?</span> Dichtfl&auml;chen von vorderem Lagerflansch und Tail Housing (Raupe). Adapterplatte der &Ouml;lpumpe: Hylomar oder Loctite Ultra Black.</div>
+                <div class="glossary-field" data-fidx="20"><span class="glossary-field-label">Achtung:</span> &Uuml;berschuss entfernen &ndash; sonst Ausrichtungsfehler am Flansch.</div>
                 <div class="glossary-related">Verwandt: Silikon, Hinterdichtung</div>
             </div>
         </div>
@@ -2293,19 +2305,19 @@
             <div class="glossary-category-title">6. Messen &amp; Pr&uuml;fen</div>
             <div class="glossary-entry" data-search="schlag runout rundlauf messuhr v-bloecke richten">
                 <div class="glossary-term">Schlag (Runout)</div>
-                <div class="glossary-field" data-fidx="20"><span class="glossary-field-label">Messung:</span> Hauptwelle in V-Bl&ouml;cken am hinteren Lagersitz und am vorderen Eingangswellen-Nadellagersitz.</div>
-                <div class="glossary-field" data-fidx="20"><span class="glossary-field-label">Grenzwerte:</span> Normal max. 0,0015&quot; (0,038 mm) je Lagersitz, nach dem Richten max. 0,003&quot; (0,076 mm).</div>
+                <div class="glossary-field" data-fidx="21"><span class="glossary-field-label">Messung:</span> Hauptwelle in V-Bl&ouml;cken am hinteren Lagersitz und am vorderen Eingangswellen-Nadellagersitz.</div>
+                <div class="glossary-field" data-fidx="21"><span class="glossary-field-label">Werte:</span> &Uuml;blich sind im Mittel ca. 0,0015&quot; (0,038 mm) je Lagersitz &ndash; ein Durchschnitt, keine Grenze. Eine harte Grenze nennt Jerico nur f&uuml;r die gerichtete Welle: h&ouml;chstens 0,003&quot; (0,076 mm) je Lagersitz.</div>
                 <div class="glossary-related">Verwandt: Hauptwelle, Messuhr</div>
             </div>
             <div class="glossary-entry" data-search="verschleiss klauen abgerundet 3/32 1/8 dog ring slider">
                 <div class="glossary-term">Verschleissgrenze Klauen</div>
-                <div class="glossary-field" data-fidx="21"><span class="glossary-field-label">Regel:</span> Dog Rings und Schiebemuffen ersetzen, wenn Z&auml;hne bzw. Einr&uuml;cknasen mehr als 3/32&quot; bis 1/8&quot; (2,4&ndash;3,2 mm) abgerundet sind.</div>
+                <div class="glossary-field" data-fidx="22"><span class="glossary-field-label">Regel:</span> Dog Rings und Schiebemuffen ersetzen, wenn Z&auml;hne bzw. Einr&uuml;cknasen mehr als 3/32&quot; bis 1/8&quot; (2,4&ndash;3,2 mm) abgerundet sind.</div>
                 <div class="glossary-related">Verwandt: Dog Ring, Slider</div>
             </div>
             <div class="glossary-entry" data-search="aluminium magnesium essigtest strahlen waermeausdehnung">
                 <div class="glossary-term">Gehaeusematerial</div>
-                <div class="glossary-field" data-fidx="22"><span class="glossary-field-label">Warum wichtig?</span> Aluminium und Magnesium dehnen sich unterschiedlich aus und vertragen unterschiedliche Strahl- und Lackvorbehandlung.</div>
-                <div class="glossary-field" data-fidx="22"><span class="glossary-field-label">Folge im Manual:</span> Road Race: #44 Schlauchklemme plus zwei Metallhalter an der Hinterdichtung gegen Dichtungsverlust.</div>
+                <div class="glossary-field" data-fidx="23"><span class="glossary-field-label">Warum wichtig?</span> Aluminium und Magnesium dehnen sich unterschiedlich aus und vertragen unterschiedliche Strahl- und Lackvorbehandlung.</div>
+                <div class="glossary-field" data-fidx="23"><span class="glossary-field-label">Folge im Manual:</span> Road Race: #44 Schlauchklemme plus zwei Metallhalter an der Hinterdichtung gegen Dichtungsverlust.</div>
                 <div class="glossary-related">Verwandt: Tail Housing, Hinterdichtung</div>
             </div>
         </div>
@@ -2313,22 +2325,22 @@
             <div class="glossary-category-title">7. Abk&uuml;rzungen &amp; Teilenummern</div>
             <div class="glossary-entry" data-search="rh02374 seriennummer serial tex racing">
                 <div class="glossary-term">RH02374</div>
-                <div class="glossary-field" data-fidx="23"><span class="glossary-field-label">Bedeutung:</span> Seriennummer dieses Getriebes. Aufgebaut von Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use).</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Bedeutung:</span> Seriennummer dieses Getriebes. Aufgebaut von Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use).</div>
                 <div class="glossary-related">Verwandt: Identifikation</div>
             </div>
             <div class="glossary-entry" data-search="a-01 a-02 a-03 a-04 quellen klasse a oem">
                 <div class="glossary-term">A-01 bis A-04</div>
-                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Bedeutung:</span> Quellenkennung aus dem Notion-Quellenregister: A-01 Assembly Manual, A-02 Break-In Sheet, A-03 Gear Ratio Chart, A-04 Transmission Guide.</div>
+                <div class="glossary-field" data-fidx="25"><span class="glossary-field-label">Bedeutung:</span> Quellenkennung aus dem Notion-Quellenregister: A-01 Assembly Manual, A-02 Break-In Sheet, A-03 Gear Ratio Chart, A-04 Transmission Guide.</div>
                 <div class="glossary-related">Verwandt: Quellen</div>
             </div>
             <div class="glossary-entry" data-search="5100-177 5100-131 sicherungsring snap ring">
                 <div class="glossary-term">#5100-177 / #5100-131</div>
-                <div class="glossary-field" data-fidx="25"><span class="glossary-field-label">Bedeutung:</span> Sicherungsring vorderes Lager (#5100-177) und Sicherungsring der 3-4 Nabe (#5100-131).</div>
+                <div class="glossary-field" data-fidx="26"><span class="glossary-field-label">Bedeutung:</span> Sicherungsring vorderes Lager (#5100-177) und Sicherungsring der 3-4 Nabe (#5100-131).</div>
                 <div class="glossary-related">Verwandt: Spirolox, Halteclip</div>
             </div>
             <div class="glossary-entry" data-search="c407q c1086q rnta cnt-a sdp-a teilenummern">
                 <div class="glossary-term">#C407Q / #C1086Q / #RNTA / #CNT-A / #SDP-A</div>
-                <div class="glossary-field" data-fidx="26"><span class="glossary-field-label">Bedeutung:</span> Nadels&auml;tze (C407Q R&uuml;ckw&auml;rtsgang, C1086Q Vorgelegewelle), Anlaufscheiben (RNTA, CNT-A) und die kurze Detentfeder (SDP-A).</div>
+                <div class="glossary-field" data-fidx="27"><span class="glossary-field-label">Bedeutung:</span> Nadels&auml;tze (C407Q R&uuml;ckw&auml;rtsgang, C1086Q Vorgelegewelle), Anlaufscheiben (RNTA, CNT-A) und die kurze Detentfeder (SDP-A).</div>
                 <div class="glossary-related">Verwandt: Nadellager, Detent</div>
             </div>
         </div>
