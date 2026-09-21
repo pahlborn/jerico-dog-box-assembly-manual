@@ -1,0 +1,55 @@
+{
+  "sha": "0000000000000000000000000000000000000000",
+  "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/trees/main",
+  "tree": [
+    {
+      "path": "img/user/p1_ident_photos/1700000000000_0.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0000000000000000000000000000000000000000",
+      "size": 1024,
+      "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/blobs/x"
+    },
+    {
+      "path": "img/user/p1_ident_photos/1700000000001_1.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0000000000000000000000000000000000000001",
+      "size": 1024,
+      "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/blobs/x"
+    },
+    {
+      "path": "img/user/p1_ident_photos/1700000000002_2.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0000000000000000000000000000000000000002",
+      "size": 1024,
+      "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/blobs/x"
+    },
+    {
+      "path": "img/user/p2_dogring_photos/1700000000000_0.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0000000000000000000000000000000000000000",
+      "size": 1024,
+      "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/blobs/x"
+    },
+    {
+      "path": "img/user/p2_dogring_photos/1700000000001_1.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0000000000000000000000000000000000000001",
+      "size": 1024,
+      "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/blobs/x"
+    },
+    {
+      "path": "img/user/spec_ident_photos/1700000000000_0.jpg",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "0000000000000000000000000000000000000000",
+      "size": 1024,
+      "url": "https://api.github.com/repos/pahlborn/jerico-dog-box-assembly-manual/git/blobs/x"
+    }
+  ],
+  "truncated": false
+}

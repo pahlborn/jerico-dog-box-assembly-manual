@@ -1,0 +1,13 @@
+{
+  "name": "jerico-dog-box-assembly-manual",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Jerico RH02374 Dog Box - Assembly Manual, Specs und Build Log (statisch, GitHub Pages)",
+  "type": "module",
+  "scripts": {
+    "test": "node tests/ui.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}

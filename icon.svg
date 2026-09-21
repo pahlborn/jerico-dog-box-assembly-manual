@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a365d"/>
+      <stop offset="100%" style="stop-color:#2b6cb0"/>
+    </linearGradient>
+  </defs>
+  <!-- Hintergrund -->
+  <rect width="512" height="512" rx="96" fill="url(#bg)"/>
+  <!-- Text: JERICO -->
+  <text x="256" y="92" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="700" font-size="36" fill="rgba(255,255,255,0.9)">JERICO</text>
+  <!-- Text: RH02374 -->
+  <text x="256" y="140" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="800" font-size="46" fill="#ed8936">RH02374</text>
+  <!-- Dog Ring: Aussenkranz mit Klauen -->
+  <g transform="translate(256,300)">
+    <circle r="108" fill="none" stroke="#e2e8f0" stroke-width="26"/>
+    <circle r="56" fill="none" stroke="#a0aec0" stroke-width="14"/>
+    <!-- Sechs Mitnehmerklauen (Dog Ring statt Synchronring) -->
+    <g fill="#cbd5e0">
+      <rect x="-17" y="-142" width="34" height="42" rx="6"/>
+      <rect x="-17" y="-142" width="34" height="42" rx="6" transform="rotate(60)"/>
+      <rect x="-17" y="-142" width="34" height="42" rx="6" transform="rotate(120)"/>
+      <rect x="-17" y="-142" width="34" height="42" rx="6" transform="rotate(180)"/>
+      <rect x="-17" y="-142" width="34" height="42" rx="6" transform="rotate(240)"/>
+      <rect x="-17" y="-142" width="34" height="42" rx="6" transform="rotate(300)"/>
+    </g>
+    <!-- Keilwelle -->
+    <g stroke="#718096" stroke-width="9" stroke-linecap="round">
+      <line x1="0" y1="-40" x2="0" y2="40"/>
+      <line x1="-40" y1="0" x2="40" y2="0"/>
+      <line x1="-28" y1="-28" x2="28" y2="28"/>
+      <line x1="-28" y1="28" x2="28" y2="-28"/>
+    </g>
+  </g>
+  <text x="256" y="486" text-anchor="middle" font-family="system-ui,sans-serif" font-weight="600" font-size="26" fill="rgba(255,255,255,0.6)">ASSEMBLY MANUAL</text>
+</svg>
