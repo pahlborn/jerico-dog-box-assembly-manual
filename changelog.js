@@ -13,6 +13,15 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v2',
+      date: '2026-09-21',
+      title: 'Offline-Betrieb auf der veroeffentlichten Seite',
+      changes: [
+        { type: 'fix', text: 'Der Service Worker liess sich auf GitHub Pages nicht installieren: die Dateiliste stand mit absolutem Pfad in Kleinschreibung, das Repository heisst aber "Jerico-...". GitHub Pages unterscheidet Gross- und Kleinschreibung, damit lief die Installation auf einen 404 und der Offline-Betrieb fiel ganz aus. Die Liste ist jetzt relativ.' },
+        { type: 'fix', text: 'Dasselbe in manifest.json: start_url und scope zeigten auf einen Pfad, den es so nicht gibt. Beim Ablegen auf dem Startbildschirm waere die App im Nichts gelandet.' }
+      ]
+    },
+    {
       version: 'v1',
       date: '2026-09-20',
       title: 'Erste Ausgabe - Jerico RH02374',

@@ -1,20 +1,24 @@
-var CACHE_NAME = 'jerico-v1';
+var CACHE_NAME = 'jerico-v2';
+// Relativ, nicht absolut: GitHub Pages unterscheidet Gross- und Kleinschreibung
+// im Pfad, und das Repository heisst "Jerico-...". Ein absoluter Pfad in der
+// falschen Schreibweise laesst cache.addAll scheitern - und damit die gesamte
+// Installation des Service Workers, also den Offline-Betrieb.
 var urlsToCache = [
-  '/jerico-dog-box-assembly-manual/',
-  '/jerico-dog-box-assembly-manual/index.html',
-  '/jerico-dog-box-assembly-manual/build-log.html',
-  '/jerico-dog-box-assembly-manual/specs.html',
-  '/jerico-dog-box-assembly-manual/styles.css',
-  '/jerico-dog-box-assembly-manual/app.js',
-  '/jerico-dog-box-assembly-manual/field-sync.js',
-  '/jerico-dog-box-assembly-manual/version.js',
-  '/jerico-dog-box-assembly-manual/gallery.js',
-  '/jerico-dog-box-assembly-manual/gallery.css',
-  '/jerico-dog-box-assembly-manual/findings.js',
-  '/jerico-dog-box-assembly-manual/changelog.js',
-  '/jerico-dog-box-assembly-manual/search.js',
-  '/jerico-dog-box-assembly-manual/icon-192.png',
-  '/jerico-dog-box-assembly-manual/icon-512.png'
+  './',
+  './index.html',
+  './build-log.html',
+  './specs.html',
+  './styles.css',
+  './app.js',
+  './field-sync.js',
+  './version.js',
+  './gallery.js',
+  './gallery.css',
+  './findings.js',
+  './changelog.js',
+  './search.js',
+  './icon-192.png',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', function(event) {

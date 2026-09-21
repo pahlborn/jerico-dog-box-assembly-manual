@@ -57,10 +57,23 @@ await test('changelog.js kennt die aktuelle Version', async () => {
 
 await test('sw.js listet nur Dateien, die es gibt', async () => {
   const sw = fs.readFileSync(path.join(REPO_ROOT, 'sw.js'), 'utf8');
-  const urls = [...sw.matchAll(/'\/jerico-dog-box-assembly-manual\/([^']*)'/g)].map((m) => m[1]);
+  const urls = [...sw.matchAll(/'\.\/([^']*)'/g)].map((m) => m[1]);
+  assert(urls.length > 5, 'Dateiliste im Service Worker sieht leer aus');
   for (const rel of urls) {
     if (!rel) continue;   // der Ordner selbst
     assert(fs.existsSync(path.join(REPO_ROOT, rel)), 'fehlt im Repo: ' + rel);
+  }
+});
+
+await test('Service Worker und Manifest kommen ohne absolute Pfade aus', async () => {
+  // GitHub Pages unterscheidet Gross- und Kleinschreibung im Pfad. Ein
+  // absoluter Pfad mit dem Repo-Namen ist damit eine Fehlerquelle, die erst
+  // auf der veroeffentlichten Seite auffaellt - und dort den Offline-Betrieb
+  // komplett aushebelt.
+  for (const datei of ['sw.js', 'manifest.json']) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    const treffer = text.match(/["']\/[A-Za-z0-9._-]+\//g) || [];
+    assertEqual(treffer, [], datei + ' enthaelt absolute Pfade');
   }
 });
 
