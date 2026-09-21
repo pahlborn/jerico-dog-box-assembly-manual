@@ -288,6 +288,57 @@ await test('Phasenzuordnung der Startseite passt zum Build Log', async () => {
 });
 
 // ---------------------------------------------------------------------------
+suite('Inhaltliche Korrekturen gegen die Primaerquellen');
+
+// Diese Pruefungen halten Korrekturen fest, die aus einem Abgleich mit den
+// Original-PDFs von Jerico stammen. Sie verhindern, dass eine der Aussagen
+// beim naechsten Ueberarbeiten unbemerkt zurueckkommt.
+
+await test('keine Seite behauptet Kupplungsschlupf als Vorgabe fuer dieses Getriebe', async () => {
+  // "CLUTCH SLIPPAGE IS A MUST" steht im Break-In-Sheet ausschliesslich unter
+  // "FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY".
+  for (const datei of PAGES) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    assert(!/Kein Schlupf = Getriebeschaden/.test(text), datei + ': alte Kupplungs-Aussage');
+    assert(!/muss die Kupplung kurz schlupfen/.test(text), datei + ': alte Kupplungs-Aussage');
+  }
+});
+
+await test('0,0015" steht nicht als Grenzwert', async () => {
+  // Original: "Normal shaft runout will average 0.0015" per any one journal."
+  for (const datei of PAGES) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    assert(!/max\.? 0,0015/.test(text), datei + ': 0,0015" als Maximum');
+    assert(!/Normal max\. 0,0015/.test(text), datei + ': 0,0015" als Maximum');
+  }
+});
+
+await test('Vorgelegewelle: buendig bis wenige Tausendstel, nicht "niemals tiefer"', async () => {
+  const text = fs.readFileSync(path.join(REPO_ROOT, 'build-log.html'), 'utf8');
+  assert(!/niemals tiefer/.test(text), 'zu strenge Vorgabe steht wieder drin');
+  assert(/wenige Tausendstel/.test(text), 'die zulaessige Toleranz fehlt');
+});
+
+await test('kein unbelegter Herstellerstatus, keine pauschale Quellenaussage', async () => {
+  for (const datei of PAGES) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    assert(!/wahrscheinlich inaktiv/.test(text), datei + ': unbelegte Aussage zum Hersteller');
+    assert(!/Alle Werte stammen aus der OEM/.test(text), datei + ': pauschale Quellenaussage');
+  }
+});
+
+await test('Specs erklaeren die Quellenklassen und benutzen sie', async () => {
+  const p = await open('specs.html');
+  const zahlen = await p.page.evaluate(() => ({
+    legende: !!document.querySelector('.src-a'),
+    benutzt: document.querySelectorAll('.spec-value .src, .spec-item .src').length
+  }));
+  assert(zahlen.legende, 'Legende der Quellenklassen fehlt');
+  assert(zahlen.benutzt >= 5, 'Quellenklassen werden kaum benutzt: ' + zahlen.benutzt);
+  await p.close();
+});
+
+// ---------------------------------------------------------------------------
 suite('Sprache und Glossar');
 
 await test('Umschalten auf Englisch blendet die deutschen Spans aus', async () => {
