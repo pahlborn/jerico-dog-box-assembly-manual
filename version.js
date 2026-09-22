@@ -9,5 +9,19 @@
  */
 (function (global) {
   'use strict';
-  global.APP_VERSION = 'v10';
+  global.APP_VERSION = 'v11';
+
+  // Freigabezeitpunkt. Es gibt keinen Build-Schritt, der ihn setzen koennte -
+  // also wird er bei jedem Versionssprung von Hand mitgezogen. Die Nummer
+  // allein sagt nicht, ob ein Geraet den neuen Stand geladen hat.
+  global.APP_BUILT = '2026-09-22T21:20:00+02:00';
+
+  // "DD.MM.YYYY, hh:mm" - ohne Sekunden, die interessieren niemanden.
+  global.formatBuilt = function (iso) {
+    var d = new Date(iso || global.APP_BUILT);
+    if (isNaN(d.getTime())) return '';
+    function zwei(n) { return (n < 10 ? '0' : '') + n; }
+    return zwei(d.getDate()) + '.' + zwei(d.getMonth() + 1) + '.' + d.getFullYear()
+         + ', ' + zwei(d.getHours()) + ':' + zwei(d.getMinutes());
+  };
 })(typeof window !== 'undefined' ? window : globalThis);

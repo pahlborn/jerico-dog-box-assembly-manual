@@ -146,7 +146,10 @@
     // ==== VERSION ====
     function renderAppVersion() {
         var v = (typeof APP_VERSION === 'string') ? APP_VERSION : '';
-        document.querySelectorAll('#appVersion, .app-version').forEach(function (el) { el.textContent = v; });
+        var gebaut = (typeof formatBuilt === 'function') ? formatBuilt() : '';
+        document.querySelectorAll('#appVersion, .app-version').forEach(function (el) {
+            el.textContent = gebaut ? (v + ' \u00b7 ' + gebaut) : v;
+        });
     }
 
     function updateSyncBadge() {
@@ -727,13 +730,17 @@
         var el = document.getElementById(id);
         if (!el) return;
         el.classList.add('show');
-        document.body.style.overflow = 'hidden';
+        // Dieselbe Sperre wie bei der Galerie - das Glossar ist genauso ein
+        // Vollbild-Overlay und lief auf iOS in denselben Fehler.
+        if (typeof sperreSeite === 'function') sperreSeite();
+        else document.body.style.overflow = 'hidden';
         if (id === 'guide-glossary') updateGlossaryCount();
     }
     function hideGuide(id) {
         var el = document.getElementById(id);
         if (el) el.classList.remove('show');
-        document.body.style.overflow = '';
+        if (typeof gibSeiteFrei === 'function') gibSeiteFrei();
+        else document.body.style.overflow = '';
     }
     function filterGlossary() {
         var q = (document.getElementById('glossarySearch') || {}).value || '';
