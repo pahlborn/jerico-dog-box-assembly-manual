@@ -110,15 +110,14 @@
         subPageLoading = true;
         var thisPage = location.pathname.split('/').pop() || 'index.html';
         var allPages = [
+            /* Nur Seiten, die es hier auch gibt. Die Liste stammt aus dem
+               Motor-Projekt und zeigte auf dessen docs/-Seiten - die 404s
+               liefen still in die Konsole und kosteten bei jeder Suche
+               sechs vergebliche Abrufe. */
             { url: 'index.html', title: 'Overview' },
             { url: 'specs.html', title: 'Specifications' },
             { url: 'build-log.html', title: 'Build Log' },
-            { url: 'docs/M-6009-302.html', title: 'M-6009-302 Short Block' },
-            { url: 'docs/M-6010-BOSS302.html', title: 'M-6010-BOSS302 Block' },
-            { url: 'docs/dellorto-drla-tuning.html', title: 'Dellorto DRLA Tuning' },
-            { url: 'docs/msd-advance-tuning.html', title: 'MSD Advance Tuning' },
-            { url: 'docs/un1-13.html', title: 'UN1-13 Gearbox' },
-            { url: 'docs/troubleshooting.html', title: 'Troubleshooting' }
+            { url: 'performance.html', title: 'Leistung' }
         ];
         /* skip the page we are on */
         var pages = allPages.filter(function (p) { return p.url !== thisPage; });

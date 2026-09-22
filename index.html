@@ -25,9 +25,10 @@
 <div class="header">
     <div class="header-row">
         <a href="index.html" class="header-title" style="text-decoration:none;color:white;"><span class="ht-name">Jerico Dog Box<span class="ht-sub">RH02374</span></span><span class="ht-version" id="appVersion" onclick="openChangelog()" title="Release-Dokumentation"></span></a>
-        <a class="nav-item active" href="index.html">&#128202; Übersicht</a>
-        <a class="nav-item" href="specs.html">&#128295; Spezifikationen</a>
-        <a class="nav-item" href="build-log.html">&#128736; Zusammenbau</a>
+        <a class="nav-item active" href="index.html" title="Übersicht"><span class="nav-icon">&#128202;</span><span class="nav-label">Übersicht</span></a>
+        <a class="nav-item" href="specs.html" title="Spezifikationen"><span class="nav-icon">&#128295;</span><span class="nav-label">Spezifikationen</span></a>
+        <a class="nav-item" href="build-log.html" title="Zusammenbau"><span class="nav-icon">&#128736;</span><span class="nav-label">Zusammenbau</span></a>
+        <a class="nav-item" href="performance.html" title="Leistung"><span class="nav-icon">&#128200;</span><span class="nav-label">Leistung</span></a>
 
         <button id="langToggle" onclick="toggleLang()" style="width:36px;min-width:36px;height:44px;border:none;background:none;cursor:pointer;font-size:1.1rem;border-left:1px solid rgba(255,255,255,0.15);" title="DE / EN">&#127465;&#127466;</button>
         <div style="position:relative;">
@@ -89,7 +90,7 @@
     </div>
     <div class="section-body">
             <div class="spec-item"><span class="spec-label">Seriennummer</span><span class="spec-value"><strong>RH02374</strong></span></div>
-            <div class="spec-item"><span class="spec-label">Typ</span><span class="spec-value">Jerico 4-Speed, Oval Road Race Rev. 2 (Dog Ring Low)</span></div>
+            <div class="spec-item"><span class="spec-label">Typ</span><span class="spec-value">Jerico 4-Speed, Road Race &ndash; Rev. 2 (Dog Ring Low). Jerico f&uuml;hrt diese Baureihe als &bdquo;Oval/Road Race&ldquo;; eingesetzt wird sie hier ausschlie&szlig;lich im Road Race.</span></div>
             <div class="spec-item"><span class="spec-label">Geh&auml;use</span><span class="spec-value">Top Loader Only</span></div>
             <div class="spec-item"><span class="spec-label">&Uuml;bersetzungen</span><span class="spec-value">2.588 / 1.714 / 1.182 / 1.000 &ndash; Main Drive 22/27</span></div>
             <div class="spec-item"><span class="spec-label">&Ouml;l</span><span class="spec-value">Synthetic 75W90, ca. 2 Quarts (~1,9 l)</span></div>
@@ -264,11 +265,13 @@
         <h2>7. Quellen &amp; Notizen</h2>
     </div>
     <div class="section-body">
-            <div class="spec-item"><span class="spec-label">A-01 Assembly/Disassembly Manual</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/jerico-manual.pdf" target="_blank" rel="noopener">PDF</a></span></div>
-            <div class="spec-item"><span class="spec-label">A-02 Break-In &amp; Operating Instructions</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/breakin-instruction-sheet.pdf" target="_blank" rel="noopener">PDF</a></span></div>
-            <div class="spec-item"><span class="spec-label">A-03 Gear Ratio Chart</span><span class="spec-value"><a href="https://www.jericoperformance.com/4speed_chart.pdf" target="_blank" rel="noopener">PDF</a></span></div>
-            <div class="spec-item"><span class="spec-label">A-04 Transmission Guide</span><span class="spec-value"><a href="https://www.jericoperformance.com/transmission_guide.pdf" target="_blank" rel="noopener">PDF</a></span></div>
-            <div class="spec-item"><span class="spec-label">Motor-Build (Schwesterprojekt)</span><span class="spec-value"><a href="https://pahlborn.github.io/gt40-engine/" target="_blank" rel="noopener">gt40-engine</a></span></div>
+            <div class="spec-item"><span class="spec-label">A-01 Assembly/Disassembly Manual</span><span class="spec-value"><a href="docs/quellen/A-01-jerico-assembly-manual.pdf" target="_blank" rel="noopener">Kopie</a> &middot; <a href="https://images.carid.com/jerico/items/pdf/jerico-manual.pdf" target="_blank" rel="noopener">Original</a></span></div>
+            <div class="spec-item"><span class="spec-label">A-02 Break-In &amp; Operating Instructions</span><span class="spec-value"><a href="docs/quellen/A-02-jerico-breakin-sheet.pdf" target="_blank" rel="noopener">Kopie</a> &middot; <a href="https://images.carid.com/jerico/items/pdf/breakin-instruction-sheet.pdf" target="_blank" rel="noopener">Original</a></span></div>
+            <div class="spec-item"><span class="spec-label">A-03 Gear Ratio Chart</span><span class="spec-value"><a href="docs/quellen/A-03-jerico-4speed-chart.pdf" target="_blank" rel="noopener">Kopie</a> &middot; <a href="https://www.jericoperformance.com/4speed_chart.pdf" target="_blank" rel="noopener">Original</a></span></div>
+            <div class="spec-item"><span class="spec-label">A-04 Transmission Guide</span><span class="spec-value">&#9888; toter Link &ndash; liefert eine HTML-Fehlerseite, nicht gespiegelt</span></div>
+
+            <div class="info-box"><strong>Quellenspiegel:</strong> A-01 bis A-03 liegen als unver&auml;nderte Kopie unter <a href="https://github.com/pahlborn/jerico-dog-box-assembly-manual/tree/main/docs/quellen" target="_blank" rel="noopener">docs/quellen/</a> im Repository, damit sie nicht mit den Herstellerlinks verschwinden. Rechte bei Jerico Performance Products; Spiegelung nur zur Dokumentation dieses einen Getriebes.</div>
+            <div class="warning-box"><strong>Keine Schnittzeichnungen verf&uuml;gbar.</strong> Der Bildteil des Assembly Manuals, auf den der Flie&szlig;text verweist, fehlt im erh&auml;ltlichen PDF. Alle Zeichnungen auf diesen Seiten sind eigene Skizzen, keine OEM-Abbildungen.</div>
 
             <div class="info-box">Die urspr&uuml;ngliche Dokumentation liegt in Notion (Quellenregister 02.01.01). Diese Seiten sind die Arbeitsfassung f&uuml;r die Werkbank &ndash; offline nutzbar, mit Messwerten und Fotos.</div>
             <div class="section-comment"><label>Allgemeine Notizen</label><textarea data-field="comment_general" placeholder="Alles, was sonst nirgends hinpasst..." oninput="autoSave()"></textarea></div>
@@ -386,9 +389,9 @@
                 <div class="glossary-field" data-fidx="4"><span class="glossary-field-label">Folge f&uuml;r RH02374:</span> Daraus l&auml;sst sich <strong>keine</strong> allgemeine Vorgabe f&uuml;r dieses Oval/Road-Race-Getriebe ableiten. Schaltstrategie und Kupplungsbenutzung sind gesondert zu kl&auml;ren.</div>
                 <div class="glossary-related">Verwandt: Dog Box, Break-In</div>
             </div>
-            <div class="glossary-entry" data-search="oval road race revision 2 dog ring low typ">
-                <div class="glossary-term">Oval Road Race (Rev. 2)</div>
-                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Was ist das?</span> Die Bauvariante des RH02374: Oval/Road Race, Revision 2, Dog Ring Low.</div>
+            <div class="glossary-entry" data-search="road race oval revision 2 dog ring low typ">
+                <div class="glossary-term">Road Race (Rev. 2)</div>
+                <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Was ist das?</span> Die Bauvariante des RH02374: Revision 2, Dog Ring Low. Jerico f&uuml;hrt die Baureihe unter &bdquo;Oval/Road Race&ldquo;; dieses Getriebe wird ausschlie&szlig;lich im Road Race eingesetzt.</div>
                 <div class="glossary-field" data-fidx="5"><span class="glossary-field-label">Folge:</span> Im Manual gelten die Abschnitte &bdquo;Winston Cup und Road Race&ldquo; &ndash; nicht die Drag-Race-Varianten.</div>
                 <div class="glossary-related">Verwandt: Kuehlerpflicht, 75W90</div>
             </div>
@@ -515,29 +518,38 @@
                 <div class="glossary-term">Gehaeusematerial</div>
                 <div class="glossary-field" data-fidx="23"><span class="glossary-field-label">Warum wichtig?</span> Aluminium und Magnesium dehnen sich unterschiedlich aus und vertragen unterschiedliche Strahl- und Lackvorbehandlung.</div>
                 <div class="glossary-field" data-fidx="23"><span class="glossary-field-label">Folge im Manual:</span> Road Race: #44 Schlauchklemme plus zwei Metallhalter an der Hinterdichtung gegen Dichtungsverlust.</div>
-                <div class="glossary-related">Verwandt: Tail Housing, Hinterdichtung</div>
+                <div class="glossary-related">Verwandt: Tail Housing, Hinterdichtung, Magnesium erkennen</div>
+            </div>
+            <div class="glossary-entry" data-search="magnesium aluminium unterscheiden essigprobe dichte 1,74 2,70 korrosion brandklasse d">
+                <div class="glossary-term">Magnesium erkennen</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Essigprobe:</span> Stelle blank schleifen, Tropfen Essig aufbringen: Magnesium sch&auml;umt in Sekunden sichtbar, Aluminium bleibt reaktionslos (passivierende Oxidschicht). Der aussagekr&auml;ftigste Feldtest.</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Dichte:</span> Magnesium 1,74 g/cm&sup3;, Aluminium 2,70 g/cm&sup3; &ndash; bei gleicher Geometrie ist ein Magnesiumteil rund ein Drittel leichter.</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Korrosionsbild:</span> Magnesium bildet einen wei&szlig;en, pulvrigen, aufwerfenden Belag, besonders an jeder Stahl-Paarung (Kontaktkorrosion). Aluminiumoxid ist d&uuml;nn, grau und haftend.</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Klang:</span> Aluminium klingt beim Anschlagen heller und l&auml;nger nach, Magnesium dumpfer. Nur als drittes Indiz brauchbar.</div>
+                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">&#9888; Gefahr:</span> Magnesiumsp&auml;ne und -schleifstaub entz&uuml;nden sich an einem Funken und brennen als Metallbrand (Klasse D) &uuml;ber 2000 &deg;C. <strong>Wasser l&ouml;scht nicht, sondern verschlimmert</strong> &ndash; es wird gespalten, Wasserstoff entsteht, Verpuffung. CO&sub2; und Schaum versagen ebenfalls. Nicht trocken flexen, Sp&auml;ne feucht aufnehmen, Metallbrandl&ouml;scher (D) oder trockenen Sand bereithalten.</div>
+                <div class="glossary-related">Verwandt: Gehaeusematerial, Strahlen</div>
             </div>
         </div>
         <div class="glossary-category" data-cat="cat-abk">
             <div class="glossary-category-title">7. Abk&uuml;rzungen &amp; Teilenummern</div>
             <div class="glossary-entry" data-search="rh02374 seriennummer serial tex racing">
                 <div class="glossary-term">RH02374</div>
-                <div class="glossary-field" data-fidx="24"><span class="glossary-field-label">Bedeutung:</span> Seriennummer dieses Getriebes. Aufgebaut von Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use).</div>
+                <div class="glossary-field" data-fidx="25"><span class="glossary-field-label">Bedeutung:</span> Seriennummer dieses Getriebes. Aufgebaut von Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use).</div>
                 <div class="glossary-related">Verwandt: Identifikation</div>
             </div>
             <div class="glossary-entry" data-search="a-01 a-02 a-03 a-04 quellen klasse a oem">
                 <div class="glossary-term">A-01 bis A-04</div>
-                <div class="glossary-field" data-fidx="25"><span class="glossary-field-label">Bedeutung:</span> Quellenkennung aus dem Notion-Quellenregister: A-01 Assembly Manual, A-02 Break-In Sheet, A-03 Gear Ratio Chart, A-04 Transmission Guide.</div>
+                <div class="glossary-field" data-fidx="26"><span class="glossary-field-label">Bedeutung:</span> Quellenkennung aus dem Notion-Quellenregister: A-01 Assembly Manual, A-02 Break-In Sheet, A-03 Gear Ratio Chart, A-04 Transmission Guide.</div>
                 <div class="glossary-related">Verwandt: Quellen</div>
             </div>
             <div class="glossary-entry" data-search="5100-177 5100-131 sicherungsring snap ring">
                 <div class="glossary-term">#5100-177 / #5100-131</div>
-                <div class="glossary-field" data-fidx="26"><span class="glossary-field-label">Bedeutung:</span> Sicherungsring vorderes Lager (#5100-177) und Sicherungsring der 3-4 Nabe (#5100-131).</div>
+                <div class="glossary-field" data-fidx="27"><span class="glossary-field-label">Bedeutung:</span> Sicherungsring vorderes Lager (#5100-177) und Sicherungsring der 3-4 Nabe (#5100-131).</div>
                 <div class="glossary-related">Verwandt: Spirolox, Halteclip</div>
             </div>
             <div class="glossary-entry" data-search="c407q c1086q rnta cnt-a sdp-a teilenummern">
                 <div class="glossary-term">#C407Q / #C1086Q / #RNTA / #CNT-A / #SDP-A</div>
-                <div class="glossary-field" data-fidx="27"><span class="glossary-field-label">Bedeutung:</span> Nadels&auml;tze (C407Q R&uuml;ckw&auml;rtsgang, C1086Q Vorgelegewelle), Anlaufscheiben (RNTA, CNT-A) und die kurze Detentfeder (SDP-A).</div>
+                <div class="glossary-field" data-fidx="28"><span class="glossary-field-label">Bedeutung:</span> Nadels&auml;tze (C407Q R&uuml;ckw&auml;rtsgang, C1086Q Vorgelegewelle), Anlaufscheiben (RNTA, CNT-A) und die kurze Detentfeder (SDP-A).</div>
                 <div class="glossary-related">Verwandt: Nadellager, Detent</div>
             </div>
         </div>
