@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v9',
+      date: '2026-09-22',
+      title: 'Geraete-Tracking, field-sync.js erweitert',
+      changes: [
+        { type: 'neu', text: 'Jedes Geraet bekommt eine eindeutige ID und einen benennbaren Namen (z.B. "iPad Werkstatt", wird aus User-Agent erraten). Das Geraeteregister wird im Gist gespeichert.' },
+        { type: 'neu', text: 'Bei jedem Speichern wird das aktuelle Geraet mit Zeitstempel im Datensatz vermerkt. Beim Merge werden die Register aller Geraete zusammengefuehrt.' },
+        { type: 'neu', text: 'Geraetename-Feld im Einstellungsdialog aller vier Seiten.' }
+      ]
+    },
+    {
       version: 'v8',
       date: '2026-09-22',
       title: 'Gist-ID entfaellt, automatische Erkennung',

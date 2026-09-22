@@ -67,6 +67,8 @@
     function openSettings() {
         var tok = document.getElementById('ghToken');
         if (tok) tok.value = getGistConfig().token;
+        var dn = document.getElementById('deviceName');
+        if (dn && typeof FieldSync !== 'undefined') dn.value = FieldSync.getDeviceName();
         updateConnectionStatus();
         var sm = document.getElementById('settingsModal');
         if (sm) sm.style.display = 'flex';
@@ -164,10 +166,11 @@
         if (!el) return;
         if (isGistConfigured()) {
             el.className = 'status-line connected';
-            el.innerHTML = 'Verbunden &mdash; Gist: <code>' + window.FIXED_GIST_ID.substring(0, 10) + '...</code>';
+            var devId = typeof FieldSync !== 'undefined' ? FieldSync.getDeviceId() : '';
+            el.innerHTML = 'Verbunden &mdash; Ger&auml;t: <code>' + (devId ? devId.substring(0, 12) : '?') + '</code>';
         } else if (getGistConfig().token) {
             el.className = 'status-line disconnected';
-            el.textContent = 'Token gesetzt, aber keine Gist-ID - Messwerte bleiben lokal';
+            el.textContent = 'Token gesetzt, suche Datenspeicher...';
         } else {
             el.className = 'status-line disconnected';
             el.textContent = 'Nicht verbunden';
