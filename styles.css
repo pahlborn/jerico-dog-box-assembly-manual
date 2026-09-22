@@ -144,6 +144,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .guide-block h4.release { color: #38a169; border-color: #c6f6d5; }
 .guide-block h4.tips { color: #d69e2e; border-color: #fefcbf; }
 .guide-block h4.photo { color: #e53e3e; border-color: #fed7d7; }
+.guide-block h4.warning { color: #9b2c2c; border-color: #fc8181; }
 /* Guide i18n: toggle DE/EN spans via html[lang] */
         html[lang="en"] .guide-block .de, html[lang="en"] .warning-box .de,
         html[lang="en"] .info-box .de, html[lang="en"] .guide-input-row .de,
@@ -486,9 +487,20 @@ mark.search-hl.active { background: #ed8936; color: white; }
         @media (max-width: 600px) {
             .header-title { font-size: 0.7rem; padding: 0 0.4rem; }
             .header-title span { display: none; }
-            .nav-item { font-size: 0.65rem; padding: 0 0.15rem; }
+            .nav-item { font-size: 0.65rem; padding: 0 0.15rem; min-width: 0; overflow: hidden; }
+        }
+        /* Vier Navigationspunkte plus Titel passen unter ~520px nicht mehr
+           nebeneinander - der Titel weicht, die Startseite bleibt ueber
+           "Uebersicht" erreichbar. */
+        @media (max-width: 520px) {
+            .header-title { display: none; }
+            .nav-item { font-size: 0.62rem; }
             .container { padding: 0.4rem; }
             .section { padding: 0.75rem; }
+        }
+@media (max-width: 430px) {
+            .nav-item .nav-label { display: none; }
+            .nav-item .nav-icon { font-size: 1rem; }
         }
 @media print {
             .header { position: static; }

@@ -10,7 +10,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
     <link rel="apple-touch-icon" href="icon-192.png">
-    <title>Spezifikationen &ndash; Jerico RH02374</title>
+    <title>Leistung &ndash; Jerico RH02374</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="gallery.css">
     <script src="version.js"></script>
@@ -26,9 +26,9 @@
     <div class="header-row">
         <a href="index.html" class="header-title" style="text-decoration:none;color:white;"><span class="ht-name">Jerico Dog Box<span class="ht-sub">RH02374</span></span><span class="ht-version" id="appVersion" onclick="openChangelog()" title="Release-Dokumentation"></span></a>
         <a class="nav-item" href="index.html" title="Übersicht"><span class="nav-icon">&#128202;</span><span class="nav-label">Übersicht</span></a>
-        <a class="nav-item active" href="specs.html" title="Spezifikationen"><span class="nav-icon">&#128295;</span><span class="nav-label">Spezifikationen</span></a>
+        <a class="nav-item" href="specs.html" title="Spezifikationen"><span class="nav-icon">&#128295;</span><span class="nav-label">Spezifikationen</span></a>
         <a class="nav-item" href="build-log.html" title="Zusammenbau"><span class="nav-icon">&#128736;</span><span class="nav-label">Zusammenbau</span></a>
-        <a class="nav-item" href="performance.html" title="Leistung"><span class="nav-icon">&#128200;</span><span class="nav-label">Leistung</span></a>
+        <a class="nav-item active" href="performance.html" title="Leistung"><span class="nav-icon">&#128200;</span><span class="nav-label">Leistung</span></a>
 
         <button id="langToggle" onclick="toggleLang()" style="width:36px;min-width:36px;height:44px;border:none;background:none;cursor:pointer;font-size:1.1rem;border-left:1px solid rgba(255,255,255,0.15);" title="DE / EN">&#127465;&#127466;</button>
         <div style="position:relative;">
@@ -62,260 +62,337 @@
 </div>
 
 <div class="container" id="mainContent">
-<div class="info-box">
-    <strong>Quellenklassen.</strong> Nicht jede Angabe auf dieser Seite hat dasselbe Gewicht. Wo es darauf ankommt, steht die Klasse als Zeichen dahinter:
-    <div style="margin-top:0.4rem;line-height:1.9;">
-    <span class="src src-a">A</span> OEM-Vorgabe aus der Jerico-Prim&auml;rliteratur &nbsp;
-    <span class="src src-b">B</span> Ist-Befund am RH02374 &nbsp;
-    <span class="src src-c">C</span> eigener Messwert &nbsp;
-    <span class="src src-d">D</span> technische Ableitung &nbsp;
-    <span class="src src-e">E</span> Sekund&auml;rquelle &nbsp;
-    <span class="src src-f">F</span> noch zu validieren
+    <div class="group-divider" id="grp-annahmen">
+        <span>&#9881; Grundlage</span>
+        <button class="group-toggle" onclick="toggleGroup(this, 'grp-annahmen')">Alles einklappen</button>
     </div>
-    <div style="margin-top:0.4rem;">Ohne Zeichen: Angabe stammt aus der Prim&auml;rliteratur (A). Anzugsmomente, Schmierstoffe, Einbaurichtungen, Nadelz&auml;hlungen und Verschlei&szlig;grenzen sind durchweg A. Messwertfelder sind zum Eintragen der eigenen Ergebnisse gedacht (C) &ndash; sie werden lokal gespeichert und mit dem Build Log geteilt.</div>
+
+<div class="section" id="sec-annahmen">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128203;</span>
+        <h2>1. Annahmen &amp; Eingangsgr&ouml;ssen</h2>
+    </div>
+    <div class="section-body">
+        <div class="warning-box"><strong>Alles auf dieser Seite ist gerechnet, nichts gemessen.</strong> Die Motorkurve ist eine Annahme aus Standarddaten <span class="src src-d" title="technische Ableitung">D</span> &ndash; ohne Pr&uuml;fstandslauf gibt es keine belastbare Kurve. Die Geschwindigkeiten je Gang sind dagegen reine Geometrie und stimmen auf etwa 1&nbsp;% genau, solange der Abrollumfang stimmt.</div>
+        <div class="spec-item"><span class="spec-label">Motor</span><span class="spec-value">347 ci (5,7 l) Stroker, World Products Guss-K&ouml;pfe, hydraulischer Nockentrieb <span class="src src-e" title="Angabe des Nutzers">E</span></span></div>
+        <div class="spec-item"><span class="spec-label">Nennleistung (Annahme)</span><span class="spec-value"><strong>350 PS</strong> (257 kW) bei ~5200/min <span class="src src-d">D</span></span></div>
+        <div class="spec-item"><span class="spec-label">Max. Drehmoment (Annahme)</span><span class="spec-value"><strong>520 Nm</strong> (384 lb-ft) bei ~4000/min <span class="src src-d">D</span></span></div>
+        <div class="spec-item"><span class="spec-label">Schaltdrehzahl</span><span class="spec-value"><strong>6000/min</strong> &ndash; Grenze aus Kolbengeschwindigkeit (86,4 mm Hub) und Ventiltrieb</span></div>
+        <div class="spec-item"><span class="spec-label">Hinterachse</span><span class="spec-value">3.50 : 1, Ford 9&quot;</span></div>
+        <div class="spec-item"><span class="spec-label">Reifen</span><span class="spec-value">Avon CR6ZZ 225/65 R15 &middot; 677 mm Aussendurchmesser &rarr; 2.13 m Abrollumfang <span class="src src-e" title="Herstellerangabe">E</span></span></div>
+        <div class="spec-item"><span class="spec-label">Fahrzeug</span><span class="spec-value">Ford Mustang 1966 (6R), Rennstreckenbetrieb</span></div>
+
+        <div class="info-box">Eigene Werte eintragen, sobald sie vorliegen &ndash; die Tabellen oben bleiben davon unber&uuml;hrt, die Felder sind die Merkliste f&uuml;r den Abgleich.</div>
+        <div class="form-group"><label>Gemessene Leistung (Pr&uuml;fstand)</label><input type="text" data-field="perf_dyno_hp" placeholder="PS" oninput="autoSave()" style="width:140px;"></div>
+        <div class="form-group"><label>Gemessenes max. Drehmoment</label><input type="text" data-field="perf_dyno_nm" placeholder="Nm" oninput="autoSave()" style="width:140px;"></div>
+        <div class="form-group"><label>Drehzahl bei Spitzenleistung</label><input type="text" data-field="perf_dyno_rpm" placeholder="1/min" oninput="autoSave()" style="width:140px;"></div>
+        <div class="form-group"><label>Abrollumfang nachgemessen</label><input type="text" data-field="perf_umfang" placeholder="m" oninput="autoSave()" style="width:100px;"></div>
+        <div class="form-group"><label>Achs&uuml;bersetzung verbaut</label><input type="text" data-field="perf_achse" placeholder="3.50" oninput="autoSave()" style="width:100px;"></div>
+    </div>
+</div>
+
+<div class="section" id="sec-kurve">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128200;</span>
+        <h2>2. Motorkurve</h2>
+    </div>
+    <div class="section-body">
+        <figure class="viz-figure"><svg viewBox="0 0 860 300" width="100%" role="img" aria-label="Drehmoment über Drehzahl" style="display:block;max-width:100%;height:auto;">
+<line x1="56" y1="250.0" x2="830" y2="250.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="254.0" text-anchor="end" font-size="11" fill="#718096">0</text>
+<line x1="56" y1="210.7" x2="830" y2="210.7" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="214.7" text-anchor="end" font-size="11" fill="#718096">100</text>
+<line x1="56" y1="171.4" x2="830" y2="171.4" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="175.4" text-anchor="end" font-size="11" fill="#718096">200</text>
+<line x1="56" y1="132.1" x2="830" y2="132.1" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="136.1" text-anchor="end" font-size="11" fill="#718096">300</text>
+<line x1="56" y1="92.9" x2="830" y2="92.9" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="96.9" text-anchor="end" font-size="11" fill="#718096">400</text>
+<line x1="56" y1="53.6" x2="830" y2="53.6" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="57.6" text-anchor="end" font-size="11" fill="#718096">500</text>
+<line x1="56.0" y1="250" x2="56.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="56.0" y="268" text-anchor="middle" font-size="11" fill="#718096">2000</text>
+<line x1="249.5" y1="250" x2="249.5" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="249.5" y="268" text-anchor="middle" font-size="11" fill="#718096">3000</text>
+<line x1="443.0" y1="250" x2="443.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="443.0" y="268" text-anchor="middle" font-size="11" fill="#718096">4000</text>
+<line x1="636.5" y1="250" x2="636.5" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="636.5" y="268" text-anchor="middle" font-size="11" fill="#718096">5000</text>
+<line x1="830.0" y1="250" x2="830.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="830.0" y="268" text-anchor="middle" font-size="11" fill="#718096">6000</text>
+<line x1="56" y1="250" x2="830" y2="250" stroke="#a0aec0" stroke-width="1"/>
+<text x="830" y="284" text-anchor="end" font-size="11" fill="#718096">Drehzahl [1/min]</text>
+<text x="18" y="20" font-size="11" fill="#718096">Nm</text>
+<rect x="443.0" y="30" width="387.0" height="220" fill="#2a78d6" opacity="0.05"/>
+<text x="449.0" y="242" text-anchor="start" font-size="10" fill="#718096">Arbeitsbereich auf der Strecke</text>
+<path d="M56.0 81.1 L75.3 77.9 L94.7 74.8 L114.0 71.6 L133.4 68.5 L152.8 65.4 L172.1 63.2 L191.4 61.1 L210.8 59.0 L230.2 56.9 L249.5 54.8 L268.9 53.5 L288.2 52.2 L307.6 51.0 L326.9 49.7 L346.2 48.5 L365.6 47.9 L384.9 47.4 L404.3 46.8 L423.6 46.3 L443.0 45.7 L462.4 46.5 L481.7 47.3 L501.0 48.1 L520.4 48.9 L539.8 49.6 L559.1 51.6 L578.5 53.6 L597.8 55.5 L617.1 57.5 L636.5 59.5 L655.9 61.8 L675.2 64.2 L694.5 67.8 L713.9 71.5 L733.2 75.2 L752.6 78.5 L772.0 81.7 L791.3 85.0 L810.6 88.9 L830.0 92.9" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="443.0" cy="45.7" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="453.0" y="37.7" font-size="12" font-weight="700" fill="#2d3748">520 Nm bei 4000/min</text>
+<circle cx="56.0" cy="81.1" r="9" fill="transparent"><title>2000/min: 430 Nm</title></circle>
+<circle cx="104.4" cy="73.2" r="9" fill="transparent"><title>2250/min: 450 Nm</title></circle>
+<circle cx="152.8" cy="65.4" r="9" fill="transparent"><title>2500/min: 470 Nm</title></circle>
+<circle cx="201.1" cy="60.1" r="9" fill="transparent"><title>2750/min: 484 Nm</title></circle>
+<circle cx="249.5" cy="54.8" r="9" fill="transparent"><title>3000/min: 497 Nm</title></circle>
+<circle cx="297.9" cy="51.6" r="9" fill="transparent"><title>3250/min: 505 Nm</title></circle>
+<circle cx="346.2" cy="48.5" r="9" fill="transparent"><title>3500/min: 513 Nm</title></circle>
+<circle cx="394.6" cy="47.1" r="9" fill="transparent"><title>3750/min: 516 Nm</title></circle>
+<circle cx="443.0" cy="45.7" r="9" fill="transparent"><title>4000/min: 520 Nm</title></circle>
+<circle cx="491.4" cy="47.7" r="9" fill="transparent"><title>4250/min: 515 Nm</title></circle>
+<circle cx="539.8" cy="49.6" r="9" fill="transparent"><title>4500/min: 510 Nm</title></circle>
+<circle cx="588.1" cy="54.6" r="9" fill="transparent"><title>4750/min: 498 Nm</title></circle>
+<circle cx="636.5" cy="59.5" r="9" fill="transparent"><title>5000/min: 485 Nm</title></circle>
+<circle cx="684.9" cy="66.0" r="9" fill="transparent"><title>5250/min: 468 Nm</title></circle>
+<circle cx="733.2" cy="75.2" r="9" fill="transparent"><title>5500/min: 445 Nm</title></circle>
+<circle cx="781.6" cy="83.4" r="9" fill="transparent"><title>5750/min: 424 Nm</title></circle>
+<circle cx="830.0" cy="92.9" r="9" fill="transparent"><title>6000/min: 400 Nm</title></circle>
+</svg><figcaption>Drehmoment &uuml;ber Drehzahl. Angenommene Kurve eines 347 mit Guss-K&ouml;pfen: fr&uuml;her, breiter Gipfel, danach flacher Abfall.</figcaption></figure>
+        <figure class="viz-figure"><svg viewBox="0 0 860 300" width="100%" role="img" aria-label="Leistung über Drehzahl" style="display:block;max-width:100%;height:auto;">
+<line x1="56" y1="250.0" x2="830" y2="250.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="254.0" text-anchor="end" font-size="11" fill="#718096">0</text>
+<line x1="56" y1="195.0" x2="830" y2="195.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="199.0" text-anchor="end" font-size="11" fill="#718096">100</text>
+<line x1="56" y1="140.0" x2="830" y2="140.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="144.0" text-anchor="end" font-size="11" fill="#718096">200</text>
+<line x1="56" y1="85.0" x2="830" y2="85.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="89.0" text-anchor="end" font-size="11" fill="#718096">300</text>
+<line x1="56" y1="30.0" x2="830" y2="30.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="34.0" text-anchor="end" font-size="11" fill="#718096">400</text>
+<line x1="56.0" y1="250" x2="56.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="56.0" y="268" text-anchor="middle" font-size="11" fill="#718096">2000</text>
+<line x1="249.5" y1="250" x2="249.5" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="249.5" y="268" text-anchor="middle" font-size="11" fill="#718096">3000</text>
+<line x1="443.0" y1="250" x2="443.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="443.0" y="268" text-anchor="middle" font-size="11" fill="#718096">4000</text>
+<line x1="636.5" y1="250" x2="636.5" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="636.5" y="268" text-anchor="middle" font-size="11" fill="#718096">5000</text>
+<line x1="830.0" y1="250" x2="830.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="830.0" y="268" text-anchor="middle" font-size="11" fill="#718096">6000</text>
+<line x1="56" y1="250" x2="830" y2="250" stroke="#a0aec0" stroke-width="1"/>
+<text x="830" y="284" text-anchor="end" font-size="11" fill="#718096">Drehzahl [1/min]</text>
+<text x="18" y="20" font-size="11" fill="#718096">PS</text>
+<rect x="443.0" y="30" width="387.0" height="220" fill="#2a78d6" opacity="0.05"/>
+<text x="449.0" y="242" text-anchor="start" font-size="10" fill="#718096">Arbeitsbereich auf der Strecke</text>
+<path d="M56.0 182.7 L75.3 178.0 L94.7 173.2 L114.0 168.2 L133.4 163.2 L152.8 158.0 L172.1 153.2 L191.4 148.3 L210.8 143.4 L230.2 138.4 L249.5 133.2 L268.9 128.6 L288.2 123.9 L307.6 119.1 L326.9 114.3 L346.2 109.4 L365.6 105.0 L384.9 100.6 L404.3 96.1 L423.6 91.6 L443.0 87.1 L462.4 83.7 L481.7 80.3 L501.0 76.9 L520.4 73.6 L539.8 70.3 L559.1 68.1 L578.5 66.0 L597.8 63.9 L617.1 62.0 L636.5 60.1 L655.9 58.7 L675.2 57.4 L694.5 57.6 L713.9 57.9 L733.2 58.3 L752.6 58.5 L772.0 58.8 L791.3 59.2 L810.6 60.6 L830.0 62.1" fill="none" stroke="#eb6834" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="675.2" cy="57.4" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="685.2" y="49.4" font-size="12" font-weight="700" fill="#2d3748">350 PS bei 5200/min</text>
+<circle cx="56.0" cy="182.7" r="9" fill="transparent"><title>2000/min: 122 PS</title></circle>
+<circle cx="104.4" cy="170.7" r="9" fill="transparent"><title>2250/min: 144 PS</title></circle>
+<circle cx="152.8" cy="158.0" r="9" fill="transparent"><title>2500/min: 167 PS</title></circle>
+<circle cx="201.1" cy="145.9" r="9" fill="transparent"><title>2750/min: 189 PS</title></circle>
+<circle cx="249.5" cy="133.2" r="9" fill="transparent"><title>3000/min: 212 PS</title></circle>
+<circle cx="297.9" cy="121.5" r="9" fill="transparent"><title>3250/min: 234 PS</title></circle>
+<circle cx="346.2" cy="109.4" r="9" fill="transparent"><title>3500/min: 256 PS</title></circle>
+<circle cx="394.6" cy="98.3" r="9" fill="transparent"><title>3750/min: 276 PS</title></circle>
+<circle cx="443.0" cy="87.1" r="9" fill="transparent"><title>4000/min: 296 PS</title></circle>
+<circle cx="491.4" cy="78.6" r="9" fill="transparent"><title>4250/min: 312 PS</title></circle>
+<circle cx="539.8" cy="70.3" r="9" fill="transparent"><title>4500/min: 327 PS</title></circle>
+<circle cx="588.1" cy="64.9" r="9" fill="transparent"><title>4750/min: 336 PS</title></circle>
+<circle cx="636.5" cy="60.1" r="9" fill="transparent"><title>5000/min: 345 PS</title></circle>
+<circle cx="684.9" cy="57.5" r="9" fill="transparent"><title>5250/min: 350 PS</title></circle>
+<circle cx="733.2" cy="58.3" r="9" fill="transparent"><title>5500/min: 348 PS</title></circle>
+<circle cx="781.6" cy="59.0" r="9" fill="transparent"><title>5750/min: 347 PS</title></circle>
+<circle cx="830.0" cy="62.1" r="9" fill="transparent"><title>6000/min: 342 PS</title></circle>
+</svg><figcaption>Leistung &uuml;ber Drehzahl, aus demselben Drehmoment gerechnet. Getrennte Tafel, weil zwei Gr&ouml;ssen mit verschiedenen Skalen nicht in ein Bild geh&ouml;ren.</figcaption></figure>
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Drehzahl [1/min]</th><th>Drehmoment [Nm]</th><th>Leistung [kW]</th><th>Leistung [PS]</th></tr></thead><tbody><tr><td>2000</td><td>430</td><td>90</td><td><strong>122</strong></td></tr><tr><td>2500</td><td>470</td><td>123</td><td><strong>167</strong></td></tr><tr><td>3000</td><td>497</td><td>156</td><td><strong>212</strong></td></tr><tr><td>3500</td><td>513</td><td>188</td><td><strong>256</strong></td></tr><tr><td>4000</td><td>520</td><td>218</td><td><strong>296</strong></td></tr><tr><td>4500</td><td>510</td><td>240</td><td><strong>327</strong></td></tr><tr><td>5000</td><td>485</td><td>254</td><td><strong>345</strong></td></tr><tr><td>5200</td><td>473</td><td>258</td><td><strong>350</strong></td></tr><tr><td>5500</td><td>445</td><td>256</td><td><strong>348</strong></td></tr><tr><td>5800</td><td>420</td><td>255</td><td><strong>347</strong></td></tr><tr><td>6000</td><td>400</td><td>251</td><td><strong>342</strong></td></tr></tbody></table></div>
+        <div class="info-box"><strong>Form der Kurve, nicht ihre H&ouml;he, bestimmt die Schaltpunkte.</strong> Entscheidend ist, dass die Leistung ab etwa 5000/min flach verl&auml;uft: zwischen 5000 und 6000/min &auml;ndert sie sich um weniger als 3&nbsp;%. Deshalb kostet das Ausdrehen bis zur Grenze nichts &ndash; und bringt die h&ouml;here Drehzahl im n&auml;chsten Gang.</div>
+    </div>
 </div>
     <div class="group-divider" id="grp-getriebe">
-        <span>&#128295; Getriebe</span>
+        <span>&#9881; &Uuml;bersetzung</span>
         <button class="group-toggle" onclick="toggleGroup(this, 'grp-getriebe')">Alles einklappen</button>
     </div>
 
-<div class="section" id="sec-ident">
+<div class="section" id="sec-tempo">
     <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#127380;</span>
-        <h2>1. Identifikation</h2>
+        <span class="section-icon">&#128663;</span>
+        <h2>3. Geschwindigkeit je Gang</h2>
     </div>
     <div class="section-body">
-        <div class="spec-item"><span class="spec-label">Seriennummer</span><span class="spec-value"><strong>RH02374</strong> <span class="src src-b" title="Ist-Befund am Getriebe">B</span></span></div>
-        <div class="spec-item"><span class="spec-label">Hersteller</span><span class="spec-value">Jerico Performance Products (Division of Hemmingson Ent., Inc.)</span></div>
-        <div class="spec-item"><span class="spec-label">Aufgebaut von</span><span class="spec-value">Tex Racing Ent. Inc. (Aufkleber am Geh&auml;use)</span></div>
-        <div class="spec-item"><span class="spec-label">Typ</span><span class="spec-value">Road Race, Revision 2 (Dog Ring Low) &ndash; Jerico-Baureihenbezeichnung &bdquo;Oval/Road Race&ldquo;</span></div>
-        <div class="spec-item"><span class="spec-label">Geh&auml;usetyp</span><span class="spec-value">Top Loader Only &ndash; visuell best&auml;tigt &#10004; <span class="src src-b" title="Ist-Befund am Getriebe">B</span></span></div>
-        <div class="spec-item"><span class="spec-label">Eingangswelle</span><span class="spec-value">Ford Input Shaft &#10004;</span></div>
-        <div class="spec-item"><span class="spec-label">Eingangswelle Splines</span><span class="spec-value">26 Spline &ndash; &#9888; Validierung ausstehend <span class="src src-f" title="noch zu validieren">F</span></span></div>
-        <div class="spec-item"><span class="spec-label">Ausgangs-Yoke</span><span class="spec-value">32 Tooth &ndash; &#9888; Validierung ausstehend <span class="src src-f" title="noch zu validieren">F</span></span></div>
-        <div class="spec-item"><span class="spec-label">Geh&auml;usematerial</span><span class="spec-value">Aluminium oder Magnesium &ndash; &#9888; zu verifizieren <span class="src src-f" title="noch zu validieren">F</span></span></div>
-        <div class="spec-item"><span class="spec-label">Hersteller-Kontakt</span><span class="spec-value">Jerico Performance Products, 443 Pitts School Rd NW, Concord NC &middot; +1 704-782-4343 <span class="src src-e" title="Sekund&auml;rquelle">E</span></span></div>
-        <div class="spec-item"><span class="spec-label">Verf&uuml;gbarkeit</span><span class="spec-value">Betrieb laut Branchenverzeichnis seit 1980 aktiv (2-, 3-, 4-, 5-Gang, Inspektion, Reparatur, Ford-9&quot;-Third-Member). Website am 21.09.2026 nicht erreichbar (Cloudflare 522) &ndash; vor Beschaffung telefonisch kl&auml;ren. <span class="src src-e" title="Sekund&auml;rquelle">E</span></span></div>
-
-        <div class="form-group"><label>Splines gez&auml;hlt (Messwert)</label><input type="text" data-field="spec_spline_count" placeholder="26" oninput="autoSave()" style="width:120px;"></div>
-        <div class="form-group"><label>Yoke-Z&auml;hne gez&auml;hlt (Messwert)</label><input type="text" data-field="spec_yoke_count" placeholder="32" oninput="autoSave()" style="width:120px;"></div>
-        <div class="form-group"><label>Material bestimmt</label><input type="text" data-field="spec_case_material" placeholder="Alu / Magnesium" oninput="autoSave()" style="width:160px;"></div>
-        <div class="comp-photo-strip" data-comp-gallery="spec_ident_photos" data-thumbs="4">
-            <div class="thumb-row"></div>
-            <div class="comp-photo-actions">
-                <button type="button" class="comp-photo-btn" onclick="openGallery('spec_ident_photos')">&#128444; <span id="spec_ident_photos-count">0</span> Fotos Typenschild</button>
-                <button type="button" class="comp-photo-btn" onclick="addPhoto('spec_ident_photos')">&#128247; Foto hinzuf&uuml;gen</button>
-                <button type="button" class="comp-photo-btn" onclick="addYouTube('spec_ident_photos')" style="border-color:rgba(255,0,0,0.3);">&#9654; YouTube</button>
-            </div>
-        </div>
+        <figure class="viz-figure"><svg viewBox="0 0 860 350" width="100%" role="img" aria-label="Geschwindigkeit je Gang, Jerico RH02374" style="display:block;max-width:100%;height:auto;">
+<line x1="56" y1="300.0" x2="830" y2="300.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="304.0" text-anchor="end" font-size="11" fill="#718096">0</text>
+<line x1="56" y1="255.0" x2="830" y2="255.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="259.0" text-anchor="end" font-size="11" fill="#718096">40</text>
+<line x1="56" y1="210.0" x2="830" y2="210.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="214.0" text-anchor="end" font-size="11" fill="#718096">80</text>
+<line x1="56" y1="165.0" x2="830" y2="165.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="169.0" text-anchor="end" font-size="11" fill="#718096">120</text>
+<line x1="56" y1="120.0" x2="830" y2="120.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="124.0" text-anchor="end" font-size="11" fill="#718096">160</text>
+<line x1="56" y1="75.0" x2="830" y2="75.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="79.0" text-anchor="end" font-size="11" fill="#718096">200</text>
+<line x1="56" y1="30.0" x2="830" y2="30.0" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="34.0" text-anchor="end" font-size="11" fill="#718096">240</text>
+<line x1="56.0" y1="300" x2="56.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="56.0" y="318" text-anchor="middle" font-size="11" fill="#718096">1000</text>
+<line x1="204.8" y1="300" x2="204.8" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="204.8" y="318" text-anchor="middle" font-size="11" fill="#718096">2000</text>
+<line x1="353.7" y1="300" x2="353.7" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="353.7" y="318" text-anchor="middle" font-size="11" fill="#718096">3000</text>
+<line x1="502.5" y1="300" x2="502.5" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="502.5" y="318" text-anchor="middle" font-size="11" fill="#718096">4000</text>
+<line x1="651.4" y1="300" x2="651.4" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="651.4" y="318" text-anchor="middle" font-size="11" fill="#718096">5000</text>
+<line x1="800.2" y1="300" x2="800.2" y2="30" stroke="#edf2f7" stroke-width="1"/>
+<text x="800.2" y="318" text-anchor="middle" font-size="11" fill="#718096">6000</text>
+<line x1="56" y1="300" x2="830" y2="300" stroke="#a0aec0" stroke-width="1"/>
+<text x="830" y="334" text-anchor="end" font-size="11" fill="#718096">Drehzahl [1/min]</text>
+<text x="18" y="20" font-size="11" fill="#718096">km/h</text>
+<path d="M130.4 276.2 L800.2 204.8" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="800.2" cy="204.8" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<text x="792.2" y="195.8" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">1. Gang · 85 km/h</text>
+<circle cx="204.8" cy="268.3" r="9" fill="transparent"><title>1. Gang, 2000/min: 28 km/h</title></circle>
+<circle cx="353.7" cy="252.4" r="9" fill="transparent"><title>1. Gang, 3000/min: 42 km/h</title></circle>
+<circle cx="502.5" cy="236.5" r="9" fill="transparent"><title>1. Gang, 4000/min: 56 km/h</title></circle>
+<circle cx="651.4" cy="220.6" r="9" fill="transparent"><title>1. Gang, 5000/min: 71 km/h</title></circle>
+<circle cx="800.2" cy="204.8" r="9" fill="transparent"><title>1. Gang, 6000/min: 85 km/h</title></circle>
+<path d="M130.4 264.1 L800.2 156.2" fill="none" stroke="#eb6834" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="800.2" cy="156.2" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="792.2" y="147.2" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">2. Gang · 128 km/h</text>
+<circle cx="204.8" cy="252.1" r="9" fill="transparent"><title>2. Gang, 2000/min: 43 km/h</title></circle>
+<circle cx="353.7" cy="228.1" r="9" fill="transparent"><title>2. Gang, 3000/min: 64 km/h</title></circle>
+<circle cx="502.5" cy="204.1" r="9" fill="transparent"><title>2. Gang, 4000/min: 85 km/h</title></circle>
+<circle cx="651.4" cy="180.2" r="9" fill="transparent"><title>2. Gang, 5000/min: 107 km/h</title></circle>
+<circle cx="800.2" cy="156.2" r="9" fill="transparent"><title>2. Gang, 6000/min: 128 km/h</title></circle>
+<path d="M130.4 247.9 L800.2 91.5" fill="none" stroke="#1baf7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="800.2" cy="91.5" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
+<text x="792.2" y="82.5" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">3. Gang · 185 km/h</text>
+<circle cx="204.8" cy="230.5" r="9" fill="transparent"><title>3. Gang, 2000/min: 62 km/h</title></circle>
+<circle cx="353.7" cy="195.7" r="9" fill="transparent"><title>3. Gang, 3000/min: 93 km/h</title></circle>
+<circle cx="502.5" cy="161.0" r="9" fill="transparent"><title>3. Gang, 4000/min: 124 km/h</title></circle>
+<circle cx="651.4" cy="126.2" r="9" fill="transparent"><title>3. Gang, 5000/min: 154 km/h</title></circle>
+<circle cx="800.2" cy="91.5" r="9" fill="transparent"><title>3. Gang, 6000/min: 185 km/h</title></circle>
+<path d="M130.4 238.4 L800.2 53.5" fill="none" stroke="#eda100" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="800.2" cy="53.5" r="4" fill="#eda100" stroke="#ffffff" stroke-width="2"/>
+<text x="792.2" y="44.5" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">4. Gang · 219 km/h</text>
+<circle cx="204.8" cy="217.8" r="9" fill="transparent"><title>4. Gang, 2000/min: 73 km/h</title></circle>
+<circle cx="353.7" cy="176.8" r="9" fill="transparent"><title>4. Gang, 3000/min: 110 km/h</title></circle>
+<circle cx="502.5" cy="135.7" r="9" fill="transparent"><title>4. Gang, 4000/min: 146 km/h</title></circle>
+<circle cx="651.4" cy="94.6" r="9" fill="transparent"><title>4. Gang, 5000/min: 183 km/h</title></circle>
+<circle cx="800.2" cy="53.5" r="9" fill="transparent"><title>4. Gang, 6000/min: 219 km/h</title></circle>
+<line x1="800.2" y1="30" x2="800.2" y2="300" stroke="#e53e3e" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="794.2" y="316" text-anchor="end" font-size="10" fill="#e53e3e">Schaltdrehzahl</text>
+</svg><figcaption>Geschwindigkeit &uuml;ber Drehzahl im Jerico RH02374. Jede Linie ein Gang; der Punkt am rechten Ende ist die Ausdrehgeschwindigkeit bei 6000/min.</figcaption></figure>
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Getriebe</th><th>Gang</th><th>&Uuml;bersetzung</th><th>km/h je 1000/min</th><th>km/h bei 6000/min</th></tr></thead><tbody><tr><td>Jerico RH02374</td><td>1. Gang</td><td>2.588</td><td>14.1</td><td><strong>85</strong></td></tr><tr><td></td><td>2. Gang</td><td>1.714</td><td>21.3</td><td><strong>128</strong></td></tr><tr><td></td><td>3. Gang</td><td>1.182</td><td>30.9</td><td><strong>185</strong></td></tr><tr><td></td><td>4. Gang</td><td>1.000</td><td>36.5</td><td><strong>219</strong></td></tr><tr><td>Toploader Close</td><td>1. Gang</td><td>2.320</td><td>15.7</td><td><strong>94</strong></td></tr><tr><td></td><td>2. Gang</td><td>1.690</td><td>21.6</td><td><strong>130</strong></td></tr><tr><td></td><td>3. Gang</td><td>1.290</td><td>28.3</td><td><strong>170</strong></td></tr><tr><td></td><td>4. Gang</td><td>1.000</td><td>36.5</td><td><strong>219</strong></td></tr><tr><td>Toploader Wide</td><td>1. Gang</td><td>2.780</td><td>13.1</td><td><strong>79</strong></td></tr><tr><td></td><td>2. Gang</td><td>1.930</td><td>18.9</td><td><strong>114</strong></td></tr><tr><td></td><td>3. Gang</td><td>1.360</td><td>26.8</td><td><strong>161</strong></td></tr><tr><td></td><td>4. Gang</td><td>1.000</td><td>36.5</td><td><strong>219</strong></td></tr></tbody></table></div>
+        <div class="info-box">Gerechnet mit 2.13 m Abrollumfang und Achse 3.50. Ein anderer Reifendruck oder eine andere Achse verschiebt alle Werte proportional.</div>
     </div>
 </div>
 
-<div class="section" id="sec-ratios">
+<div class="section" id="sec-schalt">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#128260;</span>
+        <h2>4. Schaltpunkte</h2>
+    </div>
+    <div class="section-body">
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Getriebe</th><th>Schaltung</th><th>Schalten bei [1/min]</th><th>bei</th><th>Drehzahl danach</th><th>Leistung danach</th></tr></thead><tbody><tr><td>Jerico RH02374</td><td>1 &rarr; 2</td><td><strong>6000</strong></td><td>85 km/h</td><td>3974</td><td>294 PS</td></tr><tr><td></td><td>2 &rarr; 3</td><td><strong>6000</strong></td><td>128 km/h</td><td>4138</td><td>305 PS</td></tr><tr><td></td><td>3 &rarr; 4</td><td><strong>6000</strong> <span style="font-weight:400;color:#718096;">(Schnittpunkt 5890)</span></td><td>185 km/h</td><td>5076</td><td>347 PS</td></tr><tr><td>Toploader Close</td><td>1 &rarr; 2</td><td><strong>6000</strong></td><td>94 km/h</td><td>4371</td><td>319 PS</td></tr><tr><td></td><td>2 &rarr; 3</td><td><strong>6000</strong></td><td>130 km/h</td><td>4580</td><td>330 PS</td></tr><tr><td></td><td>3 &rarr; 4</td><td><strong>6000</strong></td><td>170 km/h</td><td>4651</td><td>333 PS</td></tr><tr><td>Toploader Wide</td><td>1 &rarr; 2</td><td><strong>6000</strong></td><td>79 km/h</td><td>4165</td><td>306 PS</td></tr><tr><td></td><td>2 &rarr; 3</td><td><strong>6000</strong></td><td>114 km/h</td><td>4228</td><td>310 PS</td></tr><tr><td></td><td>3 &rarr; 4</td><td><strong>6000</strong></td><td>161 km/h</td><td>4412</td><td>321 PS</td></tr></tbody></table></div>
+        <div class="info-box"><strong>Der Schaltpunkt folgt aus dem Leistungsschnittpunkt:</strong> geschaltet wird dort, wo die Leistung im n&auml;chsten Gang die im aktuellen &uuml;bersteigt. Bei dieser Kurve liegt dieser Punkt in acht von neun Schaltungen &uuml;ber der Drehzahlgrenze &ndash; dort wird schlicht bis 6000/min ausgedreht. Die eine Ausnahme ist die Jerico-Schaltung 3&nbsp;&rarr;&nbsp;4 bei 5890/min, und der Unterschied ist rechnerisch: 345 PS nach der Schaltung gegen 344 PS davor. 110/min sind weniger, als eine angenommene Kurve hergibt &ndash; <strong>praktisch wird in jedem Gang an der Grenze geschaltet</strong>. Fr&uuml;her zu schalten kostet Leistung und l&auml;sst die Drehzahl noch tiefer fallen.</div>
+        <figure class="viz-figure"><svg viewBox="0 0 860 330" width="100%" role="img" aria-label="Drehzahl nach dem Schalten" style="display:block;max-width:100%;height:auto;">
+<line x1="56" y1="246.2" x2="830" y2="246.2" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="250.2" text-anchor="end" font-size="11" fill="#718096">3000</text>
+<line x1="56" y1="212.4" x2="830" y2="212.4" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="216.4" text-anchor="end" font-size="11" fill="#718096">3500</text>
+<line x1="56" y1="178.6" x2="830" y2="178.6" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="182.6" text-anchor="end" font-size="11" fill="#718096">4000</text>
+<line x1="56" y1="144.9" x2="830" y2="144.9" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="148.9" text-anchor="end" font-size="11" fill="#718096">4500</text>
+<line x1="56" y1="111.1" x2="830" y2="111.1" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="115.1" text-anchor="end" font-size="11" fill="#718096">5000</text>
+<line x1="56" y1="77.3" x2="830" y2="77.3" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="81.3" text-anchor="end" font-size="11" fill="#718096">5500</text>
+<line x1="56" y1="43.5" x2="830" y2="43.5" stroke="#e2e8f0" stroke-width="1"/>
+<text x="48" y="47.5" text-anchor="end" font-size="11" fill="#718096">6000</text>
+<line x1="56" y1="280" x2="830" y2="280" stroke="#a0aec0" stroke-width="1"/>
+<text x="830" y="314" text-anchor="end" font-size="11" fill="#718096"></text>
+<text x="18" y="20" font-size="11" fill="#718096">1/min</text>
+<rect x="114.0" y="180.4" width="46" height="99.6" rx="4" fill="#2a78d6"><title>Jerico RH02374, 1 → 2: 3974/min</title></rect>
+<text x="137.0" y="174.4" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">3974</text>
+<rect x="372.0" y="169.3" width="46" height="110.7" rx="4" fill="#2a78d6"><title>Jerico RH02374, 2 → 3: 4138/min</title></rect>
+<text x="395.0" y="163.3" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4138</text>
+<rect x="630.0" y="105.9" width="46" height="174.1" rx="4" fill="#2a78d6"><title>Jerico RH02374, 3 → 4: 5076/min</title></rect>
+<text x="653.0" y="99.9" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">5076</text>
+<text x="701.0" y="298" text-anchor="middle" font-size="11" fill="#718096">3 → 4</text>
+<rect x="162.0" y="153.6" width="46" height="126.4" rx="4" fill="#eb6834"><title>Toploader Close, 1 → 2: 4371/min</title></rect>
+<text x="185.0" y="147.6" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4371</text>
+<rect x="420.0" y="139.5" width="46" height="140.5" rx="4" fill="#eb6834"><title>Toploader Close, 2 → 3: 4580/min</title></rect>
+<text x="443.0" y="133.5" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4580</text>
+<rect x="678.0" y="134.7" width="46" height="145.3" rx="4" fill="#eb6834"><title>Toploader Close, 3 → 4: 4651/min</title></rect>
+<text x="701.0" y="128.7" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4651</text>
+<text x="701.0" y="298" text-anchor="middle" font-size="11" fill="#718096">3 → 4</text>
+<rect x="210.0" y="167.5" width="46" height="112.5" rx="4" fill="#1baf7a"><title>Toploader Wide, 1 → 2: 4165/min</title></rect>
+<text x="233.0" y="161.5" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4165</text>
+<rect x="468.0" y="163.2" width="46" height="116.8" rx="4" fill="#1baf7a"><title>Toploader Wide, 2 → 3: 4228/min</title></rect>
+<text x="491.0" y="157.2" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4228</text>
+<rect x="726.0" y="150.8" width="46" height="129.2" rx="4" fill="#1baf7a"><title>Toploader Wide, 3 → 4: 4412/min</title></rect>
+<text x="749.0" y="144.8" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4412</text>
+<text x="701.0" y="298" text-anchor="middle" font-size="11" fill="#718096">3 → 4</text>
+<rect x="70" y="14" width="10" height="10" rx="2" fill="#2a78d6"/>
+<text x="86" y="23" font-size="11" fill="#4a5568">Jerico RH02374</text>
+<rect x="270" y="14" width="10" height="10" rx="2" fill="#eb6834"/>
+<text x="286" y="23" font-size="11" fill="#4a5568">Toploader Close</text>
+<rect x="470" y="14" width="10" height="10" rx="2" fill="#1baf7a"/>
+<text x="486" y="23" font-size="11" fill="#4a5568">Toploader Wide</text>
+<line x1="56" y1="178.6" x2="830" y2="178.6" stroke="#e53e3e" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="60" y="172.6" text-anchor="start" font-size="10" fill="#e53e3e">Drehmomentgipfel 4000/min</text>
+</svg><figcaption>Wo der Motor nach dem Schalten landet. Das ist der eigentliche Unterschied zwischen den drei Getrieben &ndash; die Ausdrehgeschwindigkeiten unterscheiden sich kaum, die Drehzahl nach dem Schalten sehr wohl.</figcaption></figure>
+    </div>
+</div>
+
+<div class="section" id="sec-vergleich">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#9878;</span>
+        <h2>5. Vergleich der drei Getriebe</h2>
+    </div>
+    <div class="section-body">
+        <div class="info-box"><strong>Kurz:</strong> Das Jerico ist im oberen Bereich das engste der drei
+        Getriebe und im unteren das weiteste. Auf einer Strecke, die im 3. und 4. Gang gefahren wird, ist das ein
+        Vorteil. Auf einer Strecke mit engen Kehren, wo der 1. und 2. Gang z&auml;hlen, ist es der gr&ouml;sste Nachteil
+        der drei.</div>
+        <div class="spec-item"><span class="spec-label">Jerico 3 &rarr; 4</span><span class="spec-value">Drehzahl f&auml;llt nur auf <strong>5076/min</strong> &ndash; mitten im Leistungsplateau. Bestes Verhalten der drei.</span></div>
+        <div class="spec-item"><span class="spec-label">Jerico 1 &rarr; 2</span><span class="spec-value">F&auml;llt auf <strong>3974/min</strong> &ndash; unter den Drehmomentgipfel. Schlechtestes Verhalten der drei.</span></div>
+        <div class="spec-item"><span class="spec-label">Toploader Close</span><span class="spec-value">Gleichm&auml;ssigste Stufen: keine Schaltung f&auml;llt unter 4300/min. Der ausgewogenste Kompromiss ohne Dog Ring.</span></div>
+        <div class="spec-item"><span class="spec-label">Toploader Wide</span><span class="spec-value">Kurzer 1. Gang (78 km/h), danach die zweitgr&ouml;ssten Spr&uuml;nge. Auf der Rennstrecke die schw&auml;chste der drei Auslegungen.</span></div>
+        <div class="spec-item"><span class="spec-label">Schaltzeit</span><span class="spec-value">Der eigentliche Gewinn des Jerico liegt nicht in den Stufen, sondern im Klauenschaltwerk: die Schaltung dauert Bruchteile der Zeit einer Synchronschaltung. Das gleicht die tieferen Drehzahlspr&uuml;nge teilweise aus. <span class="src src-d">D</span></span></div>
+    </div>
+</div>
+
+<div class="section" id="sec-achse">
     <div class="section-header" onclick="toggleSection(this)">
         <span class="section-icon">&#9881;</span>
-        <h2>2. &Uuml;bersetzungen &amp; Zahnradzahlen</h2>
+        <h2>6. Was die Achse bestimmt</h2>
     </div>
     <div class="section-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Stufe</th><th>Z&auml;hne</th><th>Ratio</th></tr></thead><tbody><tr><td>Main Drive</td><td>22 / 27</td><td>0.815</td></tr><tr><td>1. Gang</td><td>33 / 17</td><td>2.588</td></tr><tr><td>2. Gang</td><td>27 / 21</td><td>1.714</td></tr><tr><td>3. Gang</td><td>24 / 24</td><td>1.182</td></tr><tr><td>4. Gang</td><td>&mdash;</td><td>1.000 (direkt)</td></tr></tbody></table></div>
-        <div class="comp-box">
-            <div class="comp-toggle" onclick="toggleComp(this)">Vergleich mit dem Ford Toploader</div>
-            <div class="comp-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Gang</th><th>Jerico RH02374</th><th>Toploader Close</th><th>Toploader Wide</th></tr></thead><tbody><tr><td>1.</td><td><strong>2.588</strong></td><td>2.32</td><td>2.78</td></tr><tr><td>2.</td><td><strong>1.714</strong></td><td>1.69</td><td>1.93</td></tr><tr><td>3.</td><td><strong>1.182</strong></td><td>1.29</td><td>1.36</td></tr><tr><td>4.</td><td><strong>1.000</strong></td><td>1.00</td><td>1.00</td></tr></tbody></table></div>
-        <div class="info-box"><strong>&#9888; Keine Bewertung ohne Datenbasis:</strong> Welche &Uuml;bersetzung auf welcher Strecke die richtige ist, l&auml;sst sich erst mit Motor-Kennlinie (Dyno), Fahrzeuggewicht und realen Streckendaten beurteilen. Die Zahlen hier sind reine Zahnradzahlen.</div>
-            </div>
-        </div>
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Hinterachse</th><th>km/h je 1000/min im 4.</th><th>km/h im 4. bei 6000/min</th><th>km/h im 2. bei 6000/min</th></tr></thead><tbody><tr><td>4.11 : 1</td><td>31.1</td><td><strong>187</strong></td><td>109</td></tr><tr><td>3.70 : 1</td><td>34.5</td><td><strong>207</strong></td><td>121</td></tr><tr><td>3.50 : 1 &larr; verbaut</td><td>36.5</td><td><strong>219</strong></td><td>128</td></tr><tr><td>3.25 : 1</td><td>39.3</td><td><strong>236</strong></td><td>138</td></tr><tr><td>3.00 : 1</td><td>42.6</td><td><strong>256</strong></td><td>149</td></tr></tbody></table></div>
+        <div class="info-box"><strong>Der Begrenzer ist die Achse, nicht das Getriebe.</strong> Alle drei Getriebe haben 1:1 im 4. Gang &ndash; die H&ouml;chstgeschwindigkeit ist damit bei jedem identisch und h&auml;ngt allein an Achse, Reifen und Drehzahlgrenze. Mit 3,50 ist bei rund 219 km/h die Drehzahlgrenze erreicht, nicht die Leistungsgrenze: zum Halten dieser Geschwindigkeit braucht ein Mustang gesch&auml;tzt 170&ndash;180 PS, verf&uuml;gbar sind rund 340. <span class="src src-d">D</span> Auf einer schnellen Strecke ist eine l&auml;ngere Achse der wirksamere Hebel als jedes andere Getriebe.</div>
     </div>
 </div>
-
-<div class="section" id="sec-dims">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#128207;</span>
-        <h2>3. Abmessungen &amp; Einbau-Kompatibilit&auml;t</h2>
-    </div>
-    <div class="section-body">
-        <div class="spec-item"><span class="spec-label">Gesamtl&auml;nge Jerico</span><span class="spec-value">22&quot; / 56 cm <span class="src src-e" title="Sekund&auml;rquelle, nicht nachgemessen">E</span></span></div>
-        <div class="spec-item"><span class="spec-label">Gesamtl&auml;nge Ford Toploader</span><span class="spec-value">26&quot; / 61 cm (lt. David Kee) <span class="src src-e" title="Sekund&auml;rquelle">E</span></span></div>
-        <div class="spec-item"><span class="spec-label">Differenz, nominell</span><span class="spec-value">ca. &minus;4&quot; / &minus;10 cm <span class="src src-d" title="Ableitung aus zwei Sekund&auml;rangaben">D</span></span></div>
-        <div class="spec-item"><span class="spec-label">Kardanwellenl&auml;nge</span><span class="spec-value"><strong>messen, nicht rechnen</strong> &ndash; nach endg&uuml;ltigem Einbau von Motor, Bellhousing und Getriebe bei definierter Fahrh&ouml;he <span class="src src-f" title="offen">F</span></span></div>
-        <div class="spec-item"><span class="spec-label">L&auml;nge Welle bis Dichtung</span><span class="spec-value">&#10067; unbekannt &ndash; nach Einbau messen <span class="src src-f" title="offen">F</span></span></div>
-        <div class="spec-item"><span class="spec-label">Schalthebel-Position</span><span class="spec-value">anpassbar 14,5&quot; bis 25&quot; ab Bellhousing</span></div>
-
-        <div class="comp-box">
-            <div class="comp-toggle" onclick="toggleComp(this)">Einbau-Kompatibilit&auml;t</div>
-            <div class="comp-body">
-        <div class="spec-item"><span class="spec-label">Bellhousing</span><span class="spec-value">&#10004; passt (Ford Input Shaft verbaut)</span></div>
-        <div class="spec-item"><span class="spec-label">Schwungrad (Alu)</span><span class="spec-value">&#10004; wiederverwendbar</span></div>
-        <div class="spec-item"><span class="spec-label">Druckplatte &amp; Kupplungsscheibe</span><span class="spec-value">&#10004; wiederverwendbar</span></div>
-        <div class="spec-item"><span class="spec-label">Schalthebel</span><span class="spec-value">&#10004; Position anpassbar</span></div>
-        <div class="spec-item"><span class="spec-label">Kardanwelle</span><span class="spec-value">&#9888; neue Welle sehr wahrscheinlich n&ouml;tig &ndash; L&auml;nge erst nach Einbau ermitteln</span></div>
-        <div class="spec-item"><span class="spec-label">Ausr&uuml;cklager</span><span class="spec-value">&#9888; Typ und Retainer-Durchmesser noch zu kl&auml;ren</span></div>
-        <div class="spec-item"><span class="spec-label">Schaltgest&auml;nge</span><span class="spec-value">&#9888; Bohrmuster Jerico &ne; Toploader, Anpassung n&ouml;tig</span></div>
-            </div>
-        </div>
-        <div class="info-box"><strong>Kardanwelle:</strong> Die erforderliche L&auml;nge folgt <em>nicht</em> aus der Differenz zweier nomineller Getriebe-Gesamtl&auml;ngen. Sie h&auml;ngt ab von Motorposition, Bellhousing, Getriebelage, Position von Ausgangswelle und Yoke-Aufnahme, verwendetem Slip Yoke, Lage des Pinion-Flansches, erforderlichem Einschubweg und der Fahrh&ouml;he bei der Messung. Ma&szlig; nach dem endg&uuml;ltigen Einbau nehmen.</div>
-    </div>
-</div>
-    <div class="group-divider" id="grp-montage">
-        <span>&#128736; Montagedaten</span>
-        <button class="group-toggle" onclick="toggleGroup(this, 'grp-montage')">Alles einklappen</button>
+    <div class="group-divider" id="grp-grenzen">
+        <span>&#9888; Grenzen</span>
+        <button class="group-toggle" onclick="toggleGroup(this, 'grp-grenzen')">Alles einklappen</button>
     </div>
 
-<div class="section" id="sec-torque">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#128295;</span>
-        <h2>4. Anzugsmomente</h2>
-    </div>
-    <div class="section-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Schraube / Position</th><th>lb./ft</th><th>Nm</th></tr></thead><tbody><tr><td>R&uuml;ckw&auml;rtsgang-Schaltgabel-Klemmschraube (5/16-24 &times; 1&quot;)</td><td>28</td><td><strong>38</strong></td></tr><tr><td>3-4 Schaltgabel-Klemmschraube (5/16-24 &times; 1&frac14;&quot;, Loctite)</td><td>28</td><td><strong>38</strong></td></tr><tr><td>1-2 Schaltgabel-Klemmschraube (5/16-24 &times; &frac34;&quot;, Loctite)</td><td>28</td><td><strong>38</strong></td></tr><tr><td>Zweiteiliger Hinterlager-Halteclip (1/4-28 &times; &#8542;&quot;)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Seitliche Detentschraube (3/8-16 &times; &frac12;&quot; mit AN-Scheibe)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Vorderer Lagerflansch (5/16-18 &times; 1&quot; mit AN-Scheiben)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Tail Housing (7/16-14 &times; 1&frac12;&quot;)</td><td>25 &rarr; 35</td><td><strong>34 &rarr; 47</strong></td></tr><tr><td>&Ouml;lpumpen-Adapterplatte (7/16-14 &times; 1&frac12;&quot;)</td><td>25 &rarr; 35</td><td><strong>34 &rarr; 47</strong></td></tr><tr><td>Oberer Deckel (5/16-18 &times; 1&quot;)</td><td>22</td><td><strong>30</strong></td></tr><tr><td>Bodendeckel (5/16-18 &times; 1&quot;) &ndash; entf&auml;llt bei Top Loader Only</td><td>22</td><td>30</td></tr><tr><td>&Ouml;lpumpe an Tail Housing (1/4-20 &times; 1&quot;)</td><td>35 &rarr; 60 &rarr; 90 lb./<strong>in</strong></td><td><strong>4 &rarr; 6,8 &rarr; 10,2</strong></td></tr></tbody></table></div>
-        <div class="info-box">Die Pumpenschrauben werden in <strong>lb./in</strong> angegeben, nicht lb./ft &ndash; 90 lb./in sind 10,2 Nm, nicht 122 Nm. Nach jeder Stufe die Hauptwelle drehen und auf Klemmen pr&uuml;fen.</div>
-    </div>
-</div>
-
-<div class="section" id="sec-lubes">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#128167;</span>
-        <h2>5. Schmierstoffe &amp; Dichtmittel</h2>
-    </div>
-    <div class="section-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Anwendung</th><th>Betriebsmittel</th></tr></thead><tbody><tr><td>Alle Zahnrad-Lagerfl&auml;chen, Nadellager</td><td><strong>Synthetisches 75W90</strong> &ndash; im Manual: Mobil 1 75W90</td></tr><tr><td>Schaltfingerdichtungen, Anlauffl&auml;chen, Lagerbohrungen</td><td><strong>Universalfett</strong> &ndash; im Manual: Mobil 1 Universal Grease</td></tr><tr><td>Schaltfingerwellen, Schaltschienen</td><td><strong>Synthetisches 75W90</strong> &ndash; im Manual: Mobil 1 75W90</td></tr><tr><td>Viton O-Ring beim Einbau</td><td>d&uuml;nner &Ouml;lfilm</td></tr><tr><td>Andere O-Ringe</td><td><strong>trocken einbauen</strong></td></tr><tr><td>Vorderer Lagerflansch / Tail Housing Dichtfl&auml;chen</td><td><strong>Hylomar Gasket Maker</strong></td></tr><tr><td>Adapterplatte &Ouml;lpumpe</td><td>Hylomar oder Loctite Ultra Black</td></tr><tr><td>Hinterdichtung im Geh&auml;use</td><td>d&uuml;nne Silikonschicht</td></tr><tr><td>Schaltgabel-Klemmschrauben 1-2 und 3-4</td><td><strong>Loctite</strong></td></tr></tbody></table></div>
-        <div class="info-box">Fu&szlig;note im Original: &bdquo;The word &lsquo;oil&rsquo; as used in this manual refers to the recommended lubricant of &lsquo;Mobil One&rsquo; 75W90.&ldquo; Verbindlich ist die Spezifikation (synthetisches 75W90); Mobil 1 ist das im Manual verwendete Produkt, kein Ausschlusskriterium f&uuml;r gleichwertige &Ouml;le.</div>
-    </div>
-</div>
-
-<div class="section" id="sec-parts">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#128300;</span>
-        <h2>6. Lager, Sicherungen &amp; Kleinteile</h2>
-    </div>
-    <div class="section-body">
-        <div class="spec-item"><span class="spec-label">Nadeln Eingangswelle</span><span class="spec-value"><strong>15 St&uuml;ck</strong></span></div>
-        <div class="spec-item"><span class="spec-label">Nadeln R&uuml;ckw&auml;rtsgang-Zwischenrad (#C407Q)</span><span class="spec-value"><strong>44 St&uuml;ck</strong> (22 je Seite)</span></div>
-        <div class="spec-item"><span class="spec-label">Nadeln Vorgelegewelle (#C1086Q)</span><span class="spec-value"><strong>56 St&uuml;ck</strong> (28 je Seite)</span></div>
-        <div class="spec-item"><span class="spec-label">Anlaufscheiben R&uuml;ckw&auml;rtsgang</span><span class="spec-value">#RNTA &ndash; scharfe Kanten nach innen</span></div>
-        <div class="spec-item"><span class="spec-label">Anlaufscheiben Vorgelegewelle</span><span class="spec-value">#CNT-A &ndash; innen scharfe Kanten nach oben, aussen nach innen</span></div>
-        <div class="spec-item"><span class="spec-label">Sicherungsring vorderes Lager</span><span class="spec-value">#5100-177</span></div>
-        <div class="spec-item"><span class="spec-label">Sicherungsring 3-4 Nabe</span><span class="spec-value">#5100-131</span></div>
-        <div class="spec-item"><span class="spec-label">Spirolox 1-2 Nabe</span><span class="spec-value">#RST-187 / #RS-187</span></div>
-        <div class="spec-item"><span class="spec-label">Kurze Detentfeder</span><span class="spec-value">#SDP-A</span></div>
-        <div class="spec-item"><span class="spec-label">Abstandsring vor dem vorderen Lager</span><span class="spec-value"><strong>3,625&quot; (92,1 mm)</strong></span></div>
-        <div class="spec-item"><span class="spec-label">Verschlussstopfen 3-4 Schienenbohrung</span><span class="spec-value">9/16&quot;</span></div>
-        <div class="spec-item"><span class="spec-label">Hinterdichtung Road Race</span><span class="spec-value">#44 Schlauchklemme + zwei Metallhalter</span></div>
-
-        <div class="comp-box">
-            <div class="comp-toggle" onclick="toggleComp(this)">Dog Rings und Schiebemuffen</div>
-            <div class="comp-body">
-        <div class="spec-item"><span class="spec-label">Dog Ring 2. Gang</span><span class="spec-value">34 Z&auml;hne, Keilwelle, auf Innennabe (gr&ouml;sserer ID)</span></div>
-        <div class="spec-item"><span class="spec-label">Dog Ring 3. Gang</span><span class="spec-value">37 Z&auml;hne, Keilwelle, auf Innennabe (kleinerer ID)</span></div>
-        <div class="spec-item"><span class="spec-label">Dog Ring Eingangswelle</span><span class="spec-value">37 Z&auml;hne</span></div>
-        <div class="spec-item"><span class="spec-label">Einbaurichtung</span><span class="spec-value">breite Zahnfl&auml;che <strong>nach aussen, weg vom Zahnrad</strong></span></div>
-        <div class="spec-item"><span class="spec-label">Neuere Ausf&uuml;hrung</span><span class="spec-value">gefaste Fl&auml;che liegt am Zahnrad an</span></div>
-        <div class="spec-item"><span class="spec-label">Verschleissgrenze Z&auml;hne</span><span class="spec-value">ersetzen ab 3/32&quot;&ndash;1/8&quot; (2,4&ndash;3,2 mm) Abrundung</span></div>
-        <div class="spec-item"><span class="spec-label">Verschleissgrenze Einr&uuml;cknasen</span><span class="spec-value">ersetzen ab 3/32&quot;&ndash;1/8&quot; (2,4&ndash;3,2 mm) Abrundung</span></div>
-            </div>
-        </div>
-        <div class="comp-box">
-            <div class="comp-toggle" onclick="toggleComp(this)">Grenzwerte Hauptwelle</div>
-            <div class="comp-body">
-        <div class="spec-item"><span class="spec-label">Schlag im Normalfall</span><span class="spec-value">im Mittel ca. 0,0015&quot; (0,038 mm) je Lagersitz &ndash; <strong>Durchschnittswert, kein Grenzwert</strong></span></div>
-        <div class="spec-item"><span class="spec-label">Schlag nach dem Richten</span><span class="spec-value">darf 0,003&quot; (0,076 mm) je Lagersitz <strong>nicht &uuml;berschreiten</strong></span></div>
-        <div class="spec-item"><span class="spec-label">Messaufnahme</span><span class="spec-value">V-Bl&ouml;cke an hinterem Lagersitz und vorderem Eingangswellen-Nadellagersitz</span></div>
-
-            <div class="info-box"><strong>Originalwortlaut (A-01, Inspection &rarr; Main Shaft):</strong> &bdquo;Normal shaft runout will average 0.0015&quot; per any one journal. If straightening after any event described above, shaft runout should not exceed 0.003&quot; per any one journal.&ldquo; &ndash; 0,0015&quot; beschreibt also den <em>&uuml;blichen</em> Wert, die Ausschlussgrenze nennt Jerico nur f&uuml;r die gerichtete Welle.</div>
-            </div>
-        </div>
-    </div>
-</div>
-    <div class="group-divider" id="grp-betrieb">
-        <span>&#127937; Betrieb</span>
-        <button class="group-toggle" onclick="toggleGroup(this, 'grp-betrieb')">Alles einklappen</button>
-    </div>
-
-<div class="section" id="sec-cooling">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#10052;</span>
-        <h2>7. K&uuml;hlsystem &amp; &Ouml;lpumpe</h2>
-    </div>
-    <div class="section-body">
-        <div class="spec-item"><span class="spec-label">&Ouml;lkreislauf</span><span class="spec-value">Pump OUT &rarr; K&uuml;hler &rarr; Filter (LF-100) &rarr; Pump IN</span></div>
-        <div class="spec-item"><span class="spec-label">K&uuml;hler-Position</span><span class="spec-value">OUT oben / IN unten (Best Choice laut A-02)</span></div>
-        <div class="spec-item"><span class="spec-label">Jerico &Ouml;lpumpe</span><span class="spec-value">-8AN auf 1/2&quot; Hose Barb &ndash; 2&times; gerade, 2&times; 90&deg;</span></div>
-        <div class="spec-item"><span class="spec-label">Derale &Ouml;lk&uuml;hler</span><span class="spec-value">-8AN auf 1/2&quot; Hose Barb &ndash; 2&times; gerade (im Lieferumfang)</span></div>
-        <div class="spec-item"><span class="spec-label">Derale Inline Fan Thermostat</span><span class="spec-value">-8AN</span></div>
-        <div class="spec-item"><span class="spec-label">K&uuml;hlerpflicht</span><span class="spec-value">&#10004; <strong>Ja</strong> &ndash; &bdquo;on a road course, a cooler is a must&ldquo; (A-02)</span></div>
-
-        <div class="comp-box">
-            <div class="comp-toggle" onclick="toggleComp(this)">&Ouml;lpumpe Single Stage &ndash; Teileliste</div>
-            <div class="comp-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Sym</th><th>Part Number</th><th>Anz.</th></tr></thead><tbody><tr><td>A</td><td>0T01OP</td><td>1</td></tr><tr><td>B</td><td>0T02OP</td><td>1</td></tr><tr><td>C</td><td>0T03OP</td><td>1</td></tr><tr><td>D</td><td>0T04OP</td><td>1</td></tr><tr><td>E</td><td>0T01OPO</td><td>2</td></tr><tr><td>F</td><td>0T01OPI</td><td>2</td></tr><tr><td>G</td><td>0T01OPS</td><td>1</td></tr><tr><td>H</td><td>0T01OPSR</td><td>1</td></tr><tr><td>I</td><td>0T01OPSB</td><td>1</td></tr><tr><td>J</td><td>1/4-20X1SH</td><td>5</td></tr><tr><td>K</td><td>0T01OPTI</td><td>5</td></tr><tr><td>L</td><td>1/4-20X1</td><td>10</td></tr></tbody></table></div>
-            </div>
-        </div>
-        <div class="comp-box">
-            <div class="comp-toggle" onclick="toggleComp(this)">&Ouml;lpumpen-&Uuml;berholung (Anhang 2, Single Stage)</div>
-            <div class="comp-body">
-            <ul style="font-size:0.82rem;">
-                <li>Vier 1/4-20 &times; 1&quot; Schrauben der Pumpenabschlussplatte entfernen</li>
-                <li>10-32 &times; &#8542;&quot; Schraube des Laufradwellen-Halters entfernen</li>
-                <li>Laufradwelle aus der Pumpe herausdr&uuml;cken</li>
-                <li>F&uuml;nf 1/4-28 &times; 1&#8539;&quot; Schrauben vom Pumpengeh&auml;use entfernen, beide Stufen von der Trennplatte l&ouml;sen</li>
-                <li>Pumpenzahnr&auml;der aus dem Geh&auml;use der ersten Stufe entnehmen</li>
-                <li>Alle Teile vor der Inspektion waschen und trocknen</li>
-            </ul>
-            </div>
-        </div>
-        <div class="comp-photo-strip" data-comp-gallery="spec_cooling_photos" data-thumbs="4">
-            <div class="thumb-row"></div>
-            <div class="comp-photo-actions">
-                <button type="button" class="comp-photo-btn" onclick="openGallery('spec_cooling_photos')">&#128444; <span id="spec_cooling_photos-count">0</span> Fotos K&uuml;hlsystem</button>
-                <button type="button" class="comp-photo-btn" onclick="addPhoto('spec_cooling_photos')">&#128247; Foto hinzuf&uuml;gen</button>
-                <button type="button" class="comp-photo-btn" onclick="addYouTube('spec_cooling_photos')" style="border-color:rgba(255,0,0,0.3);">&#9654; YouTube</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="section" id="sec-oil">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#128738;</span>
-        <h2>8. &Ouml;l, Bef&uuml;llung &amp; Einfahren</h2>
-    </div>
-    <div class="section-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Punkt</th><th>Vorgabe</th></tr></thead><tbody><tr><td>&Ouml;lsorte (Herstellervorgabe A-02)</td><td><strong>Synthetic Multi-Viscosity Gear Oil SAE 75W90</strong> &ndash; kein Straight 90W</td></tr><tr><td>Im Assembly Manual verwendetes Produkt</td><td>Mobil 1 75W90 &ndash; die Anleitung meint mit &bdquo;&Ouml;l&ldquo; durchgehend dieses Produkt. Die Betriebsvorgabe ist die Spezifikation, nicht die Marke.</td></tr><tr><td>Menge</td><td>ca. <strong>2 Quarts (~1,9 l)</strong></td></tr><tr><td>F&uuml;llstand</td><td>3/4&quot; unter der seitlichen Einf&uuml;ll&ouml;ffnung &ndash; nicht &uuml;berf&uuml;llen</td></tr><tr><td>K&uuml;hler</td><td><strong>Pflicht</strong> auf dem Road Course</td></tr><tr><td>Vorw&auml;rmung</td><td>Hinterachse aufbocken, h&ouml;chster Gang, warm laufen lassen</td></tr><tr><td>Einfahren</td><td>langsam im Fahrerlager, alle G&auml;nge be- und entlasten</td></tr><tr><td>&Ouml;lwechsel nach Einfahren</td><td>vor dem ersten Renneinsatz</td></tr><tr><td>&Ouml;lwechsel nach erstem Renntag</td><td>Pflicht</td></tr><tr><td>Bellhousing-Ausrichtung</td><td>vor Einbau verifizieren</td></tr><tr><td>Getriebelager</td><td>nur flexibles Gummilager, nie starr</td></tr></tbody></table></div>
-        <div class="info-box"><strong>Schaltstrategie und Kupplungsbenutzung:</strong> Das Break-In-Sheet (A-02) enth&auml;lt den Satz &bdquo;CLUTCH SLIPPAGE IS A MUST&ldquo; ausschlie&szlig;lich unter der &Uuml;berschrift <em>FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY</em> &ndash; er gilt der Kupplungsabstimmung clutchless-Drag-Race-Getriebe und ist <strong>keine allgemeine Vorgabe f&uuml;r dieses Oval/Road-Race-Getriebe</strong>. F&uuml;r das RH02374 sind Schaltstrategie und Kupplungsbenutzung anhand der dafür vorgesehenen Jerico-Unterlagen oder belastbarer Road-Race-Erfahrungswerte zu bestimmen. <span class="src src-f" title="offen">F</span></div>
-    </div>
-</div>
-
-<div class="section" id="sec-open">
+<div class="section" id="sec-grenzen">
     <div class="section-header" onclick="toggleSection(this)">
         <span class="section-icon">&#9888;</span>
-        <h2>9. Offene Validierungen</h2>
+        <h2>7. Was diese Seite nicht leistet</h2>
     </div>
     <div class="section-body">
-        <div class="info-box">Diese Punkte blockieren Teile des Zusammenbaus. Abgehakt wird im <a href="build-log.html">Build Log</a>, hier steht der Stand.</div>
-        <div class="form-group"><label>Input Shaft Splines validiert (26?)</label><input type="text" data-field="open_splines" placeholder="gemessen / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>Output Yoke validiert (32?)</label><input type="text" data-field="open_yoke" placeholder="gemessen / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>L&auml;nge Welle bis Dichtung</label><input type="text" data-field="open_seal_length" placeholder="mm / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>Kardanwellenl&auml;nge nach Einbau</label><input type="text" data-field="open_driveshaft" placeholder="mm / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>Ausr&uuml;cklager-Typ gekl&auml;rt</label><input type="text" data-field="open_tob" placeholder="Typ / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>Schaltgest&auml;nge-Anpassung gekl&auml;rt</label><input type="text" data-field="open_linkage" placeholder="L&ouml;sung / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>Geh&auml;usematerial verifiziert (Essigtest)</label><input type="text" data-field="open_material" placeholder="Alu / Mg / offen" oninput="autoSave()" style="width:100%;"></div>
-        <div class="form-group"><label>Zustand aller Teile dokumentiert</label><input type="text" data-field="open_condition" placeholder="ja / offen" oninput="autoSave()" style="width:100%;"></div>
-    </div>
-</div>
-
-<div class="section" id="sec-sources">
-    <div class="section-header" onclick="toggleSection(this)">
-        <span class="section-icon">&#128218;</span>
-        <h2>10. Quellenregister</h2>
-    </div>
-    <div class="section-body">
-        <div class="spec-item"><span class="spec-label">A-01 &ndash; Assembly/Disassembly Manual</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/jerico-manual.pdf" target="_blank" rel="noopener">jerico-manual.pdf</a></span></div>
-        <div class="spec-item"><span class="spec-label">A-02 &ndash; Break-In &amp; Operating Instructions</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/breakin-instruction-sheet.pdf" target="_blank" rel="noopener">breakin-instruction-sheet.pdf</a></span></div>
-        <div class="spec-item"><span class="spec-label">A-03 &ndash; Gear Ratio Chart 4-Speed</span><span class="spec-value"><a href="https://www.jericoperformance.com/4speed_chart.pdf" target="_blank" rel="noopener">4speed_chart.pdf</a></span></div>
-        <div class="spec-item"><span class="spec-label">A-04 &ndash; Transmission Guide (Service Center)</span><span class="spec-value"><a href="https://www.jericoperformance.com/transmission_guide.pdf" target="_blank" rel="noopener">transmission_guide.pdf</a></span></div>
-
-        <div class="info-box"><strong>Quellenklassen:</strong> A = OEM-Prim&auml;rliteratur (verbindlich), B = verifizierte Sekund&auml;rquellen, C = Erfahrungswissen (nie allein g&uuml;ltig). Alle Angaben auf dieser Seite stammen aus Klasse A.</div>
-        <div class="info-box">Bei Widerspr&uuml;chen zwischen deutscher &Uuml;bersetzung und englischem Original gilt immer das <strong>englische Original (A-01)</strong>. Die Schritte im Build Log folgen durchweg dem Original. In der deutschen Notion-Fassung waren die Gangnummern in mehreren Kapiteln durch Notions Listenformatierung verschoben (angezeigt &bdquo;1. Gang&ldquo; statt 3./2./1.); das ist am 22.09.2026 dort korrigiert, ebenso Schlagwerte und Einbautiefe der Vorgelegewelle.</div>
+        <ul style="font-size:0.85rem;line-height:1.7;">
+            <li><strong>Die Motorkurve ist geraten.</strong> Sie beruht auf Standarddaten f&uuml;r einen 347 mit
+                Guss-K&ouml;pfen, nicht auf einem Pr&uuml;fstandslauf dieses Motors. Die Lage des Drehmomentgipfels kann
+                um &plusmn;500/min danebenliegen, was die Schaltempfehlung nicht umwirft, die Aussagen zum
+                &bdquo;Arbeitsbereich&ldquo; aber verschiebt.</li>
+            <li><strong>Keine Fahrwiderst&auml;nde, keine Rundenzeiten.</strong> Hier steht, was bei welcher Drehzahl
+                anliegt &ndash; nicht, wie schnell das Auto beschleunigt. Daf&uuml;r fehlen Gewicht, Luftwiderstandsbeiwert,
+                Stirnfl&auml;che und Reifenhaftung.</li>
+            <li><strong>Keine Streckendaten.</strong> Welcher Gang in welcher Kurve anliegt, entscheidet die Strecke.
+                Dazu gibt es Analysen im Notion-Projekt (Pannoniaring, Slovakiaring) &ndash; die sind hier bewusst nicht
+                eingerechnet.</li>
+            <li><strong>Abrollumfang aus der Herstellerangabe.</strong> 677 mm Aussendurchmesser sind ein Katalogwert bei
+                Nenndruck; unter Last federt der Reifen ein, bei hoher Drehzahl w&auml;chst er wieder. Rechnerisch bleibt
+                das in der Gr&ouml;ssenordnung von 1&ndash;2&nbsp;%.</li>
+            <li><strong>Der Vergleich ist rein &uuml;bersetzungsbezogen.</strong> Schaltzeit, Bedienbarkeit, Gewicht,
+                Haltbarkeit und Kosten stehen nicht in den Zahlen.</li>
+        </ul>
     </div>
 </div>
 

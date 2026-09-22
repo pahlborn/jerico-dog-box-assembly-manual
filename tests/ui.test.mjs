@@ -16,7 +16,7 @@ const { server, base } = await startServer();
 // sonst nimmt Playwright den selbst heruntergeladenen.
 const browser = await chromium.launch(
   process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
-const PAGES = ['index.html', 'specs.html', 'build-log.html'];
+const PAGES = ['index.html', 'specs.html', 'build-log.html', 'performance.html'];
 
 async function open(file) {
   const ctx = await browser.newContext();
@@ -65,6 +65,28 @@ await test('sw.js listet nur Dateien, die es gibt', async () => {
   }
 });
 
+await test('sw.js cacht jede Seite', async () => {
+  // Die Gegenrichtung zum Test darueber: eine neue Seite, die nicht in der
+  // Liste steht, ist offline nicht erreichbar - und das faellt erst in der
+  // Werkstatt ohne Empfang auf.
+  const sw = fs.readFileSync(path.join(REPO_ROOT, 'sw.js'), 'utf8');
+  for (const seite of PAGES) {
+    assert(sw.includes("'./" + seite + "'"), seite + ' fehlt in urlsToCache');
+  }
+});
+
+await test('search.js sucht nur in Seiten, die es gibt', async () => {
+  // Die Liste stammte aus dem Motor-Projekt und zeigte auf dessen docs/-Seiten.
+  // Jede Suche loeste sechs 404 aus, still in der Konsole.
+  const js = fs.readFileSync(path.join(REPO_ROOT, 'search.js'), 'utf8');
+  const urls = [...js.matchAll(/\{\s*url:\s*'([^']+)'/g)].map((m) => m[1]);
+  assert(urls.length > 1, 'Seitenliste in search.js sieht leer aus');
+  for (const rel of urls) {
+    assert(fs.existsSync(path.join(REPO_ROOT, rel)), 'search.js verweist auf fehlende Datei: ' + rel);
+  }
+  assertEqual(urls.slice().sort(), PAGES.slice().sort());
+});
+
 await test('Service Worker und Manifest kommen ohne absolute Pfade aus', async () => {
   // GitHub Pages unterscheidet Gross- und Kleinschreibung im Pfad. Ein
   // absoluter Pfad mit dem Repo-Namen ist damit eine Fehlerquelle, die erst
@@ -100,10 +122,10 @@ for (const file of PAGES) {
     await p.close();
   });
 
-  await test(file + ': Navigation zeigt alle drei Seiten', async () => {
+  await test(file + ': Navigation zeigt alle vier Seiten', async () => {
     const p = await open(file);
     const hrefs = await p.page.$$eval('.nav-item', (els) => els.map((e) => e.getAttribute('href')));
-    assertEqual(hrefs.sort(), ['build-log.html', 'index.html', 'specs.html']);
+    assertEqual(hrefs.sort(), ['build-log.html', 'index.html', 'performance.html', 'specs.html']);
     const aktiv = await p.page.$$eval('.nav-item.active', (els) => els.length);
     assertEqual(aktiv, 1, 'Genau eine Seite muss aktiv sein');
     await p.close();

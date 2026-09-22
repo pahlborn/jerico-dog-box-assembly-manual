@@ -2,7 +2,7 @@
  * changelog.js - Release-Dokumentation.
  *
  * Erreichbar ueber die Versionsnummer im Werkzeugmenue und im Header.
- * Wird von index.html, specs.html und build-log.html geladen.
+ * Wird von index.html, specs.html, build-log.html und performance.html geladen.
  *
  * Neuer Eintrag: oben einfuegen und version.js plus die Cache-Version in
  * sw.js hochzaehlen. tests/ui.test.mjs prueft, dass alle drei zusammenpassen.
@@ -12,6 +12,19 @@
 
   // Neueste Version zuerst.
   var RELEASES = [
+    {
+      version: 'v5',
+      date: '2026-09-22',
+      title: 'Leistungsseite, Quellenspiegel, Materialbestimmung',
+      changes: [
+        { type: 'neu', text: 'Neue Seite "Leistung": Drehmoment- und Leistungskurve des 347 SBF, Geschwindigkeit je Gang, rechnerische Schaltpunkte und der Vergleich des Jerico gegen Ford Toploader Close Ratio (2.32/1.69/1.29/1.00) und Wide Ratio (2.78/1.93/1.36/1.00) - jeweils mit Drehzahl nach dem Schaltvorgang. Alle Annahmen sind offengelegt und ueberschreibbar, sobald Pruefstandswerte vorliegen.' },
+        { type: 'neu', text: 'Quellenspiegel: A-01 Assembly Manual, A-02 Break-In Sheet und A-03 Gear Ratio Chart liegen jetzt als unveraenderte Kopie unter docs/quellen/ im Repository, mit Pruefsummen und Rechtehinweis. Die Herstellerlinks koennen verschwinden - A-04 Transmission Guide ist bereits tot und daher nur noch als toter Link vermerkt.' },
+        { type: 'neu', text: 'Materialbestimmung Alu/Magnesium: Essigprobe, Dichtevergleich (1,74 gegen 2,70 g/cm3), Korrosionsbild und Klangprobe als Schrittfolge - dazu der Sicherheitshinweis, dass Magnesiumspaene als Metallbrand brennen und Wasser den Brand verschlimmert statt ihn zu loeschen. Auch als Glossareintrag.' },
+        { type: 'fix', text: 'Typbezeichnung: Das Getriebe ist ein Road-Race-Getriebe. "Oval Road Race" ist Jericos Baureihenbezeichnung und stand hier als Einsatzzweck - das ist jetzt getrennt ausgewiesen.' },
+        { type: 'fix', text: 'Klargestellt, dass keine Schnittzeichnungen vorliegen: der Bildteil des Assembly Manuals fehlt im erhaeltlichen PDF. Alle Zeichnungen auf diesen Seiten sind eigene Skizzen.' },
+        { type: 'fix', text: 'Der Link zum Motor-Build (gt40-engine) ist entfernt.' }
+      ]
+    },
     {
       version: 'v4',
       date: '2026-09-22',
