@@ -1,4 +1,4 @@
-var CACHE_NAME = 'jerico-v9';
+var CACHE_NAME = 'jerico-v10';
 // Relativ, nicht absolut: GitHub Pages unterscheidet Gross- und Kleinschreibung
 // im Pfad, und das Repository heisst "Jerico-...". Ein absoluter Pfad in der
 // falschen Schreibweise laesst cache.addAll scheitern - und damit die gesamte
@@ -24,6 +24,7 @@ var urlsToCache = [
   // Der Gear Ratio Chart (A-03) bleibt draussen: 3,1 MB Scan, und
   // cache.addAll ist atomar - ein Abbruch liesse die Installation
   // komplett scheitern. Er wird beim ersten Oeffnen nachgecacht.
+  './docs/jerico-diagrams.html',
   './docs/quellen/A-01-jerico-assembly-manual.pdf',
   './docs/quellen/A-02-jerico-breakin-sheet.pdf',
   './icon-192.png',

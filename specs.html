@@ -286,10 +286,49 @@
     </div>
 </div>
 
+<div class="section" id="sec-cooling">
+    <div class="section-header" onclick="toggleSection(this)">
+        <span class="section-icon">&#10052;</span>
+        <h2>9. K&uuml;hlsystem</h2>
+    </div>
+    <div class="section-body">
+        <div class="info-box"><strong>Road Course = K&uuml;hler Pflicht.</strong> Das Break-In-Sheet (A-02) sagt dazu: &bdquo;On a road course, a cooler is a must.&ldquo; Dieses Getriebe wird auf dem Road Course eingesetzt &ndash; das K&uuml;hlsystem ist keine Option, sondern Herstellervorgabe. <a href="docs/jerico-diagrams.html" style="color:#2b6cb0;">Schnittzeichnung K&uuml;hlkreislauf</a></div>
+
+        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Komponente</th><th>Typ / Hersteller</th><th>Status</th></tr></thead><tbody>
+        <tr><td>&Ouml;lpumpe</td><td><strong>Jerico Single-Stage</strong> (aktuelle Auspr&auml;gung am RH02374)</td><td>&#10004; vorhanden</td></tr>
+        <tr><td>Aluminium-Adapter</td><td>Nachbau (Pumpenflansch &rarr; AN-Anschluss)</td><td>&#10004; vorhanden</td></tr>
+        <tr><td>&Ouml;lk&uuml;hler + L&uuml;fter</td><td>&#9888; Produkt noch nachzureichen</td><td>&#9888; offen</td></tr>
+        <tr><td>AN-Anschlussmaterial</td><td>&#9888; Spezifikation noch offen</td><td>&#9888; offen</td></tr>
+        <tr><td>Schl&auml;uche / Leitungen</td><td>AN-konforme &Ouml;lleitungen</td><td>&#9888; offen</td></tr>
+        </tbody></table></div>
+
+        <h3 style="font-size:0.9rem;margin-top:1rem;color:var(--primary);">Auswirkung auf Gesamtl&auml;nge</h3>
+        <div class="warning-box"><strong>Das K&uuml;hlsystem verl&auml;ngert das Getriebe.</strong> Pumpe und Adapter sitzen hinter dem Tail Housing. Die Gesamtl&auml;nge &auml;ndert sich &ndash; damit &auml;ndern sich folgende abh&auml;ngige Teile:</div>
+        <div class="spec-item"><span class="spec-label">Input Shaft</span><span class="spec-value">&#9888; <strong>Neu messen und ggf. beschaffen</strong> &ndash; die Wellenl&auml;nge h&auml;ngt von der endg&uuml;ltigen Einbauposition ab</span></div>
+        <div class="spec-item"><span class="spec-label">Kardanwelle (motorseitig)</span><span class="spec-value">&#9888; <strong>Neu vermessen und kaufen</strong> &ndash; erst nach komplettem Einbau von Motor, Bellhousing, Getriebe + K&uuml;hlsystem bei definierter Fahrh&ouml;he</span></div>
+
+        <h3 style="font-size:0.9rem;margin-top:1rem;color:var(--primary);">Messwerte</h3>
+        <div class="form-group"><label>Gesamtl&auml;nge Getriebe ohne K&uuml;hlsystem</label><input type="text" data-field="cool_length_base" data-validate="numeric" placeholder="mm" oninput="autoSave()" style="width:120px;"></div>
+        <div class="form-group"><label>Gesamtl&auml;nge Getriebe mit Pumpe + Adapter</label><input type="text" data-field="cool_length_pump" data-validate="numeric" placeholder="mm" oninput="autoSave()" style="width:120px;"></div>
+        <div class="form-group"><label>Differenz (Verl&auml;ngerung)</label><input type="text" data-field="cool_length_diff" data-validate="numeric" placeholder="mm" oninput="autoSave()" style="width:120px;"></div>
+        <div class="form-group"><label>&Ouml;lk&uuml;hler Produkt</label><input type="text" data-field="cool_cooler_product" placeholder="Hersteller / Teilenummer" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>AN-Gr&ouml;&szlig;e Anschl&uuml;sse</label><input type="text" data-field="cool_an_size" placeholder="z.B. AN-8 / AN-10" oninput="autoSave()" style="width:120px;"></div>
+        <div class="section-comment"><label>Notizen K&uuml;hlsystem</label><textarea data-field="comment_cooling" placeholder="Einbauposition K&uuml;hler, Leitungsl&auml;ngen, L&uuml;fterstromversorgung..." oninput="autoSave()"></textarea></div>
+        <div class="comp-photo-strip" data-comp-gallery="spec_cooling_photos" data-thumbs="4">
+            <div class="thumb-row"></div>
+            <div class="comp-photo-actions">
+                <button type="button" class="comp-photo-btn" onclick="openGallery('spec_cooling_photos')">&#128444; <span id="spec_cooling_photos-count">0</span> Fotos</button>
+                <button type="button" class="comp-photo-btn" onclick="addPhoto('spec_cooling_photos')">&#128247; Foto hinzuf&uuml;gen</button>
+                <button type="button" class="comp-photo-btn" onclick="addYouTube('spec_cooling_photos')" style="border-color:rgba(255,0,0,0.3);">&#9654; YouTube</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="section" id="sec-open">
     <div class="section-header" onclick="toggleSection(this)">
         <span class="section-icon">&#9888;</span>
-        <h2>9. Offene Validierungen</h2>
+        <h2>10. Offene Validierungen &amp; Abh&auml;ngigkeiten</h2>
     </div>
     <div class="section-body">
         <div class="info-box">Diese Punkte blockieren Teile des Zusammenbaus. Abgehakt wird im <a href="build-log.html">Build Log</a>, hier steht der Stand.</div>
@@ -301,19 +340,28 @@
         <div class="form-group"><label>Schaltgest&auml;nge-Anpassung gekl&auml;rt</label><input type="text" data-field="open_linkage" placeholder="L&ouml;sung / offen" oninput="autoSave()" style="width:100%;"></div>
         <div class="form-group"><label>Geh&auml;usematerial verifiziert (Essigtest)</label><input type="text" data-field="open_material" placeholder="Alu / Mg / offen" oninput="autoSave()" style="width:100%;"></div>
         <div class="form-group"><label>Zustand aller Teile dokumentiert</label><input type="text" data-field="open_condition" placeholder="ja / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div style="border-top:1px solid #e2e8f0;margin:0.75rem 0;padding-top:0.5rem;">
+            <strong style="font-size:0.85rem;color:var(--primary);">K&uuml;hlsystem-Abh&auml;ngigkeiten</strong>
+        </div>
+        <div class="form-group"><label>&Ouml;lk&uuml;hler + L&uuml;fter beschafft</label><input type="text" data-field="open_cooler" placeholder="Produkt / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>AN-Anschlussmaterial spezifiziert</label><input type="text" data-field="open_an_fittings" placeholder="Gr&ouml;&szlig;e / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Gesamtl&auml;nge mit K&uuml;hlsystem gemessen</label><input type="text" data-field="open_cool_length" placeholder="mm / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Input Shaft nach K&uuml;hlsystem-Einbau geprueft</label><input type="text" data-field="open_input_shaft_cool" placeholder="passt / neu beschaffen / offen" oninput="autoSave()" style="width:100%;"></div>
+        <div class="form-group"><label>Kardanwelle nach K&uuml;hlsystem-Einbau vermessen</label><input type="text" data-field="open_driveshaft_cool" placeholder="L&auml;nge / offen" oninput="autoSave()" style="width:100%;"></div>
     </div>
 </div>
 
 <div class="section" id="sec-sources">
     <div class="section-header" onclick="toggleSection(this)">
         <span class="section-icon">&#128218;</span>
-        <h2>10. Quellenregister</h2>
+        <h2>11. Quellenregister</h2>
     </div>
     <div class="section-body">
         <div class="spec-item"><span class="spec-label">A-01 &ndash; Assembly/Disassembly Manual</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/jerico-manual.pdf" target="_blank" rel="noopener">jerico-manual.pdf</a></span></div>
         <div class="spec-item"><span class="spec-label">A-02 &ndash; Break-In &amp; Operating Instructions</span><span class="spec-value"><a href="https://images.carid.com/jerico/items/pdf/breakin-instruction-sheet.pdf" target="_blank" rel="noopener">breakin-instruction-sheet.pdf</a></span></div>
         <div class="spec-item"><span class="spec-label">A-03 &ndash; Gear Ratio Chart 4-Speed</span><span class="spec-value"><a href="https://www.jericoperformance.com/4speed_chart.pdf" target="_blank" rel="noopener">4speed_chart.pdf</a></span></div>
         <div class="spec-item"><span class="spec-label">A-04 &ndash; Transmission Guide (Service Center)</span><span class="spec-value"><a href="https://www.jericoperformance.com/transmission_guide.pdf" target="_blank" rel="noopener">transmission_guide.pdf</a></span></div>
+        <div class="spec-item"><span class="spec-label">A-05 &ndash; Schnittzeichnungen &amp; Diagramme</span><span class="spec-value"><a href="docs/jerico-diagrams.html" style="color:#2b6cb0;">Lokale &Uuml;bersicht</a> &ndash; Explosionszeichnung Rev. 2, Geh&auml;useteile, &Ouml;lpumpe, K&uuml;hlkreislauf (via Wayback Machine)</span></div>
 
         <div class="info-box"><strong>Quellenklassen:</strong> A = OEM-Prim&auml;rliteratur (verbindlich), B = verifizierte Sekund&auml;rquellen, C = Erfahrungswissen (nie allein g&uuml;ltig). Alle Angaben auf dieser Seite stammen aus Klasse A.</div>
         <div class="info-box">Bei Widerspr&uuml;chen zwischen deutscher &Uuml;bersetzung und englischem Original gilt immer das <strong>englische Original (A-01)</strong>. Die Schritte im Build Log folgen durchweg dem Original. In der deutschen Notion-Fassung waren die Gangnummern in mehreren Kapiteln durch Notions Listenformatierung verschoben (angezeigt &bdquo;1. Gang&ldquo; statt 3./2./1.); das ist am 22.09.2026 dort korrigiert, ebenso Schlagwerte und Einbautiefe der Vorgelegewelle.</div>

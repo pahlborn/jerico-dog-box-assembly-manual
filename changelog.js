@@ -13,6 +13,20 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v10',
+      date: '2026-09-22',
+      title: 'Kuehlsystem, Schnittzeichnungen, Uebersicht umgebaut',
+      changes: [
+        { type: 'neu', text: 'Neue Sektion 9 (Kuehlsystem) auf der Spezifikationsseite: Oelpumpe Single-Stage, Alu-Adapter, Oelkuehler + Luefter, AN-Material. Messwertfelder fuer Laengenaenderung, Kuehler-Produkt, AN-Groesse.' },
+        { type: 'neu', text: 'Abhaengigkeitsliste in Sektion 10 (Offene Validierungen): Input Shaft und Kardanwelle muessen nach Kuehlsystem-Einbau neu vermessen werden.' },
+        { type: 'neu', text: 'Neue Referenzseite docs/jerico-diagrams.html: OEM-Schnittzeichnungen von Jerico (Explosionszeichnung Rev. 2, Gehaeuseteile, Single-Stage-Pumpe, Kuehlkreislauf, Seal Driver) mit Wayback-Machine-Links zum Download.' },
+        { type: 'verbessert', text: 'Uebersicht Sektion 4 (Arbeitsreihenfolge): Kuehlsystem-Schritt und Input-Shaft-/Kardanwellen-Schritt ergaenzt. Verlinkt jetzt klar auf build-log.html.' },
+        { type: 'verbessert', text: 'Uebersicht Sektion 5 (Kernwerte): Auf die wichtigsten Werte reduziert, verlinkt auf die Detailseiten in specs.html.' },
+        { type: 'verbessert', text: 'Uebersicht Sektion 6 (Werkzeug): Hinweis auf Werkzeuglisten pro Arbeitsschritt im Build Log.' },
+        { type: 'verbessert', text: 'Quellenregister: A-05 Schnittzeichnungen ergaenzt. Hinweis auf fehlende Zeichnungen durch Wayback-Referenz ersetzt.' }
+      ]
+    },
+    {
       version: 'v9',
       date: '2026-09-22',
       title: 'Geraete-Tracking, field-sync.js erweitert',

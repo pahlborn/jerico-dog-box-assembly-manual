@@ -204,18 +204,20 @@
 <div class="section" id="sec-todo">
     <div class="section-header" onclick="toggleSection(this)">
         <span class="section-icon">&#9989;</span>
-        <h2>4. Arbeitsreihenfolge (TODO)</h2>
+        <h2>4. Arbeitsreihenfolge</h2>
     </div>
     <div class="section-body">
-            <div class="info-box">Arbeitsreihenfolge aus dem Notion-TODO. Die Reihenfolge ist verbindlich &ndash; kein Schritt ohne Abschluss des vorherigen.</div>
+            <div class="info-box">Die Reihenfolge ist verbindlich &ndash; kein Schritt ohne Abschluss des vorherigen. Details und Arbeitsanweisungen: <a href="build-log.html" style="color:#2b6cb0;font-weight:600;">Zusammenbau-Protokoll</a></div>
             <div class="form-group"><label>1. Trockener Zusammenbau (alle Teile vorhanden? K&uuml;hlsystem?)</label><input type="text" data-field="todo_1" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
             <div class="form-group"><label>2. Wieder zerlegen</label><input type="text" data-field="todo_2" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
             <div class="form-group"><label>3. Geh&auml;use glasperlenstrahlen (Material vorher verifizieren)</label><input type="text" data-field="todo_3" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
             <div class="form-group"><label>4. Geh&auml;use lackieren (schwarz, Original-Finish)</label><input type="text" data-field="todo_4" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
-            <div class="form-group"><label>5. Ggf. neuen Main Drive 25/27 beschaffen</label><input type="text" data-field="todo_5" placeholder="offen / zur&uuml;ckgestellt" oninput="autoSave()"></div>
-            <div class="form-group"><label>6. Final Assembly nach Manual A-01</label><input type="text" data-field="todo_6" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
+            <div class="form-group"><label>5. K&uuml;hlsystem aufbauen (Pumpe, Adapter, K&uuml;hler, Leitungen)</label><input type="text" data-field="todo_5_cool" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
+            <div class="form-group"><label>6. Ggf. neuen Main Drive 25/27 beschaffen</label><input type="text" data-field="todo_5" placeholder="offen / zur&uuml;ckgestellt" oninput="autoSave()"></div>
+            <div class="form-group"><label>7. Final Assembly nach Manual A-01</label><input type="text" data-field="todo_6" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
+            <div class="form-group"><label>8. Input Shaft + Kardanwelle (nach K&uuml;hlsystem-Einbau neu messen)</label><input type="text" data-field="todo_8_shaft" placeholder="offen / in Arbeit / erledigt" oninput="autoSave()"></div>
             <div class="section-comment"><label>Notizen zur Reihenfolge</label><textarea data-field="comment_todo" placeholder="Abweichungen, Termine, Wartezeiten..." oninput="autoSave()"></textarea></div>
-            <div class="info-box"><strong>&#9888; Zu Punkt 5:</strong> Ein anderer Main Drive wird erst nach abgeschlossener Systemanalyse gekauft &ndash; Motor-Kennlinie, Fahrzeuggewicht und Streckendaten m&uuml;ssen vorliegen. Kein Kauf ohne vollst&auml;ndige Datenbasis.</div>
+            <div class="info-box"><strong>&#9888; Zu Main Drive:</strong> Ein anderer Main Drive wird erst nach abgeschlossener Systemanalyse gekauft &ndash; Motor-Kennlinie, Fahrzeuggewicht und Streckendaten m&uuml;ssen vorliegen.</div>
     </div>
 </div>
 
@@ -225,14 +227,12 @@
         <h2>5. Kernwerte auf einen Blick</h2>
     </div>
     <div class="section-body">
+            <div class="info-box">Vollst&auml;ndige Angaben: <a href="specs.html#sec-torque" style="color:#2b6cb0;font-weight:600;">Anzugsmomente</a> &middot; <a href="specs.html#sec-lubes" style="color:#2b6cb0;font-weight:600;">Schmierstoffe</a> &middot; <a href="specs.html#sec-parts" style="color:#2b6cb0;font-weight:600;">Lager &amp; Kleinteile</a></div>
             <div class="spec-item"><span class="spec-label">Alle Schaltgabel-Klemmschrauben</span><span class="spec-value">28 lb./ft = <strong>38 Nm</strong> (1-2 und 3-4 mit Loctite)</span></div>
             <div class="spec-item"><span class="spec-label">Lagerflansch, Halteclip, Deckel, seitl. Detent</span><span class="spec-value">22 lb./ft = <strong>30 Nm</strong></span></div>
             <div class="spec-item"><span class="spec-label">Tail Housing und Adapterplatte</span><span class="spec-value">25 &rarr; 35 lb./ft = <strong>34 &rarr; 47 Nm</strong></span></div>
             <div class="spec-item"><span class="spec-label">&Ouml;lpumpe an Tail Housing</span><span class="spec-value">35 &rarr; 60 &rarr; 90 lb./<strong>in</strong> = 4 &rarr; 6,8 &rarr; 10,2 Nm</span></div>
-            <div class="spec-item"><span class="spec-label">Abstandsring vor dem vorderen Lager</span><span class="spec-value">3,625&quot; (92,1 mm)</span></div>
             <div class="spec-item"><span class="spec-label">Nadeln</span><span class="spec-value">Eingangswelle 15 &middot; R&uuml;ckw&auml;rts 44 &middot; Vorgelegewelle 56</span></div>
-            <div class="spec-item"><span class="spec-label">Dog Rings</span><span class="spec-value">2. Gang 34 Z. &middot; 3. Gang 37 Z. &middot; Eingangswelle 37 Z.</span></div>
-            <div class="spec-item"><span class="spec-label">Hauptwellen-Schlag</span><span class="spec-value">&uuml;blich ca. 0,0015&quot; &ndash; nach dem Richten h&ouml;chstens 0,003&quot;</span></div>
 
             <div class="warning-box"><strong>Die drei Fehler, die das Getriebe kosten:</strong><ul style="margin:0.3rem 0 0 1rem;"><li>Dog Ring falsch herum &ndash; springt unter Last aus dem Gang</li><li>Vorgelegewelle mehr als wenige Tausendstel unter b&uuml;ndig eingeschlagen &ndash; der W&auml;rmeausdehnungsspielraum des hinteren Nadellager-Clusters ist weg, das Lager versagt im Betrieb</li><li>Straight 90W statt Synthetic 75W90 &ndash; oder &uuml;berf&uuml;llt</li></ul></div>
     </div>
@@ -244,6 +244,7 @@
         <h2>6. Werkzeug &amp; Verbrauchsmaterial</h2>
     </div>
     <div class="section-body">
+            <div class="info-box">Werkzeuge sind pro Arbeitsschritt im <a href="build-log.html" style="color:#2b6cb0;font-weight:600;">Zusammenbau-Protokoll</a> aufgef&uuml;hrt. Hier die Gesamtliste.</div>
             <ul style="font-size:0.85rem;line-height:1.7;">
                 <li>Innensechskant-Satz (zollbasiert), Drehmomentschl&uuml;ssel <strong>bis 50 Nm</strong> und ein kleiner bis <strong>12 Nm</strong> f&uuml;r die &Ouml;lpumpe</li>
                 <li>Messuhr mit Magnetstativ, zwei V-Bl&ouml;cke, Mikrometer, Messschieber</li>
@@ -272,7 +273,8 @@
             <div class="spec-item"><span class="spec-label">A-04 Transmission Guide</span><span class="spec-value">&#9888; toter Link &ndash; liefert eine HTML-Fehlerseite, nicht gespiegelt</span></div>
 
             <div class="info-box"><strong>Quellenspiegel:</strong> A-01 bis A-03 liegen als unver&auml;nderte Kopie unter <a href="https://github.com/pahlborn/jerico-dog-box-assembly-manual/tree/main/docs/quellen" target="_blank" rel="noopener">docs/quellen/</a> im Repository, damit sie nicht mit den Herstellerlinks verschwinden. Rechte bei Jerico Performance Products; Spiegelung nur zur Dokumentation dieses einen Getriebes.</div>
-            <div class="warning-box"><strong>Keine Schnittzeichnungen verf&uuml;gbar.</strong> Der Bildteil des Assembly Manuals, auf den der Flie&szlig;text verweist, fehlt im erh&auml;ltlichen PDF. Alle Zeichnungen auf diesen Seiten sind eigene Skizzen, keine OEM-Abbildungen.</div>
+            <div class="spec-item"><span class="spec-label">Schnittzeichnungen &amp; Diagramme</span><span class="spec-value"><a href="docs/jerico-diagrams.html" style="color:#2b6cb0;font-weight:600;">Jerico OEM-Diagramme</a> &ndash; Explosionszeichnung Rev. 2, Geh&auml;useteile, &Ouml;lpumpe Single-Stage, K&uuml;hlkreislauf, Seal Driver</span></div>
+            <div class="info-box"><strong>Schnittzeichnungen:</strong> Der Bildteil des Assembly Manuals fehlt im erh&auml;ltlichen PDF. Auf der Jerico-Website waren unter <em>Diagrams and Assemblies</em> Explosionszeichnungen verf&uuml;gbar &ndash; die Website ist seit 2026 nicht erreichbar, die Bilder sind &uuml;ber die <a href="docs/jerico-diagrams.html">Wayback-Machine-Links</a> archiviert. Bilder m&uuml;ssen manuell heruntergeladen werden.</div>
 
             <div class="info-box">Die urspr&uuml;ngliche Dokumentation liegt in Notion (Quellenregister 02.01.01). Diese Seiten sind die Arbeitsfassung f&uuml;r die Werkbank &ndash; offline nutzbar, mit Messwerten und Fotos.</div>
             <div class="section-comment"><label>Allgemeine Notizen</label><textarea data-field="comment_general" placeholder="Alles, was sonst nirgends hinpasst..." oninput="autoSave()"></textarea></div>
