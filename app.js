@@ -322,7 +322,8 @@
     async function saveData() {
         var merged = saveFieldsLocal();
         updateSaveStatus();
-        if (!isGistConfigured()) { showToast('Lokal gespeichert'); return; }
+        if (!isGistConfigured()) { showToast('Lokal gespeichert (kein Sync)'); return; }
+        if (!navigator.onLine) { showToast('Offline gespeichert'); return; }
         try {
             var files = {};
             files[GIST_FILENAME] = { content: JSON.stringify(merged, null, 2) };
@@ -331,8 +332,12 @@
                 headers: { 'Authorization': 'Bearer ' + getGistConfig().token, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ files: files })
             });
-            showToast(res.ok ? 'Gespeichert & synchronisiert' : 'Cloud-Fehler (Status ' + res.status + ')');
-        } catch (err) { showToast('Cloud-Fehler: ' + err.message); }
+            if (res.ok) { showToast('Gespeichert'); }
+            else {
+                var errText = ''; try { errText = (await res.json()).message || ''; } catch(e) {}
+                showToast('Gespeichert, Sync-Fehler: ' + (errText || 'Status ' + res.status));
+            }
+        } catch (err) { showToast('Gespeichert, Sync-Fehler: ' + err.message); }
     }
 
     function loadData() {
@@ -783,6 +788,7 @@
         renderAllFindings();
         updateProgress();
         if (typeof initCompPhotos === 'function') initCompPhotos();
+        if (typeof Validation !== 'undefined') Validation.init();
         if (typeof initUnifiedSearch === 'function') initUnifiedSearch();
         scrollToHash();
         if (currentLang === 'en') setTimeout(function () { setLang('en'); }, 100);

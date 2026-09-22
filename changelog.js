@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v6',
+      date: '2026-09-22',
+      title: 'Eingabevalidierung, klarere Sync-Meldungen',
+      changes: [
+        { type: 'neu', text: 'Neues validation.js: numerische Eingabefelder werden beim Verlassen geprueft. Buchstaben in Zahlfeldern werden rot markiert, Komma wird automatisch zu Punkt normalisiert. Gilt fuer Spline-/Yoke-Zaehlung, Laufschlag, Nadelzahlen und alle Messwertfelder im Build Log.' },
+        { type: 'fix', text: 'Speicher-Meldungen vereinheitlicht: "Gespeichert" (online OK), "Offline gespeichert" (kein Netz), "Gespeichert, Sync-Fehler: ..." (mit konkretem Fehlergrund statt nur "Cloud-Fehler").' },
+        { type: 'neu', text: 'Offline-Erkennung: navigator.onLine wird jetzt geprueft bevor ein Cloud-Save versucht wird.' }
+      ]
+    },
+    {
       version: 'v5',
       date: '2026-09-22',
       title: 'Leistungsseite, Quellenspiegel, Materialbestimmung',
