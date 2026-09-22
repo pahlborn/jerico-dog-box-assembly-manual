@@ -25,8 +25,9 @@ Alles stammt aus der OEM-Prim&auml;rliteratur von Jerico (Quellenklasse A):
 * **A-04** Transmission Guide
 
 Bei Widerspr&uuml;chen zwischen der deutschen &Uuml;bersetzung und dem englischen
-Original gilt das **englische Original**. Wo die Übersetzung beschädigte
-Aufzählungen hat (Kapitel 3 und 6), folgen die Schritte dem Original.
+Original gilt das **englische Original** — die Schritte hier folgen durchweg dem
+Original. Inhaltlich strittige Aussagen wurden am 21./22.09.2026 gegen die
+Original-PDFs geprüft; die Befunde stehen im Changelog (v3).
 
 ## Bedienung
 
