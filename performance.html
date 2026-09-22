@@ -20,6 +20,7 @@
     <script src="field-sync.js"></script>
     <script src="validation.js"></script>
     <script src="app.js"></script>
+    <script src="perf-charts.js" defer></script>
 </head>
 <body>
 
@@ -209,72 +210,8 @@
         <h2>3. Geschwindigkeit je Gang</h2>
     </div>
     <div class="section-body">
-        <figure class="viz-figure"><svg viewBox="0 0 860 350" width="100%" role="img" aria-label="Geschwindigkeit je Gang, Jerico RH02374" style="display:block;max-width:100%;height:auto;">
-<line x1="56" y1="300.0" x2="830" y2="300.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="304.0" text-anchor="end" font-size="11" fill="#718096">0</text>
-<line x1="56" y1="255.0" x2="830" y2="255.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="259.0" text-anchor="end" font-size="11" fill="#718096">40</text>
-<line x1="56" y1="210.0" x2="830" y2="210.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="214.0" text-anchor="end" font-size="11" fill="#718096">80</text>
-<line x1="56" y1="165.0" x2="830" y2="165.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="169.0" text-anchor="end" font-size="11" fill="#718096">120</text>
-<line x1="56" y1="120.0" x2="830" y2="120.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="124.0" text-anchor="end" font-size="11" fill="#718096">160</text>
-<line x1="56" y1="75.0" x2="830" y2="75.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="79.0" text-anchor="end" font-size="11" fill="#718096">200</text>
-<line x1="56" y1="30.0" x2="830" y2="30.0" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="34.0" text-anchor="end" font-size="11" fill="#718096">240</text>
-<line x1="56.0" y1="300" x2="56.0" y2="30" stroke="#edf2f7" stroke-width="1"/>
-<text x="56.0" y="318" text-anchor="middle" font-size="11" fill="#718096">1000</text>
-<line x1="204.8" y1="300" x2="204.8" y2="30" stroke="#edf2f7" stroke-width="1"/>
-<text x="204.8" y="318" text-anchor="middle" font-size="11" fill="#718096">2000</text>
-<line x1="353.7" y1="300" x2="353.7" y2="30" stroke="#edf2f7" stroke-width="1"/>
-<text x="353.7" y="318" text-anchor="middle" font-size="11" fill="#718096">3000</text>
-<line x1="502.5" y1="300" x2="502.5" y2="30" stroke="#edf2f7" stroke-width="1"/>
-<text x="502.5" y="318" text-anchor="middle" font-size="11" fill="#718096">4000</text>
-<line x1="651.4" y1="300" x2="651.4" y2="30" stroke="#edf2f7" stroke-width="1"/>
-<text x="651.4" y="318" text-anchor="middle" font-size="11" fill="#718096">5000</text>
-<line x1="800.2" y1="300" x2="800.2" y2="30" stroke="#edf2f7" stroke-width="1"/>
-<text x="800.2" y="318" text-anchor="middle" font-size="11" fill="#718096">6000</text>
-<line x1="56" y1="300" x2="830" y2="300" stroke="#a0aec0" stroke-width="1"/>
-<text x="830" y="334" text-anchor="end" font-size="11" fill="#718096">Drehzahl [1/min]</text>
-<text x="18" y="20" font-size="11" fill="#718096">km/h</text>
-<path d="M130.4 276.2 L800.2 204.8" fill="none" stroke="#2a78d6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="800.2" cy="204.8" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
-<text x="792.2" y="195.8" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">1. Gang · 85 km/h</text>
-<circle cx="204.8" cy="268.3" r="9" fill="transparent"><title>1. Gang, 2000/min: 28 km/h</title></circle>
-<circle cx="353.7" cy="252.4" r="9" fill="transparent"><title>1. Gang, 3000/min: 42 km/h</title></circle>
-<circle cx="502.5" cy="236.5" r="9" fill="transparent"><title>1. Gang, 4000/min: 56 km/h</title></circle>
-<circle cx="651.4" cy="220.6" r="9" fill="transparent"><title>1. Gang, 5000/min: 71 km/h</title></circle>
-<circle cx="800.2" cy="204.8" r="9" fill="transparent"><title>1. Gang, 6000/min: 85 km/h</title></circle>
-<path d="M130.4 264.1 L800.2 156.2" fill="none" stroke="#eb6834" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="800.2" cy="156.2" r="4" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
-<text x="792.2" y="147.2" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">2. Gang · 128 km/h</text>
-<circle cx="204.8" cy="252.1" r="9" fill="transparent"><title>2. Gang, 2000/min: 43 km/h</title></circle>
-<circle cx="353.7" cy="228.1" r="9" fill="transparent"><title>2. Gang, 3000/min: 64 km/h</title></circle>
-<circle cx="502.5" cy="204.1" r="9" fill="transparent"><title>2. Gang, 4000/min: 85 km/h</title></circle>
-<circle cx="651.4" cy="180.2" r="9" fill="transparent"><title>2. Gang, 5000/min: 107 km/h</title></circle>
-<circle cx="800.2" cy="156.2" r="9" fill="transparent"><title>2. Gang, 6000/min: 128 km/h</title></circle>
-<path d="M130.4 247.9 L800.2 91.5" fill="none" stroke="#1baf7a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="800.2" cy="91.5" r="4" fill="#1baf7a" stroke="#ffffff" stroke-width="2"/>
-<text x="792.2" y="82.5" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">3. Gang · 185 km/h</text>
-<circle cx="204.8" cy="230.5" r="9" fill="transparent"><title>3. Gang, 2000/min: 62 km/h</title></circle>
-<circle cx="353.7" cy="195.7" r="9" fill="transparent"><title>3. Gang, 3000/min: 93 km/h</title></circle>
-<circle cx="502.5" cy="161.0" r="9" fill="transparent"><title>3. Gang, 4000/min: 124 km/h</title></circle>
-<circle cx="651.4" cy="126.2" r="9" fill="transparent"><title>3. Gang, 5000/min: 154 km/h</title></circle>
-<circle cx="800.2" cy="91.5" r="9" fill="transparent"><title>3. Gang, 6000/min: 185 km/h</title></circle>
-<path d="M130.4 238.4 L800.2 53.5" fill="none" stroke="#eda100" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-<circle cx="800.2" cy="53.5" r="4" fill="#eda100" stroke="#ffffff" stroke-width="2"/>
-<text x="792.2" y="44.5" text-anchor="end" font-size="12" font-weight="700" fill="#2d3748">4. Gang · 219 km/h</text>
-<circle cx="204.8" cy="217.8" r="9" fill="transparent"><title>4. Gang, 2000/min: 73 km/h</title></circle>
-<circle cx="353.7" cy="176.8" r="9" fill="transparent"><title>4. Gang, 3000/min: 110 km/h</title></circle>
-<circle cx="502.5" cy="135.7" r="9" fill="transparent"><title>4. Gang, 4000/min: 146 km/h</title></circle>
-<circle cx="651.4" cy="94.6" r="9" fill="transparent"><title>4. Gang, 5000/min: 183 km/h</title></circle>
-<circle cx="800.2" cy="53.5" r="9" fill="transparent"><title>4. Gang, 6000/min: 219 km/h</title></circle>
-<line x1="800.2" y1="30" x2="800.2" y2="300" stroke="#e53e3e" stroke-width="1" stroke-dasharray="4 3"/>
-<text x="794.2" y="316" text-anchor="end" font-size="10" fill="#e53e3e">Schaltdrehzahl</text>
-</svg><figcaption>Geschwindigkeit &uuml;ber Drehzahl im Jerico RH02374. Jede Linie ein Gang; der Punkt am rechten Ende ist die Ausdrehgeschwindigkeit bei 6000/min.</figcaption></figure>
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Getriebe</th><th>Gang</th><th>&Uuml;bersetzung</th><th>km/h je 1000/min</th><th>km/h bei 6000/min</th></tr></thead><tbody><tr><td>Jerico RH02374</td><td>1. Gang</td><td>2.588</td><td>14.1</td><td><strong>85</strong></td></tr><tr><td></td><td>2. Gang</td><td>1.714</td><td>21.3</td><td><strong>128</strong></td></tr><tr><td></td><td>3. Gang</td><td>1.182</td><td>30.9</td><td><strong>185</strong></td></tr><tr><td></td><td>4. Gang</td><td>1.000</td><td>36.5</td><td><strong>219</strong></td></tr><tr><td>Toploader Close</td><td>1. Gang</td><td>2.320</td><td>15.7</td><td><strong>94</strong></td></tr><tr><td></td><td>2. Gang</td><td>1.690</td><td>21.6</td><td><strong>130</strong></td></tr><tr><td></td><td>3. Gang</td><td>1.290</td><td>28.3</td><td><strong>170</strong></td></tr><tr><td></td><td>4. Gang</td><td>1.000</td><td>36.5</td><td><strong>219</strong></td></tr><tr><td>Toploader Wide</td><td>1. Gang</td><td>2.780</td><td>13.1</td><td><strong>79</strong></td></tr><tr><td></td><td>2. Gang</td><td>1.930</td><td>18.9</td><td><strong>114</strong></td></tr><tr><td></td><td>3. Gang</td><td>1.360</td><td>26.8</td><td><strong>161</strong></td></tr><tr><td></td><td>4. Gang</td><td>1.000</td><td>36.5</td><td><strong>219</strong></td></tr></tbody></table></div>
+        <div class="gearbox-toggles" style="margin-bottom:0.5rem;padding:0.4rem 0;"></div>
+        <figure class="viz-figure" style="margin:0;"><div style="width:100%;"><canvas id="speedChart" style="width:100%;"></canvas></div><figcaption>Geschwindigkeit &uuml;ber Drehzahl. Jede Linie ein Gang, jede Farbe ein Getriebe. Getriebe oben ein-/ausblenden.</figcaption></figure>
         <div class="info-box">Gerechnet mit 2.13 m Abrollumfang und Achse 3.50. Ein anderer Reifendruck oder eine andere Achse verschiebt alle Werte proportional.</div>
     </div>
 </div>
@@ -285,56 +222,10 @@
         <h2>4. Schaltpunkte</h2>
     </div>
     <div class="section-body">
-        <div class="table-wrapper"><table class="data-table"><thead><tr><th>Getriebe</th><th>Schaltung</th><th>Schalten bei [1/min]</th><th>bei</th><th>Drehzahl danach</th><th>Leistung danach</th></tr></thead><tbody><tr><td>Jerico RH02374</td><td>1 &rarr; 2</td><td><strong>6000</strong></td><td>85 km/h</td><td>3974</td><td>294 PS</td></tr><tr><td></td><td>2 &rarr; 3</td><td><strong>6000</strong></td><td>128 km/h</td><td>4138</td><td>305 PS</td></tr><tr><td></td><td>3 &rarr; 4</td><td><strong>6000</strong> <span style="font-weight:400;color:#718096;">(Schnittpunkt 5890)</span></td><td>185 km/h</td><td>5076</td><td>347 PS</td></tr><tr><td>Toploader Close</td><td>1 &rarr; 2</td><td><strong>6000</strong></td><td>94 km/h</td><td>4371</td><td>319 PS</td></tr><tr><td></td><td>2 &rarr; 3</td><td><strong>6000</strong></td><td>130 km/h</td><td>4580</td><td>330 PS</td></tr><tr><td></td><td>3 &rarr; 4</td><td><strong>6000</strong></td><td>170 km/h</td><td>4651</td><td>333 PS</td></tr><tr><td>Toploader Wide</td><td>1 &rarr; 2</td><td><strong>6000</strong></td><td>79 km/h</td><td>4165</td><td>306 PS</td></tr><tr><td></td><td>2 &rarr; 3</td><td><strong>6000</strong></td><td>114 km/h</td><td>4228</td><td>310 PS</td></tr><tr><td></td><td>3 &rarr; 4</td><td><strong>6000</strong></td><td>161 km/h</td><td>4412</td><td>321 PS</td></tr></tbody></table></div>
-        <div class="info-box"><strong>Der Schaltpunkt folgt aus dem Leistungsschnittpunkt:</strong> geschaltet wird dort, wo die Leistung im n&auml;chsten Gang die im aktuellen &uuml;bersteigt. Bei dieser Kurve liegt dieser Punkt in acht von neun Schaltungen &uuml;ber der Drehzahlgrenze &ndash; dort wird schlicht bis 6000/min ausgedreht. Die eine Ausnahme ist die Jerico-Schaltung 3&nbsp;&rarr;&nbsp;4 bei 5890/min, und der Unterschied ist rechnerisch: 345 PS nach der Schaltung gegen 344 PS davor. 110/min sind weniger, als eine angenommene Kurve hergibt &ndash; <strong>praktisch wird in jedem Gang an der Grenze geschaltet</strong>. Fr&uuml;her zu schalten kostet Leistung und l&auml;sst die Drehzahl noch tiefer fallen.</div>
-        <figure class="viz-figure"><svg viewBox="0 0 860 330" width="100%" role="img" aria-label="Drehzahl nach dem Schalten" style="display:block;max-width:100%;height:auto;">
-<line x1="56" y1="246.2" x2="830" y2="246.2" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="250.2" text-anchor="end" font-size="11" fill="#718096">3000</text>
-<line x1="56" y1="212.4" x2="830" y2="212.4" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="216.4" text-anchor="end" font-size="11" fill="#718096">3500</text>
-<line x1="56" y1="178.6" x2="830" y2="178.6" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="182.6" text-anchor="end" font-size="11" fill="#718096">4000</text>
-<line x1="56" y1="144.9" x2="830" y2="144.9" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="148.9" text-anchor="end" font-size="11" fill="#718096">4500</text>
-<line x1="56" y1="111.1" x2="830" y2="111.1" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="115.1" text-anchor="end" font-size="11" fill="#718096">5000</text>
-<line x1="56" y1="77.3" x2="830" y2="77.3" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="81.3" text-anchor="end" font-size="11" fill="#718096">5500</text>
-<line x1="56" y1="43.5" x2="830" y2="43.5" stroke="#e2e8f0" stroke-width="1"/>
-<text x="48" y="47.5" text-anchor="end" font-size="11" fill="#718096">6000</text>
-<line x1="56" y1="280" x2="830" y2="280" stroke="#a0aec0" stroke-width="1"/>
-<text x="830" y="314" text-anchor="end" font-size="11" fill="#718096"></text>
-<text x="18" y="20" font-size="11" fill="#718096">1/min</text>
-<rect x="114.0" y="180.4" width="46" height="99.6" rx="4" fill="#2a78d6"><title>Jerico RH02374, 1 → 2: 3974/min</title></rect>
-<text x="137.0" y="174.4" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">3974</text>
-<rect x="372.0" y="169.3" width="46" height="110.7" rx="4" fill="#2a78d6"><title>Jerico RH02374, 2 → 3: 4138/min</title></rect>
-<text x="395.0" y="163.3" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4138</text>
-<rect x="630.0" y="105.9" width="46" height="174.1" rx="4" fill="#2a78d6"><title>Jerico RH02374, 3 → 4: 5076/min</title></rect>
-<text x="653.0" y="99.9" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">5076</text>
-<text x="701.0" y="298" text-anchor="middle" font-size="11" fill="#718096">3 → 4</text>
-<rect x="162.0" y="153.6" width="46" height="126.4" rx="4" fill="#eb6834"><title>Toploader Close, 1 → 2: 4371/min</title></rect>
-<text x="185.0" y="147.6" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4371</text>
-<rect x="420.0" y="139.5" width="46" height="140.5" rx="4" fill="#eb6834"><title>Toploader Close, 2 → 3: 4580/min</title></rect>
-<text x="443.0" y="133.5" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4580</text>
-<rect x="678.0" y="134.7" width="46" height="145.3" rx="4" fill="#eb6834"><title>Toploader Close, 3 → 4: 4651/min</title></rect>
-<text x="701.0" y="128.7" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4651</text>
-<text x="701.0" y="298" text-anchor="middle" font-size="11" fill="#718096">3 → 4</text>
-<rect x="210.0" y="167.5" width="46" height="112.5" rx="4" fill="#1baf7a"><title>Toploader Wide, 1 → 2: 4165/min</title></rect>
-<text x="233.0" y="161.5" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4165</text>
-<rect x="468.0" y="163.2" width="46" height="116.8" rx="4" fill="#1baf7a"><title>Toploader Wide, 2 → 3: 4228/min</title></rect>
-<text x="491.0" y="157.2" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4228</text>
-<rect x="726.0" y="150.8" width="46" height="129.2" rx="4" fill="#1baf7a"><title>Toploader Wide, 3 → 4: 4412/min</title></rect>
-<text x="749.0" y="144.8" text-anchor="middle" font-size="11" font-weight="700" fill="#2d3748">4412</text>
-<text x="701.0" y="298" text-anchor="middle" font-size="11" fill="#718096">3 → 4</text>
-<rect x="70" y="14" width="10" height="10" rx="2" fill="#2a78d6"/>
-<text x="86" y="23" font-size="11" fill="#4a5568">Jerico RH02374</text>
-<rect x="270" y="14" width="10" height="10" rx="2" fill="#eb6834"/>
-<text x="286" y="23" font-size="11" fill="#4a5568">Toploader Close</text>
-<rect x="470" y="14" width="10" height="10" rx="2" fill="#1baf7a"/>
-<text x="486" y="23" font-size="11" fill="#4a5568">Toploader Wide</text>
-<line x1="56" y1="178.6" x2="830" y2="178.6" stroke="#e53e3e" stroke-width="1" stroke-dasharray="4 3"/>
-<text x="60" y="172.6" text-anchor="start" font-size="10" fill="#e53e3e">Drehmomentgipfel 4000/min</text>
-</svg><figcaption>Wo der Motor nach dem Schalten landet. Das ist der eigentliche Unterschied zwischen den drei Getrieben &ndash; die Ausdrehgeschwindigkeiten unterscheiden sich kaum, die Drehzahl nach dem Schalten sehr wohl.</figcaption></figure>
+        <div class="gearbox-toggles" style="margin-bottom:0.5rem;padding:0.4rem 0;"></div>
+        <figure class="viz-figure" style="margin:0 0 1rem;"><div style="width:100%;"><canvas id="shiftChart" style="width:100%;"></canvas></div><figcaption>Drehzahl nach dem Schalten (bei 6000/min). Hoehe = wo der Motor nach dem Schalten landet. Drehmomentgipfel bei 4000/min als rote Linie. Jedes Getriebe ist ein-/ausblendbar.</figcaption></figure>
+        <div class="info-box"><strong>Der Schaltpunkt folgt aus dem Leistungsschnittpunkt:</strong> geschaltet wird dort, wo die Leistung im n&auml;chsten Gang die im aktuellen &uuml;bersteigt. Bei dieser Kurve liegt dieser Punkt in acht von neun Schaltungen &uuml;ber der Drehzahlgrenze &ndash; dort wird schlicht bis 6000/min ausgedreht. <strong>Praktisch wird in jedem Gang an der Grenze geschaltet.</strong></div>
+        <figure class="viz-figure" style="margin:0;"><div style="width:100%;"><canvas id="rpmDropChart" style="width:100%;"></canvas></div><figcaption>Drehzahlverlust pro Schaltung. Je kuerzer der Balken, desto weniger Drehmoment geht beim Schalten verloren. Hier zeigt sich der Vorteil des Jerico bei 3&rarr;4 und der Nachteil bei 1&rarr;2.</figcaption></figure>
     </div>
 </div>
 

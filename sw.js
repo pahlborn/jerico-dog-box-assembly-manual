@@ -1,4 +1,4 @@
-var CACHE_NAME = 'jerico-v6';
+var CACHE_NAME = 'jerico-v7';
 // Relativ, nicht absolut: GitHub Pages unterscheidet Gross- und Kleinschreibung
 // im Pfad, und das Repository heisst "Jerico-...". Ein absoluter Pfad in der
 // falschen Schreibweise laesst cache.addAll scheitern - und damit die gesamte
@@ -19,6 +19,7 @@ var urlsToCache = [
   './findings.js',
   './changelog.js',
   './search.js',
+  './perf-charts.js',
   // Die beiden Werkbank-Dokumente offline mitnehmen (zusammen ~370 KB).
   // Der Gear Ratio Chart (A-03) bleibt draussen: 3,1 MB Scan, und
   // cache.addAll ist atomar - ein Abbruch liesse die Installation

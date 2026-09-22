@@ -13,6 +13,18 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v7',
+      date: '2026-09-22',
+      title: 'Interaktive Getriebediagramme',
+      changes: [
+        { type: 'neu', text: 'Neues perf-charts.js: Die statischen SVG-Tafeln und Vergleichstabellen in der Leistungsseite sind durch interaktive Canvas-Diagramme ersetzt. Alle drei Getriebe (Jerico RH02374, Toploader Close, Toploader Wide) sind per Checkbox einzeln ein- und ausblendbar.' },
+        { type: 'neu', text: 'Geschwindigkeitsdiagramm: Drehzahl vs. km/h mit allen vier Gaengen als Linien, unterscheidbar durch Strichmuster. Jedes Getriebe in seiner Farbe, Jerico betont.' },
+        { type: 'neu', text: 'Schaltpunkte-Diagramm: Balkendiagramm zeigt die Drehzahl nach dem Schalten bei 6000/min. Drehmomentgipfel als rote Referenzlinie. PS-Wert ueber jedem Balken.' },
+        { type: 'neu', text: 'Drehzahlverlust-Diagramm: Zeigt wie viel Drehzahl bei jeder Schaltung verloren geht - macht den Nachteil des Jerico bei 1->2 und den Vorteil bei 3->4 auf einen Blick sichtbar.' },
+        { type: 'intern', text: 'Alle Diagramme sind responsive und passen sich der Bildschirmbreite an. Retina/HiDPI-Unterstuetzung ueber devicePixelRatio.' }
+      ]
+    },
+    {
       version: 'v6',
       date: '2026-09-22',
       title: 'Eingabevalidierung, klarere Sync-Meldungen',
