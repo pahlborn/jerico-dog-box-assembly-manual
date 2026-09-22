@@ -297,9 +297,7 @@
         <label for="ghToken" style="font-size:0.78rem;font-weight:600;">GitHub Personal Access Token</label>
         <input type="password" id="ghToken" placeholder="github_pat_..." style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
         <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.5rem;">GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens<br>Berechtigung: <strong>Gists (Read and Write)</strong> und <strong>Contents (Read and Write)</strong> f&uuml;r dieses Repository (Foto-Upload).</div>
-        <label for="ghGistId" style="font-size:0.78rem;font-weight:600;">Gist-ID f&uuml;r den Ger&auml;teabgleich</label>
-        <input type="text" id="ghGistId" placeholder="z.B. 4f3c... oder komplette Gist-URL" style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
-        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.75rem;">Eigener Gist f&uuml;r dieses Getriebe &ndash; <strong>nicht</strong> der des Motor-Builds, sonst mischen sich die Daten. Ohne Gist-ID bleibt alles lokal auf diesem Ger&auml;t.</div>
+        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.75rem;">Der Datenspeicher wird beim Verbinden automatisch gefunden oder angelegt &ndash; kein manuelles Einrichten noetig. Auf einem zweiten Ger&auml;t denselben Token eingeben, die Daten werden automatisch abgeglichen.</div>
         <div style="display:flex;gap:0.4rem;justify-content:flex-end;">
             <button onclick="disconnectGist()" style="padding:0.4rem 0.8rem;border:1px solid #e53e3e;background:white;color:#e53e3e;border-radius:6px;cursor:pointer;font-size:0.78rem;">Trennen</button>
             <button onclick="closeSettings()" style="padding:0.4rem 0.8rem;border:1px solid var(--border);background:white;color:var(--text);border-radius:6px;cursor:pointer;font-size:0.78rem;">Abbrechen</button>

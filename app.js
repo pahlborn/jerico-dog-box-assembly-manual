@@ -67,8 +67,6 @@
     function openSettings() {
         var tok = document.getElementById('ghToken');
         if (tok) tok.value = getGistConfig().token;
-        var gid = document.getElementById('ghGistId');
-        if (gid) gid.value = window.FIXED_GIST_ID;
         updateConnectionStatus();
         var sm = document.getElementById('settingsModal');
         if (sm) sm.style.display = 'flex';
@@ -77,30 +75,59 @@
         var sm = document.getElementById('settingsModal');
         if (sm) sm.style.display = 'none';
     }
+    // Sucht einen bestehenden Gist anhand des Dateinamens.
+    async function findGistByFilename(token) {
+        var page = 1;
+        while (page <= 5) { // max 5 Seiten = 500 Gists
+            var res = await fetch('https://api.github.com/gists?per_page=100&page=' + page,
+                { headers: { 'Authorization': 'Bearer ' + token } });
+            if (!res.ok) return null;
+            var gists = await res.json();
+            if (gists.length === 0) break;
+            for (var i = 0; i < gists.length; i++) {
+                if (gists[i].files && gists[i].files[GIST_FILENAME]) return gists[i].id;
+            }
+            page++;
+        }
+        return null;
+    }
+    // Erstellt einen neuen Gist fuer dieses Projekt.
+    async function createGist(token) {
+        var files = {};
+        var localData = localStorage.getItem(STORAGE_KEY);
+        files[GIST_FILENAME] = { content: localData || '{}' };
+        var res = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ description: 'Jerico RH02374 - Geraeteabgleich', public: false, files: files })
+        });
+        if (!res.ok) return null;
+        var gist = await res.json();
+        return gist.id;
+    }
     async function saveSettings() {
         var tokEl = document.getElementById('ghToken');
-        var gidEl = document.getElementById('ghGistId');
         var token = tokEl ? tokEl.value.trim() : '';
-        var gid = gidEl ? gidEl.value.trim() : '';
-        // Auch eine komplette Gist-URL ist erlaubt - die ID steht am Ende.
-        var m = gid.match(/([0-9a-f]{20,})/i);
-        if (m) gid = m[1];
         if (!token) { showToast('Bitte Token eingeben!'); return; }
         try {
+            showToast('Verbinde...');
             var res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + token } });
             if (!res.ok) { showToast('Token ungueltig!'); return; }
             var user = await res.json();
             localStorage.setItem('gh_token', token);
+            // Gist automatisch finden oder erstellen
+            showToast('Suche Gist...');
+            var gid = await findGistByFilename(token);
             if (gid) {
-                var gres = await fetch('https://api.github.com/gists/' + gid, { headers: { 'Authorization': 'Bearer ' + token } });
-                if (!gres.ok) { showToast('Gist nicht erreichbar (Status ' + gres.status + ')'); return; }
-                localStorage.setItem(GIST_ID_KEY, gid);
-                window.FIXED_GIST_ID = gid;
+                showToast('Gist gefunden - verbinde...');
             } else {
-                localStorage.removeItem(GIST_ID_KEY);
-                window.FIXED_GIST_ID = '';
+                showToast('Kein Gist gefunden - lege neuen an...');
+                gid = await createGist(token);
+                if (!gid) { showToast('Gist konnte nicht erstellt werden'); return; }
             }
-            showToast('Verbunden als ' + user.login + (gid ? '' : ' (ohne Gist - nur lokal)'));
+            localStorage.setItem(GIST_ID_KEY, gid);
+            window.FIXED_GIST_ID = gid;
+            showToast('Verbunden als ' + user.login);
             updateSyncBadge(); updateConnectionStatus(); closeSettings();
         } catch (err) { showToast('Fehler: ' + err.message); }
     }
@@ -110,8 +137,6 @@
         window.FIXED_GIST_ID = '';
         var tokEl = document.getElementById('ghToken');
         if (tokEl) tokEl.value = '';
-        var gidEl = document.getElementById('ghGistId');
-        if (gidEl) gidEl.value = '';
         updateSyncBadge(); updateConnectionStatus();
         showToast('Verbindung getrennt.'); closeSettings();
     }

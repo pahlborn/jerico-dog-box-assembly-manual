@@ -13,6 +13,15 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v8',
+      date: '2026-09-22',
+      title: 'Gist-ID entfaellt, automatische Erkennung',
+      changes: [
+        { type: 'neu', text: 'Beim Verbinden genuegt jetzt der GitHub-Token. Die App sucht automatisch nach einem bestehenden Gist (anhand des Dateinamens "jerico-build-log-data.json"). Wird keiner gefunden, wird einer angelegt. Auf einem zweiten Geraet denselben Token eingeben - die Daten werden automatisch abgeglichen.' },
+        { type: 'fix', text: 'Das Gist-ID-Eingabefeld ist aus dem Einstellungsdialog entfernt. Kein manuelles Kopieren von IDs mehr noetig.' }
+      ]
+    },
+    {
       version: 'v7',
       date: '2026-09-22',
       title: 'Interaktive Getriebediagramme',
