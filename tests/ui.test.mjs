@@ -55,6 +55,28 @@ await test('changelog.js kennt die aktuelle Version', async () => {
     'Kein Changelog-Eintrag fuer ' + appVersion);
 });
 
+await test('version.js nennt einen Freigabezeitpunkt', async () => {
+  const src = fs.readFileSync(path.join(REPO_ROOT, 'version.js'), 'utf8');
+  const iso = (src.match(/APP_BUILT\s*=\s*['"]([^'"]+)['"]/) || [])[1];
+  assert(iso, 'APP_BUILT fehlt in version.js');
+  assert(!isNaN(new Date(iso).getTime()), 'APP_BUILT ist kein gueltiges Datum: ' + iso);
+});
+
+await test('Vollbild-Overlays sperren die Seite iOS-tauglich', async () => {
+  // body{overflow:hidden} allein reicht auf iOS nicht - ohne festgesetzten
+  // body wandert die Seite unter dem Overlay weg.
+  const js = fs.readFileSync(path.join(REPO_ROOT, 'gallery.js'), 'utf8');
+  assert(/function sperreSeite/.test(js), 'sperreSeite() fehlt');
+  assert(/b\.style\.position = 'fixed'/.test(js), 'Sperre setzt den body nicht fest');
+  const app = fs.readFileSync(path.join(REPO_ROOT, 'app.js'), 'utf8');
+  assert(/sperreSeite/.test(app), 'Glossar benutzt die Sperre nicht');
+});
+
+await test('Zusammenbau zeigt keine Befunde-Zeile in der Kopfzeile', async () => {
+  const text = fs.readFileSync(path.join(REPO_ROOT, 'build-log.html'), 'utf8');
+  assert(!/findings-overview/.test(text), 'Befunde-Zeile steht noch in der Kopfzeile');
+});
+
 await test('sw.js listet nur Dateien, die es gibt', async () => {
   const sw = fs.readFileSync(path.join(REPO_ROOT, 'sw.js'), 'utf8');
   const urls = [...sw.matchAll(/'\.\/([^']*)'/g)].map((m) => m[1]);
@@ -117,7 +139,8 @@ for (const file of PAGES) {
       return { text: el.textContent.trim(), imTitel: !!el.closest('.header-title') };
     });
     assert(shown, 'Kein #appVersion auf ' + file);
-    assert(/^v\d+$/.test(shown.text), 'Version sieht falsch aus: ' + shown.text);
+    assert(/^v\d+ \u00b7 \d{2}\.\d{2}\.\d{4}, \d{2}:\d{2}$/.test(shown.text),
+      'Version sieht falsch aus: ' + shown.text);
     assert(shown.imTitel, 'Version steht nicht im Titelblock');
     await p.close();
   });
@@ -345,7 +368,13 @@ await test('kein unbelegter Herstellerstatus, keine pauschale Quellenaussage', a
   for (const datei of PAGES) {
     const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
     assert(!/wahrscheinlich inaktiv/.test(text), datei + ': unbelegte Aussage zum Hersteller');
-    assert(!/Alle Werte stammen aus der OEM/.test(text), datei + ': pauschale Quellenaussage');
+    // Auf das Muster pruefen, nicht auf einen Wortlaut: die enge Fassung hat
+    // "Alle Angaben auf dieser Seite stammen aus Klasse A" in specs.html
+    // acht Versionen lang uebersehen.
+    assert(!/Alle (Werte|Angaben)[^<.]{0,60}stammen aus/.test(text),
+      datei + ': pauschale Quellenaussage');
+    assert(!/B = verifizierte Sekund/.test(text),
+      datei + ': veraltetes Quellenklassen-Schema A/B/C statt A bis F');
   }
 });
 

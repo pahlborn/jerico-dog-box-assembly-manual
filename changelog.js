@@ -13,6 +13,18 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v11',
+      date: '2026-09-22',
+      title: 'Galerie auf iPad, Aufraeumen',
+      changes: [
+        { type: 'fix', text: 'Galerie und Glossar oeffneten auf dem iPad mit dem Kopf oberhalb des Bildschirms - Titel und Schliessen-Knopf waren nicht zu sehen, erst Runterscrollen brachte sie herein. Ursache: body{overflow:hidden} sperrt die Seite auf iOS nicht, Safari scrollt per Touch weiter, und das Overlay bleibt dabei am Viewport. Jetzt wird der body selbst festgesetzt und der Scrollstand beim Schliessen wiederhergestellt. Betraf beide Projekte, weil beide dieselbe gallery.js benutzen.' },
+        { type: 'neu', text: 'Die Versionsnummer im Kopf nennt jetzt auch den Freigabezeitpunkt. Die Nummer allein sagt nicht, ob ein Geraet den neuen Stand geladen hat.' },
+        { type: 'fix', text: 'Specs: Kapitel "Quellenregister" entfernt. Es wiederholte die Quellen der Uebersichtsseite und war dabei der schlechtere Stand: alte Fremdlinks statt der lokalen Kopien, kein Hinweis auf den toten A-04-Link, das alte Klassenschema A/B/C statt A bis F - und der Satz "Alle Angaben auf dieser Seite stammen aus Klasse A", der in v3 als falsch erkannt und anderswo schon gestrichen war. Der Vorrang des englischen Originals stand nur dort und ist in die Quellenklassen-Legende oben gewandert.' },
+        { type: 'fix', text: 'Zusammenbau: die Zeile "Offene Befunde" in der Kopfzeile ist weg. Die Befunde stehen ohnehin an jedem Kapitel.' },
+        { type: 'neu', text: 'Der Test gegen pauschale Quellenaussagen greift jetzt auf das Muster statt auf einen einzelnen Wortlaut - die alte Fassung hat genau diesen Satz uebersehen. Dazu Tests fuer den Freigabezeitpunkt und die Scroll-Sperre.' }
+      ]
+    },
+    {
       version: 'v10',
       date: '2026-09-22',
       title: 'Kuehlsystem, Schnittzeichnungen, Uebersicht umgebaut',
