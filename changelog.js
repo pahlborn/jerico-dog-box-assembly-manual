@@ -13,6 +13,15 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v4',
+      date: '2026-09-22',
+      title: 'Notion-Quellen nachgezogen',
+      changes: [
+        { type: 'fix', text: 'Die Notion-Seiten sind jetzt auf demselben Stand wie diese Anleitung: der Kupplungsschlupf-Satz ist im Quellenregister als Fehluebertragung markiert, das Break-In-Sheet hat den fehlenden Abschnitt "FOR CLUTCHLESS DRAG RACE TRANSMISSIONS ONLY" samt Begruendung, und in der deutschen Uebersetzung sind Schlagwerte, Einbautiefe der Vorgelegewelle und die verschobenen Gangnummern korrigiert.' },
+        { type: 'fix', text: 'Der Hinweis im Build Log sagt jetzt, was gilt (dritter, zweiter, erster Gang), statt nur die Notion-Fassung zu ruegen - die ist korrigiert.' }
+      ]
+    },
+    {
       version: 'v3',
       date: '2026-09-21',
       title: 'Gegen die Original-PDFs geprueft',
