@@ -13,6 +13,14 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v14',
+      date: '2026-09-23',
+      title: 'Menue aufgeraeumt',
+      changes: [
+        { type: 'verbessert', text: 'Manueller Cloud-Sync-Button aus dem Menue entfernt (Sync passiert automatisch). "Einstellungen" umbenannt in "Cloud-Sync".' }
+      ]
+    },
+    {
       version: 'v13',
       date: '2026-09-23',
       title: 'Nachschlagekarte Betriebsmittel & Anzugswerte',

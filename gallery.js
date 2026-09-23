@@ -622,7 +622,7 @@ async function _uploadToGitHub(group, base64data, filename, retries) {
 async function addPhoto(group) {
     var lang = document.documentElement.lang || 'de';
     if (!getGistConfig().token) {
-        showToast(lang === 'de' ? 'Bitte zuerst GitHub-Token in den Einstellungen konfigurieren' : 'Please configure GitHub token in settings first');
+        showToast(lang === 'de' ? 'Bitte zuerst GitHub-Token unter Cloud-Sync konfigurieren' : 'Please configure GitHub token in Cloud Sync first');
         return;
     }
     // Gegen den echten Repo-Stand pruefen, nicht gegen eine lokale Liste -

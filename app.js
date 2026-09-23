@@ -713,7 +713,7 @@
         'Zusammenbau': 'Assembly',
         'Alles einklappen': 'Collapse all',
         'Alles aufklappen': 'Expand all',
-        'Einstellungen': 'Settings',
+        'Cloud-Sync': 'Cloud Sync',
         'Verbinden': 'Connect',
         'Trennen': 'Disconnect',
         'Abbrechen': 'Cancel',
