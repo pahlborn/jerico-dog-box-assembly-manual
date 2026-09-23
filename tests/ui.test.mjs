@@ -116,6 +116,61 @@ await test('Kuehlsystem-Messwerte behalten ihre Feldnamen', async () => {
   }
 });
 
+await test('Nachschlagekarte und Specs nennen dieselben Werte', async () => {
+  // Der eigentliche Zweck der Datendatei: die Karte ist eine zweite Ansicht
+  // derselben Werte, keine zweite Quelle. Laufen sie auseinander, wird dieser
+  // Test rot - statt dass an der Werkbank zwei Zahlen stehen.
+  const p = await open('specs.html');
+  const daten = await p.page.evaluate(() => {
+    const raus = {};
+    REFERENCE.gruppen.forEach((g) => {
+      raus[g.id] = g.zeilen.map((z) => z.map((c) => c.replace(/<[^>]+>/g, '')));
+    });
+    return raus;
+  });
+  await p.close();
+
+  const specs = fs.readFileSync(path.join(REPO_ROOT, 'specs.html'), 'utf8');
+  // Vergleich auf der gerenderten Zeichenkette, nicht auf dem Markup: die
+  // Specs setzen Entitaeten teils anders, der Wert ist derselbe.
+  const flach = (t) => t.replace(/<[^>]+>/g, '').replace(/&[a-z]+;|&#\d+;/g, ' ')
+                        .replace(/\s+/g, ' ').trim().toLowerCase();
+  const heuhaufen = flach(specs);
+
+  const fehlend = [];
+  for (const [gruppe, zeilen] of Object.entries(daten)) {
+    for (const zeile of zeilen) {
+      // Erste Spalte ist die Bezeichnung - die muss in specs.html vorkommen.
+      const nadel = flach(zeile[0]);
+      if (nadel.length > 8 && !heuhaufen.includes(nadel)) {
+        fehlend.push(gruppe + ': ' + zeile[0]);
+      }
+    }
+  }
+  assertEqual(fehlend, [], 'Karte nennt Zeilen, die specs.html nicht kennt');
+});
+
+await test('Nachschlagekarte ist auf jeder Seite erreichbar', async () => {
+  for (const datei of PAGES) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    assert(text.includes('reference.js'), datei + ': reference.js nicht eingebunden');
+    assert(text.includes('showReference()'), datei + ': kein Knopf fuer die Karte');
+  }
+  // Das Overlay entsteht erst beim Oeffnen - es soll nicht in jeder Seite
+  // als totes Markup liegen, so wie das Glossar.
+  const p = await open('build-log.html');
+  const vorher = await p.page.evaluate(() => !!document.getElementById('guide-reference'));
+  assertEqual(vorher, false, 'Karte liegt schon vor dem Oeffnen im DOM');
+  const offen = await p.page.evaluate(() => {
+    showReference();
+    const el = document.getElementById('guide-reference');
+    return { da: !!el, zeilen: document.querySelectorAll('#guide-reference tr.ref-row').length };
+  });
+  assert(offen.da, 'Karte wurde nicht gebaut');
+  assert(offen.zeilen > 25, 'Karte hat nur ' + offen.zeilen + ' Zeilen');
+  await p.close();
+});
+
 await test('sw.js listet nur Dateien, die es gibt', async () => {
   const sw = fs.readFileSync(path.join(REPO_ROOT, 'sw.js'), 'utf8');
   const urls = [...sw.matchAll(/'\.\/([^']*)'/g)].map((m) => m[1]);
