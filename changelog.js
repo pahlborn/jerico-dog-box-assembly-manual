@@ -13,6 +13,17 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v12',
+      date: '2026-09-23',
+      title: 'Kuehlsystem entflochten',
+      changes: [
+        { type: 'fix', text: 'Die Spezifikationen hatten zweimal ein Kuehlsystem-Kapitel - Nummer 7 und Nummer 9, beide mit derselben Element-ID sec-cooling und derselben Galerie-ID. Doppelte IDs brechen Ankerlinks, und der Fotozaehler aktualisierte sich nur an einer der beiden Stellen. Zusammengefuehrt zu einem Kapitel 7.' },
+        { type: 'fix', text: 'Dabei war dreierlei vermischt. Die Spezifikation (Oelkreislauf, Kuehlerposition, Anschluesse, Teileliste der Pumpe) bleibt in Kapitel 7. Die Montageschritte - die sechs Punkte "Oelpumpe zerlegen" aus Anhang 2 - stehen jetzt im Build Log bei Schritt 4, wo Tail Housing und Adapterplatte abgenommen werden. Der Ist-Stand mit den offenen Punkten (Kuehler, Luefter, Leitungen, Auswirkung auf die Gesamtlaenge, Messwertfelder) steht in Kapitel 9 "Offene Validierungen & Abhaengigkeiten", wo die anderen offenen Punkte schon stehen.' },
+        { type: 'fix', text: 'Widerspruch aufgeloest: Kapitel 7 fuehrte einen Derale Oelkuehler und einen Derale Inline Fan Thermostat als gesetzte Spezifikation, waehrend die Bestandsaufnahme beide als "Produkt noch nachzureichen" auswies. Sie sind jetzt als Kandidat vermerkt und als offen gefuehrt, nicht als Vorgabe. Die Messwertfelder behalten ihre Feldnamen, eingetragene Werte bleiben erhalten.' },
+        { type: 'neu', text: 'Leistungsseite: der Ventiltrieb ist praeziser benannt - Flachstoessel-Nockenwelle mit Rollenkipphebeln.' }
+      ]
+    },
+    {
       version: 'v11',
       date: '2026-09-22',
       title: 'Galerie auf iPad, Aufraeumen',
