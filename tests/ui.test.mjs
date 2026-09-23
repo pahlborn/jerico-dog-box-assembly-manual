@@ -77,6 +77,45 @@ await test('Zusammenbau zeigt keine Befunde-Zeile in der Kopfzeile', async () =>
   assert(!/findings-overview/.test(text), 'Befunde-Zeile steht noch in der Kopfzeile');
 });
 
+await test('keine doppelten Element-IDs auf einer Seite', async () => {
+  // Zwei Kuehlsystem-Kapitel trugen beide id="sec-cooling" und beide die
+  // Galerie-ID spec_cooling_photos. Doppelte IDs brechen Ankerlinks, und der
+  // Fotozaehler aktualisierte sich nur an einer der beiden Stellen.
+  for (const datei of PAGES) {
+    const text = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    const ids = [...text.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]);
+    const gesehen = new Set();
+    const doppelt = [];
+    for (const id of ids) {
+      if (gesehen.has(id)) doppelt.push(id);
+      gesehen.add(id);
+    }
+    assertEqual(doppelt, [], datei + ': doppelte IDs');
+  }
+});
+
+await test('Montageschritte stehen im Build Log, nicht in den Specs', async () => {
+  // Die Spezifikationen beschreiben, was das Getriebe ist. Was man tut,
+  // gehoert an den Arbeitsschritt.
+  const specs = fs.readFileSync(path.join(REPO_ROOT, 'specs.html'), 'utf8');
+  const bl = fs.readFileSync(path.join(REPO_ROOT, 'build-log.html'), 'utf8');
+  assert(bl.includes('Laufradwelle aus der Pumpe herausdr'),
+    'Zerlegeschritte der Oelpumpe fehlen im Build Log');
+  assert(!specs.includes('Laufradwelle aus der Pumpe herausdr'),
+    'Zerlegeschritte stehen noch in den Spezifikationen');
+});
+
+await test('Kuehlsystem-Messwerte behalten ihre Feldnamen', async () => {
+  // Die Werte haengen am data-field, nicht an der Position. Ein umbenanntes
+  // Feld verliert still, was jemand eingetragen hat.
+  const specs = fs.readFileSync(path.join(REPO_ROOT, 'specs.html'), 'utf8');
+  for (const f of ['cool_length_base', 'cool_length_pump', 'cool_length_diff',
+                   'cool_cooler_product', 'cool_an_size', 'comment_cooling']) {
+    const n = (specs.match(new RegExp('data-field="' + f + '"', 'g')) || []).length;
+    assertEqual(n, 1, 'Feld ' + f + ' kommt ' + n + ' mal vor, erwartet genau einmal');
+  }
+});
+
 await test('sw.js listet nur Dateien, die es gibt', async () => {
   const sw = fs.readFileSync(path.join(REPO_ROOT, 'sw.js'), 'utf8');
   const urls = [...sw.matchAll(/'\.\/([^']*)'/g)].map((m) => m[1]);
