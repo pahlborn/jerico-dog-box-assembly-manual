@@ -9,12 +9,12 @@
  */
 (function (global) {
   'use strict';
-  global.APP_VERSION = 'v12';
+  global.APP_VERSION = 'v13';
 
   // Freigabezeitpunkt. Es gibt keinen Build-Schritt, der ihn setzen koennte -
   // also wird er bei jedem Versionssprung von Hand mitgezogen. Die Nummer
   // allein sagt nicht, ob ein Geraet den neuen Stand geladen hat.
-  global.APP_BUILT = '2026-09-23T06:35:00+02:00';
+  global.APP_BUILT = '2026-09-23T07:00:00+02:00';
 
   // "DD.MM.YYYY, hh:mm" - ohne Sekunden, die interessieren niemanden.
   global.formatBuilt = function (iso) {

@@ -110,28 +110,27 @@
     async function saveSettings() {
         var tokEl = document.getElementById('ghToken');
         var token = tokEl ? tokEl.value.trim() : '';
-        if (!token) { showToast('Bitte Token eingeben!'); return; }
+        if (!token) { showToast('Bitte Token eingeben!', { sticky: true, isError: true }); return; }
         try {
             showToast('Verbinde...');
             var res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + token } });
-            if (!res.ok) { showToast('Token ungueltig!'); return; }
+            if (!res.ok) { showToast('Token ungueltig!', { sticky: true, isError: true }); return; }
             var user = await res.json();
             localStorage.setItem('gh_token', token);
-            // Gist automatisch finden oder erstellen
             showToast('Suche Gist...');
             var gid = await findGistByFilename(token);
             if (gid) {
-                showToast('Gist gefunden - verbinde...');
+                showToast('Gist gefunden...');
             } else {
-                showToast('Kein Gist gefunden - lege neuen an...');
+                showToast('Lege neuen Gist an...');
                 gid = await createGist(token);
-                if (!gid) { showToast('Gist konnte nicht erstellt werden'); return; }
+                if (!gid) { showToast('Gist konnte nicht erstellt werden', { sticky: true, isError: true }); return; }
             }
             localStorage.setItem(GIST_ID_KEY, gid);
             window.FIXED_GIST_ID = gid;
-            showToast('Verbunden als ' + user.login);
             updateSyncBadge(); updateConnectionStatus(); closeSettings();
-        } catch (err) { showToast('Fehler: ' + err.message); }
+            // Erfolg: kein Toast, Badge wechselt auf gruen
+        } catch (err) { showToast('Verbindungsfehler: ' + err.message, { sticky: true, isError: true }); }
     }
     function disconnectGist() {
         localStorage.removeItem('gh_token');
@@ -182,26 +181,30 @@
 
     async function syncFromCloud() {
         if (!isGistConfigured()) { openSettings(); return; }
-        showToast('Lade aus Cloud...');
         isLoading = true;
         try {
             var res = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID,
                 { headers: { 'Authorization': 'Bearer ' + getGistConfig().token } });
-            if (!res.ok) { isLoading = false; showToast('Cloud-Fehler (Status ' + res.status + ')'); return; }
+            if (!res.ok) {
+                isLoading = false;
+                showToast('Sync-Fehler: Status ' + res.status, { sticky: true, isError: true });
+                return;
+            }
             var gist = await res.json();
             var file = gist.files && gist.files[GIST_FILENAME];
-            if (!file) { isLoading = false; showToast('Keine Cloud-Daten gefunden'); return; }
+            if (!file) { isLoading = false; return; }
             var cloudData = JSON.parse(file.content);
             var localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            // Feldweise zusammenfuehren: der juengere Zeitstempel gewinnt, ein
-            // geleertes Feld also auch (siehe field-sync.js).
             var merged = FieldSync.mergeRecords(cloudData, localData);
             applyData(merged);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
             if (await Findings.pull(gist, getGistConfig().token)) renderAllFindings();
             isLoading = false; updateSaveStatus();
-            showToast('Cloud-Daten geladen!');
-        } catch (err) { isLoading = false; showToast('Cloud-Fehler: ' + err.message); }
+            // Erfolg: kein Toast
+        } catch (err) {
+            isLoading = false;
+            showToast('Sync-Fehler: ' + err.message, { sticky: true, isError: true });
+        }
     }
 
     // ==== AUF- UND ZUKLAPPEN ====
@@ -353,8 +356,8 @@
     async function saveData() {
         var merged = saveFieldsLocal();
         updateSaveStatus();
-        if (!isGistConfigured()) { showToast('Lokal gespeichert (kein Sync)'); return; }
-        if (!navigator.onLine) { showToast('Offline gespeichert'); return; }
+        // Kein Sync moeglich - still lokal speichern, kein Toast
+        if (!isGistConfigured() || !navigator.onLine) return;
         try {
             var files = {};
             files[GIST_FILENAME] = { content: JSON.stringify(merged, null, 2) };
@@ -363,12 +366,14 @@
                 headers: { 'Authorization': 'Bearer ' + getGistConfig().token, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ files: files })
             });
-            if (res.ok) { showToast('Gespeichert'); }
-            else {
+            if (!res.ok) {
                 var errText = ''; try { errText = (await res.json()).message || ''; } catch(e) {}
-                showToast('Gespeichert, Sync-Fehler: ' + (errText || 'Status ' + res.status));
+                showToast('Sync-Fehler: ' + (errText || 'Status ' + res.status), { sticky: true, isError: true });
             }
-        } catch (err) { showToast('Gespeichert, Sync-Fehler: ' + err.message); }
+            // Erfolg: kein Toast - der Sync-Badge zeigt den Status
+        } catch (err) {
+            showToast('Sync-Fehler: ' + err.message, { sticky: true, isError: true });
+        }
     }
 
     function loadData() {
@@ -411,7 +416,23 @@
         el.innerHTML = (txt ? '<span>' + txt + '</span> ' : '') + (badge ? badge.outerHTML : '');
     }
 
-    function showToast(msg) {
+    /**
+     * Toast-System.
+     *
+     * Konzept:
+     *   - Erfolgs-Toasts werden NICHT mehr angezeigt. Der Sync-Badge im
+     *     Header reicht (gruen = laeuft).
+     *   - Fehler-Toasts bleiben stehen, bis der Benutzer sie aktiv schliesst.
+     *   - Fehler werden zusaetzlich ins Gist-Fehlerprotokoll geschrieben,
+     *     damit sie spaeter auswertbar sind.
+     *
+     * @param {string} msg  - Meldungstext
+     * @param {Object} [opts]
+     * @param {boolean} [opts.sticky] - bleibt stehen bis manuell geschlossen
+     * @param {boolean} [opts.isError] - wird ins Fehlerprotokoll geschrieben
+     */
+    function showToast(msg, opts) {
+        opts = opts || {};
         var t = document.getElementById('toast');
         if (!t) {
             t = document.createElement('div');
@@ -419,10 +440,59 @@
             t.className = 'toast';
             document.body.appendChild(t);
         }
-        t.textContent = msg;
+        // Schliessen-Knopf fuer sticky Toasts
+        if (opts.sticky || opts.isError) {
+            t.innerHTML = '<span>' + msg + '</span><button onclick="this.parentElement.classList.remove(\'show\')" style="background:none;border:none;color:inherit;font-size:1.1rem;cursor:pointer;margin-left:0.5rem;padding:0 0.3rem;line-height:1;">&times;</button>';
+        } else {
+            t.textContent = msg;
+        }
+        if (opts.isError) t.classList.add('toast-error');
+        else t.classList.remove('toast-error');
         t.classList.add('show');
         clearTimeout(t._timer);
-        t._timer = setTimeout(function () { t.classList.remove('show'); }, 2500);
+        if (!opts.sticky && !opts.isError) {
+            t._timer = setTimeout(function () { t.classList.remove('show'); }, 2500);
+        }
+        // Fehler ins Gist-Protokoll schreiben
+        if (opts.isError) logErrorToGist(msg);
+    }
+
+    /** Fehler ins Gist-Fehlerprotokoll schreiben. */
+    async function logErrorToGist(msg) {
+        try {
+            if (!isGistConfigured() || !navigator.onLine) return;
+            var cfg = getGistConfig();
+            var logFile = GIST_FILENAME.replace('.json', '-errors.json');
+            // Bestehenden Log lesen
+            var res = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID,
+                { headers: { 'Authorization': 'Bearer ' + cfg.token } });
+            if (!res.ok) return;
+            var gist = await res.json();
+            var existing = [];
+            if (gist.files && gist.files[logFile]) {
+                try { existing = JSON.parse(gist.files[logFile].content); } catch (e) {}
+            }
+            // Neuen Eintrag anhaengen (max 50 Eintraege behalten)
+            var devId = typeof FieldSync !== 'undefined' ? FieldSync.getDeviceId() : 'unknown';
+            var devName = typeof FieldSync !== 'undefined' ? FieldSync.getDeviceName() : '';
+            existing.push({
+                time: new Date().toISOString(),
+                device: devId,
+                deviceName: devName,
+                page: location.pathname.split('/').pop() || 'unknown',
+                version: typeof APP_VERSION === 'string' ? APP_VERSION : '',
+                error: msg
+            });
+            if (existing.length > 50) existing = existing.slice(-50);
+            // Zurueckschreiben
+            var files = {};
+            files[logFile] = { content: JSON.stringify(existing, null, 2) };
+            await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID, {
+                method: 'PATCH',
+                headers: { 'Authorization': 'Bearer ' + cfg.token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ files: files })
+            });
+        } catch (e) { console.error('[Fehlerprotokoll] Schreiben fehlgeschlagen:', e.message); }
     }
 
     function exportJSON() {
@@ -460,7 +530,7 @@
                 }
                 updateSaveStatus();
                 showToast('Importiert');
-            } catch (err) { showToast('Import fehlgeschlagen: ' + err.message); }
+            } catch (err) { showToast('Import fehlgeschlagen: ' + err.message, { sticky: true, isError: true }); }
             event.target.value = '';
         };
         reader.readAsText(file);
@@ -830,6 +900,12 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(function () { /* offline ist optional */ });
         }
+        // Automatisch syncen, wenn die Verbindung wiederkommt
+        window.addEventListener('online', function () {
+            if (isGistConfigured()) {
+                saveData(); // pusht lokale Aenderungen still hoch
+            }
+        });
     });
 
     // ==== NACH AUSSEN ====

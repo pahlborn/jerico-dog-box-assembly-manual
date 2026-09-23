@@ -258,8 +258,7 @@ html[lang="de"] .guide-block .en, html[lang="de"] .warning-box .en,
         .progress-bar { background: var(--border); border-radius: 10px; height: 8px; margin-top: 0.4rem; overflow: hidden; }
 .progress-fill { background: var(--success); height: 100%; border-radius: 10px; transition: width 0.3s; }
 .progress-text { font-size: 0.68rem; color: var(--text-light); margin-top: 0.15rem; }
-.toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a202c; color: white; padding: 0.6rem 1.2rem; border-radius: 10px; font-size: 0.82rem; opacity: 0; transition: all 0.3s; z-index: 9999; }
-.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+/* Toast-Styles sind weiter unten konsolidiert (Zeile ~485) */
 .lightbox { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 8000; align-items: center; justify-content: center; flex-direction: column; padding: 1rem; }
 .lightbox.show { display: flex; }
 .lightbox img { max-width: 95%; max-height: 80vh; border-radius: 8px; }
@@ -482,7 +481,8 @@ textarea:focus { outline: none; border-color: var(--primary-light); background: 
 mark.search-hl { background: #fefcbf; color: #744210; padding: 0 1px; border-radius: 2px; }
 mark.search-hl.active { background: #ed8936; color: white; }
 /* ---- Toast ---- */
-        .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: white; padding: 0.65rem 1.3rem; border-radius: 10px; font-size: 0.82rem; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10000; transition: transform 0.3s ease; }
+        .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: white; padding: 0.65rem 1.3rem; border-radius: 10px; font-size: 0.82rem; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10000; transition: transform 0.3s ease; display: flex; align-items: center; max-width: calc(100vw - 2rem); }
+        .toast-error { background: #c53030; }
 /* ---- Mobile ---- */
         @media (max-width: 600px) {
             .header-title { font-size: 0.7rem; padding: 0 0.4rem; }
