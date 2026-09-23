@@ -14,6 +14,7 @@ var urlsToCache = [
   './field-sync.js',
   './validation.js',
   './version.js',
+  './reference.js',
   './gallery.js',
   './gallery.css',
   './findings.js',

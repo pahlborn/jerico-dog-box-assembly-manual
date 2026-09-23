@@ -804,6 +804,9 @@
         // Vollbild-Overlay und lief auf iOS in denselben Fehler.
         if (typeof sperreSeite === 'function') sperreSeite();
         else document.body.style.overflow = 'hidden';
+        // Die runden Knoepfe liegen ueber dem Overlay (z-index 900 gegen 500)
+        // und standen sonst mitten in der Tabelle.
+        document.body.classList.add('overlay-offen');
         if (id === 'guide-glossary') updateGlossaryCount();
     }
     function hideGuide(id) {
@@ -811,6 +814,7 @@
         if (el) el.classList.remove('show');
         if (typeof gibSeiteFrei === 'function') gibSeiteFrei();
         else document.body.style.overflow = '';
+        document.body.classList.remove('overlay-offen');
     }
     function filterGlossary() {
         var q = (document.getElementById('glossarySearch') || {}).value || '';

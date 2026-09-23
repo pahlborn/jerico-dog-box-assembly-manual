@@ -15,6 +15,16 @@
     {
       version: 'v13',
       date: '2026-09-23',
+      title: 'Nachschlagekarte Betriebsmittel & Anzugswerte',
+      changes: [
+        { type: 'neu', text: 'Neue Karte hinter dem blauen Schraubenschluessel rechts, auf jeder Seite: Anzugsmomente, Schmierstoffe und Dichtmittel, Oel und Service - mit Suchfeld wie im Glossar. Sie ist ein Overlay, keine eigene Seite: wer an der Werkbank einen Wert nachschlaegt, verliert seinen Schritt im Build Log nicht. Bei geoeffneter Karte druckt Strg+P eine Werkstattfassung ohne Bedienelemente.' },
+        { type: 'neu', text: 'Die Werte stehen in reference.js als Daten, die Karte wird daraus gebaut - nicht als vierte handgeschriebene Kopie. Das Glossar liegt als fertiges Markup in jeder Seite, viermal dieselben 25 KB; bei Werten, die auch in den Spezifikationen stehen, ist das die Falle, an der die zwei Kuehlsystem-Kapitel und das Quellenregister auseinandergelaufen sind. Ein Test vergleicht die Karte gegen specs.html und wird rot, sobald eine Zeile nur noch an einer Stelle steht.' },
+        { type: 'neu', text: 'Das Overlay entsteht erst beim ersten Oeffnen, statt auf jeder Seite ungenutzt im DOM zu liegen.' }
+      ]
+    },
+    {
+      version: 'v13',
+      date: '2026-09-23',
       title: 'Stilles Speichern, Fehlerprotokoll, Auto-Reconnect',
       changes: [
         { type: 'verbessert', text: 'Speichern zeigt keinen Toast mehr bei Erfolg. Sync-Badge im Header (gruen/rot) reicht als Statusanzeige.' },
