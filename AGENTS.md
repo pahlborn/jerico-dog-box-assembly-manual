@@ -102,6 +102,10 @@ entlarvt.
   erlaubter Typen. Die haette den Fehler durchgelassen, um den es ging - ein
   unbekannter Typ kommt in so einer Liste einfach nicht vor. Jetzt gegen die
   tatsaechlich benutzten.
+- v27: der Toast trug die Klasse 'show', aber die CSS-Regel dazu fehlte - er
+  stand 76 px unter dem Fensterrand. Ein Test auf classList.contains('show')
+  waere die ganze Zeit gruen gewesen. Geprueft wird jetzt die Lage im Fenster.
+  **Die Regel daraus:** sichtbar heisst gemessen, nicht "Klasse gesetzt".
 
 **Und ein Umkehrfall aus v25:** eine Pruefung schlug fehl, obwohl der Code
 richtig war. Der Service Worker war im Testkontext aktiv und fing die

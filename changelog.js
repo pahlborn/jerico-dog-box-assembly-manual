@@ -13,6 +13,17 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v27',
+      date: '2026-10-19',
+      time: '12:40',
+      title: 'Meldungen sind wieder sichtbar',
+      changes: [
+        { type: 'fix', text: 'Keine einzige Meldung dieser App war sichtbar. Die Regel .toast.show fehlte in styles.css - sie ist beim Zusammenlegen der Seitenstile verlorengegangen. Ohne sie bleibt der Toast dort stehen, wohin .toast ihn setzt: 76 px unter dem unteren Fensterrand. Betroffen war jede Meldung, auch "Token ungueltig!", "Gist konnte nicht erstellt werden" und jeder Sync-Fehler. Beim Einrichten des Cloud-Sync sah es damit aus, als passiere gar nichts.' },
+        { type: 'verbessert', text: 'Eine geglueckte Verbindung sagt das jetzt auch, mit dem Kontonamen. Vorher wechselte nur das Abzeichen die Farbe - zusammen mit den unsichtbaren Meldungen gab es damit ueberhaupt keine Rueckmeldung.' },
+        { type: 'intern', text: 'Der neue Test misst, ob die Meldung im Fenster steht, statt zu pruefen, ob die Klasse gesetzt ist - die war ja gesetzt. Ein Klassentest waere die ganze Zeit gruen gewesen. Dazu eine Pruefung, dass jede Klasse, die der Code auf "show" setzt, auch eine CSS-Regel dafuer hat; sechs weitere Overlays haben sie, nur der Toast nicht.' }
+      ]
+    },
+    {
       version: 'v26',
       date: '2026-10-07',
       time: '14:20',

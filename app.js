@@ -129,7 +129,11 @@
             localStorage.setItem(GIST_ID_KEY, gid);
             window.FIXED_GIST_ID = gid;
             updateSyncBadge(); updateConnectionStatus(); closeSettings();
-            // Erfolg: kein Toast, Badge wechselt auf gruen
+            // Der Erfolg war bisher stumm - nur das Abzeichen wechselte die
+            // Farbe. Wer gerade einen Token eingetragen hat, will aber lesen,
+            // dass es geklappt hat, und unter welchem Konto.
+            showToast('Verbunden als ' + (user && user.login ? user.login : 'GitHub')
+                + ' - Abgleich aktiv.');
         } catch (err) { showToast('Verbindungsfehler: ' + err.message, { sticky: true, isError: true }); }
     }
     function disconnectGist() {

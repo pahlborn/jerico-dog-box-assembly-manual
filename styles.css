@@ -512,6 +512,12 @@ mark.search-hl.active { background: #ed8936; color: white; }
 /* ---- Toast ---- */
         .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: white; padding: 0.65rem 1.3rem; border-radius: 10px; font-size: 0.82rem; font-weight: 500; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 10000; transition: transform 0.3s ease; display: flex; align-items: center; max-width: calc(100vw - 2rem); }
         .toast-error { background: #c53030; }
+        /* Ohne diese Regel bleibt der Toast 100 px unter dem unteren Rand
+           stehen: .toast schiebt ihn dorthin, und nur das Zuruecksetzen des
+           transform holt ihn ins Bild. Sie ist beim Zusammenlegen der
+           Seitenstile in styles.css verlorengegangen - damit war jede
+           Meldung unsichtbar, auch jede Fehlermeldung. */
+        .toast.show { transform: translateX(-50%) translateY(0); }
 /* ---- Mobile ---- */
         /* Vier Navigationspunkte plus Titel passen schmal nicht nebeneinander.
            Bis v20 wich dafuer der Titel - damit verschwanden auf dem Telefon
