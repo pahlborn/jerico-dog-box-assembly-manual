@@ -502,6 +502,61 @@ await test('Uebersetzungen werden gerechnet und gespeichert, nicht fest hinterle
   await p.close();
 });
 
+for (const datei of PAGES) {
+  await test(datei + ': eine Meldung ist wirklich im Bild', async () => {
+    // Die Regel .toast.show fehlte in styles.css. .toast schiebt den Toast
+    // 100 px unter den unteren Rand, erst das Zuruecksetzen des transform holt
+    // ihn zurueck. Damit war JEDE Meldung unsichtbar - auch "Token
+    // ungueltig!" und "Gist konnte nicht erstellt werden". Es sah aus, als
+    // passiere beim Verbinden gar nichts.
+    //
+    // Darum wird hier die Lage gemessen und nicht die Klasse geprueft: ein
+    // Test auf classList.contains('show') waere die ganze Zeit gruen gewesen.
+    const p = await open(datei);
+    const r = await p.page.evaluate(() => {
+      showToast('Pruefmeldung');
+      const t = document.getElementById('toast');
+      const k = t.getBoundingClientRect();
+      return {
+        klasse: t.classList.contains('show'),
+        oben: k.top, unten: k.bottom, hoehe: k.height,
+        fensterHoehe: window.innerHeight,
+        sichtbar: getComputedStyle(t).visibility,
+        deckkraft: parseFloat(getComputedStyle(t).opacity)
+      };
+    });
+    await p.close();
+
+    assert(r.klasse, 'show wurde nicht gesetzt');
+    assert(r.hoehe > 10, 'Toast hat keine Hoehe: ' + r.hoehe);
+    assert(r.sichtbar !== 'hidden' && r.deckkraft > 0.5,
+      'Toast ist unsichtbar: visibility=' + r.sichtbar + ' opacity=' + r.deckkraft);
+    assert(r.unten <= r.fensterHoehe + 1,
+      'Toast steht unter dem Fensterrand: unten=' + Math.round(r.unten)
+      + ' bei Fensterhoehe ' + r.fensterHoehe);
+    assert(r.oben >= 0, 'Toast steht ueber dem Fensterrand: oben=' + Math.round(r.oben));
+  });
+}
+
+await test('jede Klasse, die der Code auf show setzt, hat eine CSS-Regel', async () => {
+  // Der Toast flog auf, weil eine einzelne Regel fehlte. Geprueft wird darum
+  // nicht nur er: jedes Element, dem der Code 'show' gibt, braucht eine Regel
+  // dafuer - sonst passiert sichtbar nichts.
+  const css = ['styles.css', 'gallery.css']
+    .map((f) => fs.readFileSync(path.join(REPO_ROOT, f), 'utf8')).join('\n');
+
+  const p = await open('index.html');
+  const fehlt = await p.page.evaluate((cssText) => {
+    // Die Elemente, die im Betrieb 'show' bekommen, mit ihrer tragenden Klasse.
+    const traeger = ['toast', 'guide-overlay', 'changelog-overlay',
+                     'gallery-overlay', 'photo-lightbox', 'lightbox', 'modal-overlay'];
+    return traeger.filter((k) => !cssText.includes('.' + k + '.show'));
+  }, css);
+  await p.close();
+
+  assertEqual(fehlt, [], 'Klassen ohne .show-Regel im CSS');
+});
+
 await test('PS werden mit dem PS-Teiler gerechnet, nicht mit dem fuer hp', async () => {
   // Der Code teilte durch 7121. Das ist der Teiler fuer hp; beschriftet wird
   // aber PS. Die Kurve ist fuer PS gebaut - sie erreicht damit 349,8 PS und
