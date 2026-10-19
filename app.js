@@ -562,7 +562,98 @@
     }
     if (typeof ErrorLog !== 'undefined') ErrorLog.spiegelSetzen(spiegleProtokollInGist);
 
-    function exportJSON() {
+    /** Zaehlt, was in der Sicherung steckt - damit man es sieht, nicht glaubt. */
+    function sicherungUmfang(payload) {
+        var felder = 0;
+        var f = payload.felder || {};
+        for (var k in f) {
+            if (!Object.prototype.hasOwnProperty.call(f, k)) continue;
+            if (k.charAt(0) === '_') continue;
+            var v = f[k];
+            if (v !== '' && v !== null && v !== undefined && v !== false) felder++;
+        }
+        var befunde = (payload.befunde && payload.befunde.items) ? payload.befunde.items.length : 0;
+        var bilder = 0;
+        if (payload.galerie && payload.galerie.meta) {
+            for (var b in payload.galerie.meta) {
+                if (Object.prototype.hasOwnProperty.call(payload.galerie.meta, b)) bilder++;
+            }
+        }
+        return { felder: felder, befunde: befunde, bilder: bilder };
+    }
+
+    /**
+     * Letzter Ausweg: den Datensatz sichtbar und markierbar hinlegen.
+     *
+     * Ein Weg, der scheitern kann, ist keine Sicherung. Der Download ueber
+     * einen Blob-Link ist in einer vom Home-Bildschirm gestarteten Web-App auf
+     * iOS nicht verlaesslich - und genau dort wird dokumentiert. Dieser
+     * Rueckfall braucht nichts als Markieren und Kopieren.
+     */
+    function sicherungAnzeigen(text, grund) {
+        var alt = document.getElementById('sicherungFallback');
+        if (alt) alt.remove();
+        var box = document.createElement('div');
+        box.id = 'sicherungFallback';
+        box.className = 'modal-overlay show';
+        box.style.cssText = 'display:flex;position:fixed;top:0;left:0;right:0;bottom:0;'
+            + 'background:rgba(0,0,0,0.6);z-index:11000;align-items:center;justify-content:center;';
+        var inner = document.createElement('div');
+        inner.style.cssText = 'background:white;border-radius:12px;padding:1rem;'
+            + 'max-width:640px;width:calc(100vw - 24px);max-height:85vh;display:flex;'
+            + 'flex-direction:column;gap:0.5rem;';
+        var kopf = document.createElement('div');
+        kopf.style.cssText = 'font-size:0.78rem;color:#4a5568;';
+        kopf.textContent = grund + ' Markiere den Text und kopiere ihn in Notizen oder '
+            + 'eine Mail an dich selbst. Das ist eine vollwertige Sicherung: ueber '
+            + 'Import laesst sie sich wieder einlesen.';
+        var feld = document.createElement('textarea');
+        feld.readOnly = true;
+        feld.value = text;
+        feld.style.cssText = 'width:100%;flex:1;min-height:40vh;font-size:0.68rem;'
+            + 'font-family:ui-monospace,monospace;border:1px solid #cbd5e0;border-radius:6px;padding:0.4rem;';
+        var reihe = document.createElement('div');
+        reihe.style.cssText = 'display:flex;gap:0.4rem;justify-content:flex-end;';
+        var kopieren = document.createElement('button');
+        kopieren.type = 'button';
+        kopieren.textContent = 'Alles kopieren';
+        kopieren.style.cssText = 'padding:0.4rem 0.8rem;border:none;background:var(--primary-light);'
+            + 'color:white;border-radius:6px;cursor:pointer;font-size:0.78rem;';
+        kopieren.onclick = function () {
+            feld.focus(); feld.select();
+            var ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) {}
+            if (!ok && navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function () { showToast('Sicherung kopiert'); },
+                    function () { showToast('Kopieren ging nicht - bitte von Hand markieren', { sticky: true, isError: true }); });
+            } else if (ok) { showToast('Sicherung kopiert'); }
+        };
+        var zu = document.createElement('button');
+        zu.type = 'button';
+        zu.textContent = 'Schliessen';
+        zu.style.cssText = 'padding:0.4rem 0.8rem;border:1px solid var(--border);background:white;'
+            + 'border-radius:6px;cursor:pointer;font-size:0.78rem;';
+        zu.onclick = function () { box.remove(); };
+        reihe.appendChild(kopieren); reihe.appendChild(zu);
+        inner.appendChild(kopf); inner.appendChild(feld); inner.appendChild(reihe);
+        box.appendChild(inner);
+        document.body.appendChild(box);
+        feld.focus(); feld.select();
+    }
+
+    /**
+     * Sicherung herausgeben. Drei Wege, in dieser Reihenfolge:
+     *
+     *   1. Teilen-Menue des Geraets (navigator.share mit Datei). Auf dem iPad
+     *      der verlaessliche Weg - darueber fuehrt "In Dateien speichern".
+     *   2. Download ueber einen Blob-Link. Am Rechner der normale Weg.
+     *   3. Text zum Markieren. Kann nicht scheitern.
+     *
+     * Dass es mehrere Wege braucht, liegt nicht an der App: in einer vom
+     * Home-Bildschirm gestarteten Web-App auf iOS ist ein programmatischer
+     * Download nicht verlaesslich, und ausgerechnet dort wird dokumentiert.
+     */
+    async function exportJSON() {
         var data = saveFieldsLocal();
         // Die Galerie-Metadaten muessen mit. Darin stehen die Beschriftungen
         // der Fotos, die Aufnahmezeit, die Reihenfolge und das Hauptbild - und
@@ -579,13 +670,82 @@
             befunde: Findings._raw(),
             galerie: galerie
         };
-        var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-        var a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'jerico-rh02374-' + new Date().toISOString().slice(0, 10) + '.json';
-        a.click();
-        URL.revokeObjectURL(a.href);
-        showToast('Exportiert');
+        var text = JSON.stringify(payload, null, 2);
+        var umfang = sicherungUmfang(payload);
+        var bilanz = umfang.felder + ' Werte, ' + umfang.befunde + ' Befunde, '
+            + umfang.bilder + ' Foto-Beschriftungen';
+        var name = 'jerico-rh02374-' + new Date().toISOString().slice(0, 10) + '.json';
+
+        // Eine leere Sicherung darf nicht wie eine gelungene aussehen.
+        if (!umfang.felder && !umfang.befunde && !umfang.bilder) {
+            showToast('Es ist nichts zu sichern: dieser Speicher ist leer (' + bilanz + ').'
+                + ' Auf iOS hat eine vom Home-Bildschirm gestartete App einen eigenen'
+                + ' Speicher - exportiere dort, wo du eingetragen hast.',
+                { sticky: true, isError: true, detail: { quelle: 'exportJSON' } });
+            return false;
+        }
+
+        // 1. Teilen-Menue
+        try {
+            if (typeof File === 'function' && navigator.share && navigator.canShare) {
+                var datei = new File([text], name, { type: 'application/json' });
+                if (navigator.canShare({ files: [datei] })) {
+                    await navigator.share({ files: [datei], title: 'Jerico-Sicherung' });
+                    showToast('Sicherung geteilt - ' + bilanz);
+                    return true;
+                }
+            }
+        } catch (err) {
+            // Abgebrochen ist eine Entscheidung, kein Fehler.
+            if (err && err.name === 'AbortError') { return false; }
+        }
+
+        // 2. Download
+        try {
+            var blob = new Blob([text], { type: 'application/json' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = name;
+            a.rel = 'noopener';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 10000);
+            showToast('Sicherung gespeichert: ' + name + ' (' + bilanz + '). Kommt keine Datei an,'
+                + ' nochmal exportieren - dann erscheint der Text zum Kopieren.',
+                { sticky: true });
+            // Der Download laesst sich nicht nachpruefen. Beim naechsten Aufruf
+            // in derselben Sitzung kommt darum der Weg, der nicht scheitern
+            // kann - wer ein zweites Mal exportiert, hat beim ersten Mal keine
+            // Datei bekommen.
+            if (window.__exportSchonVersucht) {
+                sicherungAnzeigen(text, 'Der Download hat offenbar nicht geklappt.');
+            }
+            window.__exportSchonVersucht = true;
+            return true;
+        } catch (err2) {
+            // 3. Text
+            sicherungAnzeigen(text, 'Speichern als Datei ging nicht (' + err2.message + ').');
+            return true;
+        }
+    }
+
+    /**
+     * Sicherung direkt als Text zeigen. Eigener Menuepunkt, damit niemand
+     * zweimal exportieren muss, um an den Weg zu kommen, der nicht scheitert.
+     */
+    function sicherungAlsText() {
+        var data = saveFieldsLocal();
+        var galerie = null;
+        try { galerie = JSON.parse(localStorage.getItem('jericoGalleryMeta') || 'null'); } catch (e) {}
+        var payload = {
+            meta: { projekt: 'Jerico RH02374', version: (typeof APP_VERSION === 'string' ? APP_VERSION : ''), exportiert: new Date().toISOString() },
+            felder: data, befunde: Findings._raw(), galerie: galerie
+        };
+        var u = sicherungUmfang(payload);
+        sicherungAnzeigen(JSON.stringify(payload, null, 2),
+            'Sicherung mit ' + u.felder + ' Werten, ' + u.befunde + ' Befunden und '
+            + u.bilder + ' Foto-Beschriftungen.');
     }
 
     function importJSON(event) {
@@ -1015,6 +1175,7 @@
         saveSettings: saveSettings, disconnectGist: disconnectGist,
         syncFromCloud: syncFromCloud, saveData: saveData, autoSave: autoSave,
         exportJSON: exportJSON, importJSON: importJSON,
+        sicherungAlsText: sicherungAlsText,
         updateSaveStatus: updateSaveStatus, updateSyncBadge: updateSyncBadge,
         showToast: showToast, updateProgress: updateProgress,
         togglePhase: togglePhase, toggleGuide: toggleGuide, toggleSection: toggleSection,

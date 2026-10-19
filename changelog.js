@@ -13,6 +13,18 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v29',
+      date: '2026-10-19',
+      time: '16:30',
+      title: 'Die Sicherung kann nicht mehr scheitern',
+      changes: [
+        { type: 'fix', text: 'Der Export gab die Datei ausschliesslich ueber einen programmatischen Klick auf einen Blob-Link heraus. In einer vom Home-Bildschirm gestarteten Web-App auf iOS ist das nicht verlaesslich - und ausgerechnet dort wird dokumentiert. Jetzt drei Wege in dieser Reihenfolge: das Teilen-Menue des Geraets (darueber fuehrt "In Dateien speichern"), der Download, und zuletzt der Datensatz als markierbarer Text. Der letzte kann nicht scheitern.' },
+        { type: 'neu', text: 'Eigener Menuepunkt "Sicherung als Text". Damit niemand erst zweimal exportieren muss, um an den Weg zu kommen, der sicher funktioniert. Der Text laesst sich in Notizen oder eine Mail kopieren und ueber Import wieder einlesen - eine vollwertige Sicherung.' },
+        { type: 'fix', text: 'Ein leerer Speicher wurde als gelungene Sicherung ausgegeben. Das ist der gefaehrlichste Fall: auf iOS hat eine vom Home-Bildschirm gestartete App einen eigenen, von Safari getrennten Speicher. Wer dort exportiert, wo er nicht eingetragen hat, bekam eine leere Datei und durfte sie fuer eine Sicherung halten. Jetzt bricht der Export ab und nennt den wahrscheinlichen Grund.' },
+        { type: 'verbessert', text: 'Jede Sicherung nennt ihren Umfang - so viele Werte, so viele Befunde, so viele Foto-Beschriftungen. Eine Zahl, die man nachsehen kann, statt einer Zusage.' }
+      ]
+    },
+    {
       version: 'v28',
       date: '2026-10-19',
       time: '15:05',

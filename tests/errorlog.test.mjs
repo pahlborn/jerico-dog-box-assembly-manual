@@ -389,6 +389,130 @@ await test('Der Export enthaelt Felder, Befunde UND Foto-Beschriftungen', async 
     'Foto-Beschriftung fehlt in der Sicherung');
 });
 
+await test('Der Export geht ueber das Teilen-Menue, wenn es das gibt', async () => {
+  // Auf dem iPad der verlaessliche Weg: ein programmatischer Download ist in
+  // einer vom Home-Bildschirm gestarteten Web-App nicht verlaesslich, und
+  // ausgerechnet dort wird dokumentiert.
+  const p = await oeffne('build-log.html');
+  await p.page.waitForFunction(() => typeof exportJSON === 'function', null, { timeout: 30000 });
+  const r = await p.page.evaluate(async () => {
+    const feld = document.querySelector('textarea[data-field], input[type="text"][data-field]');
+    feld.value = 'Geteilter Wert';
+    await saveData();
+
+    let geteilt = null;
+    navigator.canShare = () => true;
+    navigator.share = (d) => { geteilt = d; return Promise.resolve(); };
+    let heruntergeladen = false;
+    const klick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () { heruntergeladen = true; };
+
+    await exportJSON();
+    HTMLAnchorElement.prototype.click = klick;
+
+    const text = geteilt && geteilt.files ? await geteilt.files[0].text() : '';
+    return { name: geteilt && geteilt.files ? geteilt.files[0].name : '',
+             text: text, heruntergeladen: heruntergeladen,
+             meldung: (document.getElementById('toast') || {}).textContent || '',
+             feldname: feld.dataset.field };
+  });
+  await p.close();
+
+  assert(/\.json$/.test(r.name), 'Keine Datei geteilt: ' + r.name);
+  const sicherung = JSON.parse(r.text);
+  assertEqual(sicherung.felder[r.feldname], 'Geteilter Wert', 'Wert fehlt in der geteilten Datei');
+  assertEqual(r.heruntergeladen, false, 'Trotz Teilen zusaetzlich heruntergeladen');
+  assert(/Werte/.test(r.meldung), 'Der Umfang wird nicht gemeldet: ' + r.meldung);
+});
+
+await test('Ohne Teilen-Menue wird heruntergeladen', async () => {
+  const p = await oeffne('build-log.html');
+  await p.page.waitForFunction(() => typeof exportJSON === 'function', null, { timeout: 30000 });
+  const r = await p.page.evaluate(async () => {
+    const feld = document.querySelector('textarea[data-field], input[type="text"][data-field]');
+    feld.value = 'Heruntergeladener Wert';
+    await saveData();
+    delete navigator.share; delete navigator.canShare;
+    let name = '';
+    const klick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () { name = this.download; };
+    await exportJSON();
+    HTMLAnchorElement.prototype.click = klick;
+    return { name: name, meldung: (document.getElementById('toast') || {}).textContent || '' };
+  });
+  await p.close();
+  assert(/^jerico-rh02374-\d{4}-\d{2}-\d{2}\.json$/.test(r.name), 'Dateiname falsch: ' + r.name);
+  assert(/Werte/.test(r.meldung), 'Der Umfang wird nicht gemeldet: ' + r.meldung);
+});
+
+await test('Die Sicherung als Text zeigt den vollen Datensatz', async () => {
+  // Der Weg, der nicht scheitern kann - eigener Menuepunkt.
+  const p = await oeffne('build-log.html');
+  await p.page.waitForFunction(() => typeof sicherungAlsText === 'function', null, { timeout: 30000 });
+  const r = await p.page.evaluate(async () => {
+    const feld = document.querySelector('textarea[data-field], input[type="text"][data-field]');
+    feld.value = 'Wert fuer den Textweg';
+    await saveData();
+    _galleryMeta.meta['getriebe/t.jpg'] = { caption: 'Beschriftung fuer den Textweg', m: Date.now() };
+    saveGalleryMeta();
+    sicherungAlsText();
+    const box = document.getElementById('sicherungFallback');
+    const k = box ? box.getBoundingClientRect() : null;
+    return {
+      da: !!box,
+      text: box ? box.querySelector('textarea').value : '',
+      imBild: k ? (k.top >= 0 && k.bottom <= window.innerHeight + 1 && k.height > 50) : false,
+      feldname: feld.dataset.field
+    };
+  });
+  await p.close();
+
+  assert(r.da, 'Kein Textfenster');
+  assert(r.imBild, 'Textfenster steht nicht im Bild');
+  const sicherung = JSON.parse(r.text);
+  assertEqual(sicherung.felder[r.feldname], 'Wert fuer den Textweg', 'Wert fehlt im Text');
+  assertEqual(sicherung.galerie.meta['getriebe/t.jpg'].caption, 'Beschriftung fuer den Textweg',
+    'Foto-Beschriftung fehlt im Text');
+});
+
+await test('Ein leerer Speicher wird nicht als gelungene Sicherung ausgegeben', async () => {
+  // Der gefaehrlichste Fall: auf iOS hat eine vom Home-Bildschirm gestartete
+  // App einen eigenen Speicher. Wer dort exportiert, wo er nicht eingetragen
+  // hat, bekaeme sonst eine leere Datei und hielte sie fuer eine Sicherung.
+  const p = await oeffne('index.html');
+  await p.page.waitForFunction(() => typeof exportJSON === 'function', null, { timeout: 30000 });
+  const r = await p.page.evaluate(async () => {
+    localStorage.removeItem('jericoBuildLog');
+    localStorage.removeItem('jericoGalleryMeta');
+    if (typeof _galleryMeta !== 'undefined') { _galleryMeta = { version: 2, meta: {}, videos: {}, hero: {} }; }
+    if (typeof Findings !== 'undefined' && Findings._set) { Findings._set({ items: [] }); Findings.save(); }
+    document.querySelectorAll('[data-field]').forEach((el) => {
+      if (el.type === 'checkbox') el.checked = false; else el.value = '';
+    });
+
+    let geteilt = false, geladen = false;
+    navigator.canShare = () => true;
+    navigator.share = () => { geteilt = true; return Promise.resolve(); };
+    const klick = HTMLAnchorElement.prototype.click;
+    HTMLAnchorElement.prototype.click = function () { geladen = true; };
+    const ergebnis = await exportJSON();
+    HTMLAnchorElement.prototype.click = klick;
+
+    const t = document.getElementById('toast');
+    return { ergebnis: ergebnis, geteilt: geteilt, geladen: geladen,
+             meldung: t ? t.textContent : '', fehlerfarbe: t ? t.classList.contains('toast-error') : false };
+  });
+  await p.close();
+
+  assertEqual(r.ergebnis, false, 'Leerer Export meldet Erfolg');
+  assertEqual(r.geteilt, false, 'Leere Sicherung wurde geteilt');
+  assertEqual(r.geladen, false, 'Leere Sicherung wurde heruntergeladen');
+  assert(r.fehlerfarbe, 'Die Meldung ist nicht als Fehler gekennzeichnet');
+  assert(/leer/i.test(r.meldung), 'Sagt nicht, dass nichts zu sichern ist: ' + r.meldung);
+  assert(/Home-Bildschirm/.test(r.meldung),
+    'Nennt nicht den wahrscheinlichen Grund (eigener Speicher): ' + r.meldung);
+});
+
 await test('Ein Import spielt die Foto-Beschriftungen zurueck', async () => {
   // Eine Sicherung, die sich nicht zurueckspielen laesst, ist keine.
   const p = await oeffne('build-log.html');
