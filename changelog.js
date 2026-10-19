@@ -13,6 +13,20 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v28',
+      date: '2026-10-19',
+      time: '15:05',
+      title: 'Die Sicherung ist vollstaendig, der Abgleich sagt warum er nicht laeuft',
+      changes: [
+        { type: 'fix', text: 'Der Export enthielt die Beschriftungen der Fotos nicht. Sie stehen in den Galerie-Metadaten und gingen bisher ausschliesslich ueber den Gist - wer ohne eingerichteten Abgleich arbeitet, hatte sie damit in keiner Sicherung. Die Bilddateien liegen im Repository, ihre Beschriftungen, Aufnahmezeiten, Reihenfolge und das Hauptbild nur auf dem Geraet. Export und Import nehmen sie jetzt mit; der Import fuehrt sie je Eintrag nach Zeitstempel zusammen, statt vorhandene zu ersetzen.' },
+        { type: 'fix', text: 'Beide Gist-Aufrufe beim Verbinden gaben bei jedem Fehlschlag stillschweigend nichts zurueck. Damit war "kein Datenspeicher gefunden" nicht von "kommt nicht an die Gists heran" zu unterscheiden, und die Meldung lautete am Ende nur "Gist konnte nicht erstellt werden" - ohne Statuscode, ohne GitHubs Antwort. Genau dieser Unterschied ist der entscheidende: ein Token, der Fotos ins Repository schreiben darf, aber nicht an Gists kommt, laesst die Fotos auf jedem Geraet erscheinen und die Inhalte liegen. Jetzt nennt die Meldung Status und Antwort, erklaert den Unterschied zu den Fotos, und beides steht im Fehlerprotokoll.' },
+        { type: 'fix', text: 'Die Statuszeile im Einstellungsdialog behauptete "Token gesetzt, suche Datenspeicher..." - es suchte aber nichts. Das ist ein Ruhezustand, kein Vorgang. Sie sagt jetzt, was gilt: kein Datenspeicher, Inhalte bleiben auf diesem Geraet.' },
+        { type: 'neu', text: 'Der Einstellungsdialog erklaert die beiden getrennten Wege: Fotos liegen im Repository und sind auch ohne Token auf jedem Geraet sichtbar, Inhalte liegen im Gist und brauchen die Verbindung. Sichtbare Fotos sind also kein Beleg dafuer, dass der Abgleich laeuft.' },
+        { type: 'intern', text: 'Im Test waren weder GET /user noch die Gist-Liste gestubbt - der ganze Weg, auf dem sich die App verbindet, war nie geprueft. Die Liste fiel durch das Muster: "/gists/**" verlangt einen Schraegstrich nach gists, "/gists?per_page=..." hat keinen. Beide sind jetzt gestubbt, mit Schaltern fuer den Fehlschlag.' },
+        { type: 'intern', text: 'Fuenf Pruefungen zur Datensicherheit, jede gegengeprueft: dass der Export die Foto-Beschriftungen enthaelt, dass ein Import sie zurueckspielt, dass "Verbindung trennen" keine Daten anfasst, dass ein Versionswechsel sie unberuehrt laesst - nachgestellt, indem alle Caches verworfen und neu geladen wird -, und dass kein Code im Projekt die Nutzdaten entfernt. Erlaubt sind genau drei Schluessel: Token und Gist-Id beim Trennen, das Fehlerprotokoll beim Leeren.' }
+      ]
+    },
+    {
       version: 'v27',
       date: '2026-10-19',
       time: '12:40',

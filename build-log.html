@@ -2356,6 +2356,12 @@
         <input type="password" id="ghToken" placeholder="github_pat_..." style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
         <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.5rem;">GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens<br>Berechtigung: <strong>Gists (Read and Write)</strong> und <strong>Contents (Read and Write)</strong> f&uuml;r dieses Repository (Foto-Upload).</div>
         <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.75rem;">Der Datenspeicher wird beim Verbinden automatisch gefunden oder angelegt &ndash; kein manuelles Einrichten noetig. Auf einem zweiten Ger&auml;t denselben Token eingeben, die Daten werden automatisch abgeglichen.</div>
+        <div style="font-size:0.7rem;color:var(--text-light);background:#ebf8ff;border:1px solid #bee3f8;border-radius:6px;padding:0.4rem 0.5rem;margin-bottom:0.75rem;">
+            <strong>Fotos und Inhalte gehen getrennte Wege.</strong><br>
+            <em>Fotos</em> landen im Repository und sind damit auf jedem Ger&auml;t sichtbar, auch ohne Token &ndash; sie geh&ouml;ren zur Seite selbst.<br>
+            <em>Inhalte</em> &ndash; Messwerte, Bemerkungen, Befunde, Schrittstatus &ndash; liegen im Gist und brauchen diese Verbindung. Ohne sie bleiben sie auf diesem Ger&auml;t.<br>
+            Sichtbare Fotos sind also <strong>kein</strong> Beleg daf&uuml;r, dass der Abgleich l&auml;uft. Daf&uuml;r z&auml;hlt nur das Abzeichen oben: <em>Cloud Sync</em> statt <em>Lokal</em>.
+        </div>
         <div style="display:flex;gap:0.4rem;justify-content:flex-end;">
             <button onclick="disconnectGist()" style="padding:0.4rem 0.8rem;border:1px solid #e53e3e;background:white;color:#e53e3e;border-radius:6px;cursor:pointer;font-size:0.78rem;">Trennen</button>
             <button onclick="closeSettings()" style="padding:0.4rem 0.8rem;border:1px solid var(--border);background:white;color:var(--text);border-radius:6px;cursor:pointer;font-size:0.78rem;">Abbrechen</button>
