@@ -280,7 +280,7 @@ await test('Das Kuehlsystem zeigt eine Zeichnung, keine Pfeilkette', async () =>
     assert(beschriftung.includes(station),
       'Station fehlt in der Zeichnung: ' + station + ' (vorhanden: ' + r.beschriftet.join(', ') + ')'));
   assert(r.beschriftet.some((t) => t.includes('OUT oben')) && r.beschriftet.some((t) => t.includes('IN unten')),
-    'Die Kuehlerlage aus A-02 steht nicht in der Zeichnung');
+    'Die Kuehlerlage steht nicht in der Zeichnung');
   assert(r.beschriftet.some((t) => t.includes('LF-100')), 'Die Filternummer fehlt');
 
   // Zugaenglichkeit: eine Zeichnung ohne Titel und Beschreibung ist fuer
@@ -292,7 +292,12 @@ await test('Das Kuehlsystem zeigt eine Zeichnung, keine Pfeilkette', async () =>
   // Und sie darf sich nicht als Jerico-Original ausgeben.
   assert(/kein Jerico-Original/.test(r.unterschrift),
     'Die Unterschrift sagt nicht, dass die Zeichnung eine eigene Darstellung ist: ' + r.unterschrift);
-  assert(/\bD\b/.test(r.unterschrift), 'Quellenklasse D fehlt an der Zeichnung');
+  // Die Klasse ist E, nicht mehr D: der Kreis stammt aus dem Befund am Geraet,
+  // nicht aus einer Ableitung von A-01 und A-02. A-01 sagt zur Reihenfolge
+  // nichts - "cooler", "filter" und "LF-100" kommen dort null Mal vor, A-02
+  // ist wegen Subset-Font nicht lesbar. Die vorherige Angabe trug trotzdem
+  // Klasse A; dieser Test hielt die Zeichnung bei D fest.
+  assert(/\bE\b/.test(r.unterschrift), 'Quellenklasse E fehlt an der Zeichnung');
 });
 
 await test('Offene Kuehlsystem-Teile sind eintragbar, nicht festgeschrieben', async () => {
@@ -555,6 +560,74 @@ await test('jede Klasse, die der Code auf show setzt, hat eine CSS-Regel', async
   await p.close();
 
   assertEqual(fehlt, [], 'Klassen ohne .show-Regel im CSS');
+});
+
+await test('Der Kuehlkreis steht an einer Stelle, nicht an vier', async () => {
+  // Die Reihenfolge stand im Titel und in der Beschreibung der Zeichnung, in
+  // deren Beschriftungen, in der Zeile "Reihenfolge" der Spezifikationen und
+  // zweimal im Build Log. Vier Kopien - und die erste Fassung war ausserdem
+  // falsch und trug trotzdem Klasse A.
+  for (const datei of ['specs.html', 'build-log.html']) {
+    const html = fs.readFileSync(path.join(REPO_ROOT, datei), 'utf8');
+    assert(!/Pump OUT/.test(html), datei + ' fuehrt die alte Reihenfolge noch im Markup');
+    assert(!/Filter \(LF-100\) &rarr; Pump IN/.test(html), datei + ' hat die alte Kette noch');
+  }
+
+  const p = await open('specs.html');
+  const r = await p.page.evaluate(() => {
+    const reihen = [...document.querySelectorAll('[data-kuehlkreis="reihenfolge"]')]
+      .map((e) => e.textContent.trim());
+    const bild = document.getElementById('kuehlkreisBild');
+    const svg = bild ? bild.querySelector('svg') : null;
+    return {
+      reihen: reihen,
+      ausDaten: KUEHLKREIS.alsText(),
+      anschluesse: KUEHLKREIS.anschluesse(),
+      svgDa: !!svg,
+      desc: svg ? svg.querySelector('desc').textContent : '',
+      // Jede Station muss in der Zeichnung auch beschriftet sein.
+      fehlend: KUEHLKREIS.STATIONEN
+        .filter((st) => !(svg && svg.textContent.includes(st.name)))
+        .map((st) => st.name)
+    };
+  });
+  await p.close();
+
+  assert(r.svgDa, 'Die Zeichnung wird nicht erzeugt');
+  assert(r.reihen.length >= 1, 'Keine Reihenfolge-Stelle auf der Seite');
+  r.reihen.forEach((t) => assertEqual(t, r.ausDaten,
+    'Angezeigte Reihenfolge weicht von den Daten ab'));
+  assertEqual(r.fehlend, [], 'Stationen ohne Beschriftung in der Zeichnung');
+  assert(r.desc.includes(r.anschluesse),
+    'Die Bildbeschreibung nennt eine andere Anschlussfolge als die Daten: ' + r.desc);
+});
+
+await test('Der Kuehlkreis folgt dem Befund am Geraet, mit richtiger Quellenklasse', async () => {
+  // A-01 sagt zur Reihenfolge nichts: "cooler", "filter" und "LF-100" kommen
+  // im maschinell ausgelesenen Text null Mal vor, A-02 ist nicht lesbar. Die
+  // alte Angabe trug trotzdem Klasse A - eine erfundene Zuschreibung.
+  const p = await open('specs.html');
+  const r = await p.page.evaluate(() => {
+    const kette = KUEHLKREIS.anschluesse();
+    const zeile = document.querySelector('[data-kuehlkreis="reihenfolge"]');
+    const wert = zeile ? zeile.closest('.spec-value') : null;
+    return {
+      kette: kette,
+      klasse: wert ? (wert.querySelector('.src') || {}).className || '' : '',
+      luefter: (document.querySelector('[data-kuehlkreis="luefter"]') || {}).textContent || ''
+    };
+  });
+  await p.close();
+
+  // Die Reihenfolge des Befunds: Ablass, Filter, Pumpe, Thermostat, Kuehler.
+  const erwartet = ['Ölablass', 'zur Pumpe', 'Pumpe OUT', 'Kühler IN (unten)', 'Kühler OUT (oben)'];
+  erwartet.forEach((t) => assert(r.kette.includes(t), 'Fehlt in der Kette: ' + t));
+  const posFilter = r.kette.indexOf('zur Pumpe');
+  const posOut = r.kette.indexOf('Pumpe OUT');
+  assert(posFilter < posOut, 'Der Filter liegt nicht vor der Pumpe - alte Reihenfolge');
+  assert(/src-e/.test(r.klasse),
+    'Die Reihenfolge traegt nicht Klasse E, sondern: ' + r.klasse);
+  assert(/Ventilator/.test(r.luefter), 'Das zweite Thermostat wird nicht genannt: ' + r.luefter);
 });
 
 await test('PS werden mit dem PS-Teiler gerechnet, nicht mit dem fuer hp', async () => {

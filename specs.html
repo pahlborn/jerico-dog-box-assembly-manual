@@ -23,6 +23,7 @@
     <script src="befund.js"></script>
     <script src="glossar.js"></script>
     <script src="reference.js"></script>
+    <script src="kuehlkreis.js"></script>
     <script src="errorlog.js"></script>
     <script src="app.js"></script>
 </head>
@@ -194,61 +195,20 @@
         <span class="src src-a" title="A-02 Break-In Sheet">A</span></div>
 
         <figure class="viz-figure" style="margin:0 0 1rem;">
-        <svg viewBox="0 0 680 300" role="img" aria-labelledby="kreisTitel kreisDesc" style="width:100%;height:auto;">
-            <title id="kreisTitel">&Ouml;lkreislauf des Jerico mit Single-Stage-Pumpe</title>
-            <desc id="kreisDesc">Die Pumpe sitzt im Tail Housing und saugt aus dem Getriebesumpf.
-            Von ihrem Druckanschluss geht das &Ouml;l zum K&uuml;hler, dessen Eingang unten und dessen
-            Ausgang oben liegt, von dort durch den Filter LF-100 und zur&uuml;ck zum Sauganschluss der
-            Pumpe.</desc>
-            <defs>
-                <marker id="pfeil" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#2a78d6"/>
-                </marker>
-                <marker id="pfeilRueck" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                    <path d="M0,0 L10,5 L0,10 z" fill="#718096"/>
-                </marker>
-            </defs>
-
-            <!-- Getriebe mit Tail Housing und Pumpe -->
-            <rect x="24" y="96" width="200" height="118" rx="8" fill="#f7fafc" stroke="#4a5568" stroke-width="2"/>
-            <text x="124" y="120" text-anchor="middle" font-size="14" font-weight="700" fill="#2d3748">Getriebe</text>
-            <text x="124" y="137" text-anchor="middle" font-size="11" fill="#718096">Sumpf &middot; ca. 2 Quarts</text>
-            <rect x="150" y="150" width="62" height="50" rx="5" fill="#e6f0fb" stroke="#2a78d6" stroke-width="2"/>
-            <text x="181" y="170" text-anchor="middle" font-size="11" font-weight="700" fill="#2a78d6">Pumpe</text>
-            <text x="181" y="185" text-anchor="middle" font-size="9" fill="#2a78d6">Single Stage</text>
-            <text x="181" y="214" text-anchor="middle" font-size="9" fill="#718096">im Tail Housing</text>
-            <path d="M150 175 L120 175" stroke="#718096" stroke-width="2" marker-end="url(#pfeilRueck)"/>
-            <text x="100" y="172" text-anchor="middle" font-size="9" fill="#718096">Ansaugung</text>
-
-            <!-- K&uuml;hler -->
-            <rect x="300" y="40" width="150" height="110" rx="6" fill="#f7fafc" stroke="#4a5568" stroke-width="2"/>
-            <g stroke="#cbd5e0" stroke-width="2">
-                <path d="M312 60 H438"/><path d="M312 76 H438"/><path d="M312 92 H438"/>
-                <path d="M312 108 H438"/><path d="M312 124 H438"/>
-            </g>
-            <text x="375" y="32" text-anchor="middle" font-size="13" font-weight="700" fill="#2d3748">&Ouml;lk&uuml;hler</text>
-            <text x="466" y="60" font-size="10" font-weight="700" fill="#2a78d6">OUT oben</text>
-            <text x="466" y="142" font-size="10" font-weight="700" fill="#2a78d6">IN unten</text>
-
-            <!-- Filter -->
-            <rect x="530" y="150" width="112" height="64" rx="6" fill="#f7fafc" stroke="#4a5568" stroke-width="2"/>
-            <text x="586" y="176" text-anchor="middle" font-size="13" font-weight="700" fill="#2d3748">Filter</text>
-            <text x="586" y="194" text-anchor="middle" font-size="11" fill="#718096">LF-100</text>
-
-            <!-- Leitungen -->
-            <path d="M212 160 H262 V134 H300" fill="none" stroke="#2a78d6" stroke-width="3" marker-end="url(#pfeil)"/>
-            <text x="252" y="126" text-anchor="middle" font-size="10" font-weight="600" fill="#2a78d6">Pump OUT</text>
-            <path d="M450 56 H490 V182 H530" fill="none" stroke="#2a78d6" stroke-width="3" marker-end="url(#pfeil)"/>
-            <path d="M586 214 V258 H181 V200" fill="none" stroke="#718096" stroke-width="3" marker-end="url(#pfeilRueck)"/>
-            <text x="390" y="275" text-anchor="middle" font-size="10" font-weight="600" fill="#718096">zur&uuml;ck zu Pump IN</text>
-        </svg>
-        <figcaption>&Ouml;lkreislauf, schematisch. Reihenfolge und K&uuml;hlerlage nach A-01 und A-02;
-        die Zeichnung selbst ist eine eigene Darstellung, kein Jerico-Original.
-        <span class="src src-d" title="eigene Ableitung aus A-01 und A-02">D</span></figcaption>
+        <div id="kuehlkreisBild"></div>
+        <figcaption>&Ouml;lkreis, schematisch &ndash; eine eigene Darstellung,
+        <strong>kein Jerico-Original</strong>. Reihenfolge und Anschl&uuml;sse nach dem
+        Befund am Ger&auml;t; die Zeichnung entsteht aus denselben Daten wie die Zeile
+        &bdquo;Reihenfolge&ldquo; darunter und kann ihr darum nicht widersprechen.
+        A-01 sagt zur Reihenfolge nichts &ndash; &bdquo;cooler&ldquo;, &bdquo;filter&ldquo; und
+        &bdquo;LF-100&ldquo; kommen dort nicht vor, A-02 ist maschinell nicht lesbar.
+        <span class="src src-e" title="Angabe des Nutzers, am Ger&auml;t ermittelt">E</span></figcaption>
         </figure>
 
-        <div class="spec-item"><span class="spec-label">Reihenfolge</span><span class="spec-value">Pump OUT &rarr; K&uuml;hler &rarr; Filter (LF-100) &rarr; Pump IN <span class="src src-a">A</span></span></div>
-        <div class="spec-item"><span class="spec-label">K&uuml;hler-Anschl&uuml;sse</span><span class="spec-value">OUT oben, IN unten <span class="src src-a" title="A-02: Best Choice">A</span></span></div>
+        <div class="spec-item"><span class="spec-label">Reihenfolge</span><span class="spec-value"><span data-kuehlkreis="reihenfolge"></span> <span class="src src-e" title="Angabe des Nutzers, am Ger&auml;t ermittelt">E</span></span></div>
+        <div class="spec-item"><span class="spec-label">Anschlussfolge</span><span class="spec-value"><span data-kuehlkreis="anschluesse"></span> <span class="src src-e" title="Angabe des Nutzers, am Ger&auml;t ermittelt">E</span></span></div>
+        <div class="spec-item"><span class="spec-label">Ventilator</span><span class="spec-value"><span data-kuehlkreis="luefter"></span> <span class="src src-e" title="Angabe des Nutzers, am Ger&auml;t ermittelt">E</span></span></div>
+        <div class="spec-item"><span class="spec-label">K&uuml;hler-Anschl&uuml;sse</span><span class="spec-value">OUT oben, IN unten <span class="src src-e" title="Angabe des Nutzers, am Ger&auml;t ermittelt">E</span></span></div>
         <div class="spec-item"><span class="spec-label">&Ouml;lpumpe</span><span class="spec-value">Jerico Single-Stage, am Getriebe vorhanden <span class="src src-b">B</span></span></div>
         <div class="spec-item"><span class="spec-label">Pumpenanschl&uuml;sse</span><span class="spec-value">-8AN auf 1/2&quot; Hose Barb &ndash; 2&times; gerade, 2&times; 90&deg; <span class="src src-b">B</span></span></div>
         <div class="spec-item"><span class="spec-label">Aluminium-Adapter</span><span class="spec-value">Nachbau Pumpenflansch &rarr; AN, vorhanden <span class="src src-b">B</span></span></div>
