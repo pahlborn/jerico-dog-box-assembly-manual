@@ -13,6 +13,17 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v32',
+      date: '2026-10-19',
+      time: '23:10',
+      title: 'Ein leerer Wert schlaegt nie einen vorhandenen',
+      changes: [
+        { type: 'fix', text: 'Beim Zusammenfuehren entschied der Zeitstempel ohne Ansehen des Inhalts. v30 hat das Stempeln leerer Felder abgestellt, aber die bis dahin gestempelten blieben liegen und wirkten weiter: im Cloud-Stand trugen 171 leere Felder einen neueren Zeitstempel als die Eintragungen des anderen Geraets. Beim Abgleich gewann die Leere, und 69 Felder Dokumentation wurden durch Leerstrings ersetzt - Seriennummer, kompletter Schrittstatus der Phasen 2 bis 6, alle Anzugswerte. Jetzt entscheidet der Inhalt: steht nur auf einer Seite ein Wert, gewinnt er, egal wie alt er ist.' },
+        { type: 'verbessert', text: 'Der Preis dieser Regel, offen genannt: ein absichtliches Leeren wandert nicht mehr auf das andere Geraet. Wer einen Wert loescht, muss das dort wiederholen. Das ist die sichere Richtung - ein stehengebliebener Wert faellt auf und ist in zwei Sekunden erneut geloescht, eine ausradierte Dokumentation nicht. Bei zwei vorhandenen Werten gewinnt weiterhin der spaetere.' },
+        { type: 'intern', text: 'Gegen die echten Datensaetze simuliert, nicht nur gegen Testdaten: aus 15 gefuellten Feldern im Cloud-Stand und 84 auf dem Geraet werden 84 - mit dem neueren Streckeneintrag des Laptops und dem neueren Nutzungseintrag des iPads. Dazu ein Test, der die umgekehrte Richtung festhaelt: zwei echte Werte entscheiden weiter nach Zeitstempel, sonst waere der Abgleich wertlos.' }
+      ]
+    },
+    {
       version: 'v31',
       date: '2026-10-19',
       time: '20:40',

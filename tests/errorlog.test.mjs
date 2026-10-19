@@ -453,6 +453,55 @@ await test('Beim selben Feld gewinnt der spaetere Eintrag', async () => {
   assertEqual(hoch.p1_len_total, '810', 'Der aeltere Wert wurde hochgeschrieben');
 });
 
+await test('Ein leerer Wert schlaegt nie einen vorhandenen - auch nicht mit neuerem Datum', async () => {
+  // Der Fall, der wirklich eingetreten ist. v30 hat das Stempeln leerer
+  // Felder abgestellt, aber die bis dahin gestempelten blieben liegen und
+  // wirkten weiter: im Cloud-Stand trugen 171 leere Felder einen neueren
+  // Zeitstempel als die Eintragungen des anderen Geraets. Beim
+  // Zusammenfuehren gewann die Leere - 69 Felder Dokumentation wurden durch
+  // Leerstrings ersetzt. Darum entscheidet jetzt der Inhalt, nicht das Datum.
+  const p = await oeffne('index.html');
+  const r = await p.page.evaluate(() => {
+    const alt = Date.now() - 86400000;   // der echte Wert, einen Tag alt
+    const neu = Date.now();              // die Leere, von gerade
+    const wolke = { p1_case_number: '', p2_topcover: '',
+      _fieldTimes: { p1_case_number: neu, p2_topcover: neu },
+      _savedAt: new Date(neu).toISOString() };
+    const hier = { p1_case_number: 'RH02374', p2_topcover: 'done',
+      _fieldTimes: { p1_case_number: alt, p2_topcover: alt },
+      _savedAt: new Date(alt).toISOString() };
+    const m = FieldSync.mergeRecords(wolke, hier);
+    // Und die Gegenrichtung: der echte Wert in der Wolke, die Leere hier.
+    const m2 = FieldSync.mergeRecords(hier, { p1_case_number: '',
+      _fieldTimes: { p1_case_number: neu }, _savedAt: new Date(neu).toISOString() });
+    return { a: m.p1_case_number, b: m.p2_topcover, c: m2.p1_case_number };
+  });
+  await p.close();
+
+  assertEqual(r.a, 'RH02374', 'Die neuere Leere aus der Wolke hat den Wert ueberschrieben');
+  assertEqual(r.b, 'done', 'Die neuere Leere aus der Wolke hat den Status ueberschrieben');
+  assertEqual(r.c, 'RH02374', 'Die neuere Leere vom Geraet hat den Wolkenwert ueberschrieben');
+});
+
+await test('Bei zwei vorhandenen Werten gewinnt weiterhin der spaetere', async () => {
+  // Die Regel gilt nur gegen Leere. Zwei echte Werte entscheiden wie bisher
+  // nach Zeitstempel - sonst waere der Abgleich wertlos.
+  const p = await oeffne('index.html');
+  const r = await p.page.evaluate(() => {
+    const alt = Date.now() - 86400000, neu = Date.now();
+    const m = FieldSync.mergeRecords(
+      { p1_len_total: '810', _fieldTimes: { p1_len_total: neu } },
+      { p1_len_total: '800', _fieldTimes: { p1_len_total: alt } });
+    const m2 = FieldSync.mergeRecords(
+      { p1_len_total: '800', _fieldTimes: { p1_len_total: alt } },
+      { p1_len_total: '810', _fieldTimes: { p1_len_total: neu } });
+    return { a: m.p1_len_total, b: m2.p1_len_total };
+  });
+  await p.close();
+  assertEqual(r.a, '810', 'Der spaetere Cloud-Wert hat nicht gewonnen');
+  assertEqual(r.b, '810', 'Der spaetere lokale Wert hat nicht gewonnen');
+});
+
 await test('Ein leeres Feld bekommt keinen Zeitstempel, nur weil die Seite es zeigt', async () => {
   // Der eigentliche Befund. Vorher stempelte jedes angezeigte leere Feld mit
   // "jetzt" - und schlug damit beim Abgleich jeden echten Wert, den ein
