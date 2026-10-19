@@ -103,10 +103,23 @@
       var next = current[key];
       var prev = existing[key];
       var clearing = isBlank(next) || next === false;
+      var unbekannt = !Object.prototype.hasOwnProperty.call(existing, key);
 
       // Solange die Seite noch laedt, stehen alle Felder auf leer. Ein Save in
       // diesem Moment darf nichts loeschen.
       if (clearing && !recordClears && !isBlank(prev) && prev !== false) continue;
+
+      // Ein leeres Feld, das hier noch nie etwas enthielt, ist kein Ereignis.
+      //
+      // Vorher bekam es trotzdem einen Zeitstempel von jetzt - allein weil die
+      // Seite es anzeigt. Beim Abgleich gewinnt je Feld der spaetere
+      // Zeitstempel, also schlug dieses frisch gestempelte Leer jeden echten
+      // Wert, den ein anderes Geraet vorher eingetragen hatte. Ein Geraet
+      // musste eine Seite nur oeffnen, um die Eintraege des anderen zu
+      // loeschen. Im Bestand eines Geraets trugen 128 von 212 Feldern einen
+      // Zeitstempel, ohne je einen Wert gehabt zu haben - in Bloecken mit
+      // identischem Zeitstempel, also pro Seitenaufruf gesetzt.
+      if (clearing && unbekannt) continue;
 
       if (next !== prev) times[key] = now;
       data[key] = next;

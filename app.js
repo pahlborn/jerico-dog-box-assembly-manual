@@ -421,12 +421,61 @@
         return merged;
     }
 
+    /**
+     * Felder in den Gist schreiben - vorher den Cloud-Stand lesen und
+     * zusammenfuehren.
+     *
+     * Hier wurde der lokale Datensatz ohne Rueckfrage hochgeschrieben. Das ist
+     * ein verlorener Schreibvorgang: ein Geraet, das den Stand des anderen
+     * noch nicht kennt, ersetzt die Gist-Datei komplett - mit einem Datensatz,
+     * in dem die Felder des anderen Geraets gar nicht vorkommen. Sie waren
+     * damit aus der Cloud weg, obwohl niemand sie geloescht hat.
+     *
+     * Galerie-Metadaten (gallery.js) und Befunde (findings.js) machen es seit
+     * immer richtig: lesen, mergen, schreiben. Nur der Kanal mit den
+     * Messwerten, Bemerkungen und dem Schrittstatus - also der mit dem meisten
+     * Inhalt - tat es nicht. Dieselbe Vorgehensweise an drei Orten, und an
+     * einem davon fehlte sie.
+     *
+     * mergeRecords entscheidet je Feld nach Zeitstempel, ein Leeren zaehlt
+     * dabei als Aenderung. Zwei Geraete, die dasselbe Feld aendern: der
+     * spaetere Eintrag gewinnt. Verschiedene Felder stoeren sich nicht.
+     */
     async function saveData() {
         var merged = saveFieldsLocal();
         updateSaveStatus();
         // Kein Sync moeglich - still lokal speichern, kein Toast
         if (!isGistConfigured() || !navigator.onLine) return;
         try {
+            // 1. Cloud-Stand holen und zusammenfuehren.
+            try {
+                var vorher = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID,
+                    { headers: { 'Authorization': 'Bearer ' + getGistConfig().token } });
+                if (vorher.ok) {
+                    var gist = await vorher.json();
+                    var datei = gist.files && gist.files[GIST_FILENAME];
+                    var inhalt = datei ? (typeof _readGistFile === 'function'
+                        ? await _readGistFile(gist, GIST_FILENAME, getGistConfig().token)
+                        : datei.content) : null;
+                    if (inhalt) {
+                        merged = FieldSync.mergeRecords(JSON.parse(inhalt), merged);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+                        // Was aus der Cloud dazukam, soll auch zu sehen sein.
+                        var war = isLoading; isLoading = true;
+                        applyData(merged);
+                        isLoading = war;
+                    }
+                }
+            } catch (leseFehler) {
+                // Nicht lesbar: lieber den lokalen Stand sichern als nichts.
+                // Ein Hinweis genuegt, der Schreibvorgang laeuft weiter.
+                if (typeof ErrorLog !== 'undefined') {
+                    ErrorLog.add('Cloud-Stand vor dem Speichern nicht lesbar - schreibe lokalen Stand',
+                        { quelle: 'saveData', stack: leseFehler && leseFehler.stack });
+                }
+            }
+
+            // 2. Schreiben.
             var files = {};
             files[GIST_FILENAME] = { content: JSON.stringify(merged, null, 2) };
             var res = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID, {
@@ -445,13 +494,17 @@
                     detail: { quelle: 'saveData', status: res.status, statusText: res.statusText,
                               antwort: roh, url: res.url }
                 });
+                return false;
             }
+            updateSaveStatus();
+            return true;
             // Erfolg: kein Toast - der Sync-Badge zeigt den Status
         } catch (err) {
             showToast('Sync-Fehler: ' + err.message, {
                 sticky: true, isError: true,
                 detail: { quelle: 'saveData', stack: err && err.stack }
             });
+            return false;
         }
     }
 
@@ -464,6 +517,17 @@
         updateSaveStatus();
     }
 
+    /**
+     * Nach einer Eingabe lokal sichern und danach hochschieben.
+     *
+     * Hochgeschoben wurde bisher nur beim ausdruecklichen "Speichern". Wer das
+     * nie drueckt - und warum sollte man, wenn der Kopf "gespeichert" meldet -
+     * hatte alles ausschliesslich auf seinem Geraet. Galerie und Befunde
+     * schieben seit immer selbst nach, je 800 ms nach der letzten Aenderung.
+     * Hier etwas traeger, weil Tippen laufend Aenderungen erzeugt und jeder
+     * Vorgang zwei Aufrufe kostet (lesen und schreiben).
+     */
+    var pushTimer = null;
     function autoSave() {
         if (isLoading) return;
         clearTimeout(autoSaveTimer);
@@ -471,6 +535,10 @@
             saveFieldsLocal();
             updateSaveStatus();
             updateProgress();
+
+            if (!isGistConfigured() || !navigator.onLine) return;
+            clearTimeout(pushTimer);
+            pushTimer = setTimeout(function () { saveData(); }, 4000);
         }, 600);
     }
 
