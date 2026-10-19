@@ -77,21 +77,46 @@
         var sm = document.getElementById('settingsModal');
         if (sm) sm.style.display = 'none';
     }
+    /**
+     * Antwort von GitHub auf einen Fehlschlag einlesen.
+     *
+     * Beide Gist-Aufrufe gaben vorher bei jedem Fehler null zurueck. Damit war
+     * "kein Gist gefunden" nicht von "darf nicht an Gists heran" zu
+     * unterscheiden - und genau dieser Unterschied ist der, auf den es
+     * ankommt: ein Token, der Fotos ins Repository schreiben darf, aber nicht
+     * an Gists kommt, laesst die Fotos erscheinen und die Inhalte liegen.
+     */
+    async function fehlerAus(res) {
+        var roh = ''; try { roh = await res.text(); } catch (e) {}
+        var meldung = ''; try { meldung = (JSON.parse(roh).message) || ''; } catch (e) {}
+        return { status: res.status, statusText: res.statusText, antwort: roh, meldung: meldung, url: res.url };
+    }
+
+    /** Sagt bei 401/403 auf einem Gist-Aufruf, was das bedeutet. */
+    function gistZugriffHinweis(f) {
+        if (f.status !== 401 && f.status !== 403 && f.status !== 404) return '';
+        return ' Der Token kommt an GitHub durch, aber nicht an die Gists heran.'
+            + ' Fotos liegen im Repository und brauchen das nicht - die Inhalte'
+            + ' dieser App liegen im Gist. Pruefe die Gist-Berechtigung des Tokens;'
+            + ' die genaue Antwort steht im Fehlerprotokoll.';
+    }
+
     // Sucht einen bestehenden Gist anhand des Dateinamens.
+    // Gibt { id } oder { fehler } zurueck - nie stillschweigend nichts.
     async function findGistByFilename(token) {
         var page = 1;
         while (page <= 5) { // max 5 Seiten = 500 Gists
             var res = await fetch('https://api.github.com/gists?per_page=100&page=' + page,
                 { headers: { 'Authorization': 'Bearer ' + token } });
-            if (!res.ok) return null;
+            if (!res.ok) return { fehler: await fehlerAus(res) };
             var gists = await res.json();
             if (gists.length === 0) break;
             for (var i = 0; i < gists.length; i++) {
-                if (gists[i].files && gists[i].files[GIST_FILENAME]) return gists[i].id;
+                if (gists[i].files && gists[i].files[GIST_FILENAME]) return { id: gists[i].id };
             }
             page++;
         }
-        return null;
+        return {};   // durchgesucht, nichts gefunden - kein Fehler
     }
     // Erstellt einen neuen Gist fuer dieses Projekt.
     async function createGist(token) {
@@ -103,9 +128,9 @@
             headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
             body: JSON.stringify({ description: 'Jerico RH02374 - Geraeteabgleich', public: false, files: files })
         });
-        if (!res.ok) return null;
+        if (!res.ok) return { fehler: await fehlerAus(res) };
         var gist = await res.json();
-        return gist.id;
+        return { id: gist.id };
     }
     async function saveSettings() {
         var tokEl = document.getElementById('ghToken');
@@ -117,14 +142,30 @@
             if (!res.ok) { showToast('Token ungueltig!', { sticky: true, isError: true }); return; }
             var user = await res.json();
             localStorage.setItem('gh_token', token);
-            showToast('Suche Gist...');
-            var gid = await findGistByFilename(token);
-            if (gid) {
-                showToast('Gist gefunden...');
-            } else {
-                showToast('Lege neuen Gist an...');
-                gid = await createGist(token);
-                if (!gid) { showToast('Gist konnte nicht erstellt werden', { sticky: true, isError: true }); return; }
+            showToast('Suche Datenspeicher...');
+            var gefunden = await findGistByFilename(token);
+            if (gefunden.fehler) {
+                var f = gefunden.fehler;
+                showToast('Gist-Liste nicht lesbar (' + f.status + (f.meldung ? ': ' + f.meldung : '') + ').'
+                    + gistZugriffHinweis(f), { sticky: true, isError: true,
+                    detail: { quelle: 'findGistByFilename', status: f.status, statusText: f.statusText,
+                              antwort: f.antwort, url: f.url } });
+                return;
+            }
+            var gid = gefunden.id;
+            if (!gid) {
+                showToast('Lege Datenspeicher an...');
+                var erzeugt = await createGist(token);
+                if (erzeugt.fehler) {
+                    var g = erzeugt.fehler;
+                    showToast('Datenspeicher konnte nicht angelegt werden (' + g.status
+                        + (g.meldung ? ': ' + g.meldung : '') + ').' + gistZugriffHinweis(g),
+                        { sticky: true, isError: true,
+                          detail: { quelle: 'createGist', status: g.status, statusText: g.statusText,
+                                    antwort: g.antwort, url: g.url } });
+                    return;
+                }
+                gid = erzeugt.id;
             }
             localStorage.setItem(GIST_ID_KEY, gid);
             window.FIXED_GIST_ID = gid;
@@ -183,8 +224,13 @@
             var devId = typeof FieldSync !== 'undefined' ? FieldSync.getDeviceId() : '';
             el.innerHTML = 'Verbunden &mdash; Ger&auml;t: <code>' + (devId ? devId.substring(0, 12) : '?') + '</code>';
         } else if (getGistConfig().token) {
+            // Stand hier "suche Datenspeicher..." - es suchte aber nichts. Das
+            // ist ein Ruhezustand, nicht ein Vorgang: Token liegt vor, ein
+            // Datenspeicher nicht. Fotos gehen trotzdem ins Repository, die
+            // Inhalte bleiben auf diesem Geraet.
             el.className = 'status-line disconnected';
-            el.textContent = 'Token gesetzt, suche Datenspeicher...';
+            el.innerHTML = 'Token gesetzt, aber <strong>kein Datenspeicher</strong> &mdash; '
+                + 'Inhalte bleiben auf diesem Ger&auml;t. Auf &bdquo;Verbinden&ldquo; tippen.';
         } else {
             el.className = 'status-line disconnected';
             el.textContent = 'Nicht verbunden';
@@ -518,10 +564,20 @@
 
     function exportJSON() {
         var data = saveFieldsLocal();
+        // Die Galerie-Metadaten muessen mit. Darin stehen die Beschriftungen
+        // der Fotos, die Aufnahmezeit, die Reihenfolge und das Hauptbild - und
+        // sie gehen sonst ausschliesslich ueber den Gist. Wer ohne
+        // eingerichteten Abgleich arbeitet, hatte sie damit in keiner
+        // Sicherung: die Bilddateien liegen im Repository, ihre Beschriftungen
+        // nur auf dem Geraet. Genau das ist der Fall, in dem eine Sicherung
+        // gebraucht wird.
+        var galerie = null;
+        try { galerie = JSON.parse(localStorage.getItem('jericoGalleryMeta') || 'null'); } catch (e) {}
         var payload = {
             meta: { projekt: 'Jerico RH02374', version: (typeof APP_VERSION === 'string' ? APP_VERSION : ''), exportiert: new Date().toISOString() },
             felder: data,
-            befunde: Findings._raw()
+            befunde: Findings._raw(),
+            galerie: galerie
         };
         var blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
         var a = document.createElement('a');
@@ -549,8 +605,24 @@
                     Findings.save();
                     renderAllFindings();
                 }
+                // Galerie-Metadaten zusammenfuehren, nicht ersetzen: auf dem
+                // Zielgeraet koennen eigene Beschriftungen stehen. _mergeMeta
+                // entscheidet je Eintrag nach Zeitstempel.
+                var galerieUebernommen = 0;
+                if (parsed.galerie && typeof _mergeMeta === 'function') {
+                    try {
+                        var vorher = JSON.stringify(_galleryMeta);
+                        _galleryMeta = _mergeMeta(_normalizeMeta(parsed.galerie), _galleryMeta);
+                        saveGalleryMeta();
+                        if (JSON.stringify(_galleryMeta) !== vorher) galerieUebernommen = 1;
+                        if (typeof rebuildPhotoData === 'function') rebuildPhotoData();
+                    } catch (e2) {
+                        showToast('Galerie-Metadaten nicht uebernommen: ' + e2.message,
+                            { sticky: true, isError: true, detail: { quelle: 'importJSON' } });
+                    }
+                }
                 updateSaveStatus();
-                showToast('Importiert');
+                showToast('Importiert' + (galerieUebernommen ? ' - samt Foto-Beschriftungen' : ''));
             } catch (err) { showToast('Import fehlgeschlagen: ' + err.message, { sticky: true, isError: true }); }
             event.target.value = '';
         };

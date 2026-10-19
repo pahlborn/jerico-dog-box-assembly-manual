@@ -106,6 +106,10 @@ const TINY_JPEG = Buffer.from(
  *   opts.gistFiles - { "<dateiname>": "<inhalt>" } fuer GET /gists/<id>
  *   opts.onGistWrite - Callback fuer PATCH /gists/<id>, bekommt das files-Objekt
  *   opts.gistPatchFehler - { status, body } laesst PATCH /gists/<id> scheitern
+ *   opts.gistListe       - Antwort auf GET /gists (Default: leere Liste)
+ *   opts.gistListeFehler - { status, body } laesst GET /gists scheitern
+ *   opts.userLogin       - Kontoname fuer GET /user (Default: pruefkonto)
+ *   opts.userFehler      - { status, body } laesst GET /user scheitern
  */
 export async function stubGitHub(page, opts = {}) {
   const state = { treeRequests: 0, gistWrites: [] };
@@ -142,6 +146,38 @@ export async function stubGitHub(page, opts = {}) {
     'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
     'Access-Control-Allow-Headers': 'Authorization,Content-Type'
   };
+
+  // Die Gist-LISTE (GET /gists?per_page=...). Sie war nicht gestubbt: das
+  // Muster '/gists/**' verlangt einen Schraegstrich nach gists, die Liste hat
+  // keinen. Der Aufruf lief damit in die Catch-All-Route und brach ab - der
+  // Weg, auf dem sich die App mit einem Token verbindet, war nie geprueft.
+  // GET /user - die erste Pruefung beim Verbinden. War ebenfalls nicht
+  // gestubbt, also lief schon der erste Schritt in die Catch-All-Route.
+  await page.route('**api.github.com/user', (route) => {
+    if (opts.userFehler) {
+      return route.fulfill({
+        status: opts.userFehler.status, contentType: 'application/json',
+        headers: CORS, body: opts.userFehler.body
+      });
+    }
+    return route.fulfill({
+      status: 200, contentType: 'application/json', headers: CORS,
+      body: JSON.stringify({ login: opts.userLogin || 'pruefkonto' })
+    });
+  });
+
+  await page.route('**api.github.com/gists?*', (route) => {
+    if (opts.gistListeFehler) {
+      return route.fulfill({
+        status: opts.gistListeFehler.status, contentType: 'application/json',
+        headers: CORS, body: opts.gistListeFehler.body
+      });
+    }
+    return route.fulfill({
+      status: 200, contentType: 'application/json', headers: CORS,
+      body: JSON.stringify(opts.gistListe || [])
+    });
+  });
 
   await page.route('**api.github.com/gists/**', (route) => {
     const req = route.request();
