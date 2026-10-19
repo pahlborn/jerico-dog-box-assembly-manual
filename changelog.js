@@ -13,6 +13,17 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v31',
+      date: '2026-10-19',
+      time: '20:40',
+      title: 'Kuehlkreis nach dem Befund am Geraet, aus einer Quelle',
+      changes: [
+        { type: 'fix', text: 'Die Reihenfolge des Oelkreises war falsch und trug trotzdem Klasse A, also Herstellervorgabe. A-01 sagt dazu nichts: im maschinell ausgelesenen Text kommen "cooler", "filter" und "LF-100" null Mal vor, A-02 ist wegen Subset-Font nicht lesbar. Die Zuschreibung war erfunden. Es gilt jetzt der Befund am Geraet - Oelablass, Filter, Pumpe, Thermostat, Kuehler (IN unten, OUT oben), Jerico-Deckel - als Klasse E, bis Jerico sie bestaetigt. Ein zweites Thermostat schaltet den Ventilator; es liegt nicht im Oelweg und ist darum gestrichelt gezeichnet.' },
+        { type: 'fix', text: 'Die Reihenfolge stand an vier Stellen: im Titel und in der Beschreibung der Zeichnung, in deren Beschriftungen, in der Zeile "Reihenfolge" der Spezifikationen und zweimal im Build Log. Jetzt steht sie in kuehlkreis.js, und die Zeichnung entsteht aus denselben Daten wie der Text - sie kann ihm nicht mehr widersprechen.' },
+        { type: 'intern', text: 'Der bestehende Test hielt die Zeichnung bei Klasse D fest, der Ableitung aus A-01 und A-02. Das war die alte Wahrheit; der Kreis stammt jetzt aus dem Befund. Die Pruefung, dass sich die Zeichnung nicht als Jerico-Original ausgibt, bleibt - sie ist weiter eine eigene Darstellung.' }
+      ]
+    },
+    {
       version: 'v30',
       date: '2026-10-19',
       time: '18:15',

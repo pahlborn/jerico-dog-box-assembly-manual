@@ -23,6 +23,7 @@
     <script src="ratios.js"></script>
     <script src="befund.js"></script>
     <script src="glossar.js"></script>
+    <script src="kuehlkreis.js"></script>
     <script src="errorlog.js"></script>
     <script src="app.js"></script>
 </head>
@@ -490,7 +491,7 @@
         <div class="guide-grid">
             <div class="guide-block"><h4 class="prereq">Vorgehensweise (Procedure)</h4>
                 <ol>
-                <li><span class="de">Leitungsf&uuml;hrung festlegen: Pump OUT &rarr; K&uuml;hler &rarr; Filter &rarr; Pump IN</span><span class="en">Define routing: pump OUT &rarr; cooler &rarr; filter &rarr; pump IN</span></li>
+                <li><span class="de">Leitungsf&uuml;hrung pr&uuml;fen: <span data-kuehlkreis="anschluesse"></span></span><span class="en">Check the routing of the lines</span></li>
                 <li><span class="de">K&uuml;hler-Position pr&uuml;fen: OUT oben, IN unten</span><span class="en">Check cooler position: OUT on top, IN at the bottom</span></li>
                 <li><span class="de">Alle Fittinge trocken verschrauben und Schlauchl&auml;ngen notieren</span><span class="en">Screw all fittings together dry and note hose lengths</span></li>
                 </ol>
@@ -498,7 +499,7 @@
             <div class="guide-block"><h4 class="measure">Komponenten (Components)</h4>
                 <div class="spec-line"><span>Jerico &Ouml;lpumpe</span><span class="spec-val">-8AN auf 1/2&quot; Hose Barb, 2&times; gerade + 2&times; 90&deg; &ndash; vorhanden</span></div>
                 <div class="spec-line"><span>Filter</span><span class="spec-val">Part# LF-100</span></div>
-                <div class="spec-line"><span>Reihenfolge</span><span class="spec-val">Pump OUT &rarr; K&uuml;hler &rarr; Filter &rarr; Pump IN; K&uuml;hler OUT oben, IN unten</span></div>
+                <div class="spec-line"><span>Reihenfolge</span><span class="spec-val"><span data-kuehlkreis="reihenfolge"></span> &middot; K&uuml;hler OUT oben, IN unten</span></div>
                 <div class="guide-input-row" style="margin-top:0.4rem;">
                     <div style="flex:1 1 100%;"><label>K&uuml;hler (Typ, Gr&ouml;sse, Anschl&uuml;sse):</label><input type="text" data-field="p1_cool_kuehler" placeholder="noch offen &ndash; Kandidat war Derale -8AN auf 1/2&quot; Hose Barb" oninput="autoSave()" style="width:100%;"></div>
                 </div>
