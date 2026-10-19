@@ -345,6 +345,162 @@ await test('Die Statuszeile behauptet keine Suche, die nicht laeuft', async () =
 });
 
 // ---------------------------------------------------------------------------
+suite('Zwei Geraete loeschen sich nichts');
+
+// Der Befund: saveData() schrieb den lokalen Datensatz ohne Rueckfrage in den
+// Gist. Ein Geraet, das den Stand des anderen noch nicht kennt, ersetzte die
+// Datei komplett - die Felder des anderen Geraets kamen darin gar nicht vor
+// und waren aus der Cloud weg, obwohl niemand sie geloescht hat.
+//
+// Galerie und Befunde machen es seit immer richtig: lesen, mergen, schreiben.
+
+async function geraet(datei, gistInhalt, aufGeschrieben) {
+  const ctx = await neuerKontext(browser);
+  const page = await ctx.newPage();
+  await stubGitHub(page, {
+    gistFiles: { 'jerico-build-log-data.json': JSON.stringify(gistInhalt) },
+    onGistWrite: (files) => {
+      const f = files['jerico-build-log-data.json'];
+      if (f) aufGeschrieben.push(JSON.parse(f.content));
+    }
+  });
+  await page.goto(base + '/' + datei);
+  await page.waitForFunction(() => typeof saveData === 'function', null, { timeout: 30000 });
+  await page.evaluate(() => {
+    localStorage.setItem('gh_token', 'testtoken');
+    localStorage.setItem('jerico_gist_id', 'testgist');
+    window.FIXED_GIST_ID = 'testgist';
+  });
+  return { page: page, close: () => ctx.close() };
+}
+
+await test('Ein Geraet ohne den fremden Stand loescht ihn nicht aus der Cloud', async () => {
+  const geschrieben = [];
+  // In der Cloud liegt ein Feld, das dieses Geraet noch nie gesehen hat.
+  const cloud = {
+    p1_case_number: 'RH02374',
+    _fieldTimes: { p1_case_number: Date.now() },
+    _savedAt: new Date().toISOString()
+  };
+  const g = await geraet('build-log.html', cloud, geschrieben);
+
+  const r = await g.page.evaluate(async () => {
+    // Dieses Geraet kennt p1_case_number nicht und traegt in ein ANDERES Feld
+    // ein. (Die erste Fassung schrieb in genau das Feld, das sie prueft.)
+    localStorage.setItem('jericoBuildLog', JSON.stringify({}));
+    const feld = [...document.querySelectorAll('textarea[data-field], input[type="text"][data-field]')]
+      .find((e) => e.dataset.field !== 'p1_case_number');
+    feld.value = 'Von Geraet B';
+    const ok = await saveData();
+    return { ok: ok, feldname: feld.dataset.field };
+  });
+  await g.close();
+
+  assert(geschrieben.length >= 1, 'Es wurde nichts in den Gist geschrieben');
+  const hoch = geschrieben[geschrieben.length - 1];
+  assertEqual(hoch.p1_case_number, 'RH02374',
+    'Der fremde Wert fehlt im hochgeschriebenen Datensatz - verlorener Schreibvorgang');
+  assertEqual(hoch[r.feldname], 'Von Geraet B', 'Der eigene Wert fehlt');
+});
+
+await test('Beim Speichern kommt der fremde Stand auch in die Anzeige', async () => {
+  // Sonst sieht man auf diesem Geraet weiter einen Stand, den es nicht mehr gibt.
+  const geschrieben = [];
+  const cloud = {
+    p1_case_number: 'RH02374',
+    _fieldTimes: { p1_case_number: Date.now() },
+    _savedAt: new Date().toISOString()
+  };
+  const g = await geraet('build-log.html', cloud, geschrieben);
+  const r = await g.page.evaluate(async () => {
+    localStorage.setItem('jericoBuildLog', JSON.stringify({}));
+    await saveData();
+    const el = document.querySelector('[data-field="p1_case_number"]');
+    return { imFeld: el ? el.value : null,
+             imSpeicher: JSON.parse(localStorage.getItem('jericoBuildLog')).p1_case_number };
+  });
+  await g.close();
+  assertEqual(r.imSpeicher, 'RH02374', 'Fremder Wert nicht lokal uebernommen');
+  if (r.imFeld !== null) assertEqual(r.imFeld, 'RH02374', 'Fremder Wert nicht in der Anzeige');
+});
+
+await test('Beim selben Feld gewinnt der spaetere Eintrag', async () => {
+  const geschrieben = [];
+  const alt = Date.now() - 60000;
+  const cloud = {
+    p1_len_total: '800',
+    _fieldTimes: { p1_len_total: alt },
+    _savedAt: new Date(alt).toISOString()
+  };
+  const g = await geraet('build-log.html', cloud, geschrieben);
+  const r = await g.page.evaluate(async () => {
+    // Lokal neuer: derselbe Schluessel, spaeterer Zeitstempel.
+    const jetzt = Date.now();
+    localStorage.setItem('jericoBuildLog', JSON.stringify({
+      p1_len_total: '810', _fieldTimes: { p1_len_total: jetzt },
+      _savedAt: new Date(jetzt).toISOString()
+    }));
+    // Der Wert muss auch im Feld stehen: saveData() sammelt zuerst das DOM
+    // ein, und ein leeres Feld ueber einem gespeicherten Wert ist ein Leeren.
+    const el = document.querySelector('[data-field="p1_len_total"]');
+    if (el) el.value = '810';
+    await saveData();
+    return JSON.parse(localStorage.getItem('jericoBuildLog')).p1_len_total;
+  });
+  await g.close();
+  assertEqual(r, '810', 'Der aeltere Cloud-Wert hat den neueren lokalen ueberschrieben');
+  const hoch = geschrieben[geschrieben.length - 1];
+  assertEqual(hoch.p1_len_total, '810', 'Der aeltere Wert wurde hochgeschrieben');
+});
+
+await test('Ein leeres Feld bekommt keinen Zeitstempel, nur weil die Seite es zeigt', async () => {
+  // Der eigentliche Befund. Vorher stempelte jedes angezeigte leere Feld mit
+  // "jetzt" - und schlug damit beim Abgleich jeden echten Wert, den ein
+  // anderes Geraet vorher eingetragen hatte. Ein Geraet musste eine Seite nur
+  // oeffnen, um die Eintraege des anderen zu loeschen.
+  const p = await oeffne('build-log.html');
+  await p.page.waitForFunction(() => typeof saveData === 'function', null, { timeout: 30000 });
+  const r = await p.page.evaluate(async () => {
+    localStorage.setItem('jericoBuildLog', JSON.stringify({}));
+    await saveData();                      // ohne Gist: nur lokal
+    const d = JSON.parse(localStorage.getItem('jericoBuildLog'));
+    const t = d._fieldTimes || {};
+    const angezeigt = [...document.querySelectorAll('[data-field]')].length;
+    const leerGestempelt = Object.keys(t).filter((k) => {
+      const v = d[k];
+      return v === '' || v === false || v === undefined;
+    });
+    return { angezeigt: angezeigt, gestempelt: Object.keys(t).length,
+             leerGestempelt: leerGestempelt.length };
+  });
+  await p.close();
+
+  assert(r.angezeigt > 20, 'Zu wenige Felder auf der Seite: ' + r.angezeigt);
+  assertEqual(r.leerGestempelt, 0,
+    r.leerGestempelt + ' leere Felder tragen einen Zeitstempel, obwohl sie nie etwas enthielten');
+});
+
+await test('Eine Eingabe wird auch ohne "Speichern" hochgeschoben', async () => {
+  // Wer nie auf Speichern drueckt, hatte alles nur auf seinem Geraet.
+  const geschrieben = [];
+  const g = await geraet('build-log.html', {}, geschrieben);
+  await g.page.evaluate(() => {
+    const feld = document.querySelector('textarea[data-field], input[type="text"][data-field]');
+    feld.value = 'Ohne Speichern getippt';
+    autoSave();
+  });
+  // 600 ms lokal + 4000 ms bis zum Hochschieben, plus Luft.
+  await g.page.waitForTimeout(6000);
+  const feldname = await g.page.evaluate(() =>
+    document.querySelector('textarea[data-field], input[type="text"][data-field]').dataset.field);
+  await g.close();
+
+  assert(geschrieben.length >= 1, 'Nach einer Eingabe wurde nichts hochgeschoben');
+  assertEqual(geschrieben[geschrieben.length - 1][feldname], 'Ohne Speichern getippt',
+    'Der getippte Wert kam nicht in der Cloud an');
+});
+
+// ---------------------------------------------------------------------------
 suite('Die Sicherung ist vollstaendig');
 
 await test('Der Export enthaelt Felder, Befunde UND Foto-Beschriftungen', async () => {

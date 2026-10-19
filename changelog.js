@@ -13,6 +13,18 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v30',
+      date: '2026-10-19',
+      time: '18:15',
+      title: 'Zwei Geraete loeschen sich nichts mehr',
+      changes: [
+        { type: 'fix', text: 'Ein leeres Feld bekam einen Zeitstempel von jetzt, allein weil die Seite es anzeigt. Beim Abgleich gewinnt je Feld der spaetere Zeitstempel - dieses frisch gestempelte Leer schlug also jeden echten Wert, den ein anderes Geraet vorher eingetragen hatte. Ein Geraet musste eine Seite nur oeffnen, um die Eintraege des anderen zu loeschen. Im Bestand eines Geraets trugen 128 von 212 Feldern einen Zeitstempel, ohne je einen Wert gehabt zu haben, in Bloecken mit identischem Zeitstempel - also pro Seitenaufruf gesetzt. Ein leeres Feld, das nie etwas enthielt, ist jetzt kein Ereignis mehr.' },
+        { type: 'fix', text: 'Die Felder wurden ohne Rueckfrage in den Gist geschrieben: der lokale Datensatz ersetzte die Datei komplett. Ein Geraet, das den Stand des anderen noch nicht kannte, nahm dessen Felder damit aus der Cloud, obwohl niemand sie geloescht hat. Jetzt wird erst gelesen, dann zusammengefuehrt, dann geschrieben - und was aus der Cloud dazukommt, erscheint auch in der Anzeige. Galerie-Metadaten und Befunde machen das seit immer so; nur der Kanal mit dem meisten Inhalt tat es nicht.' },
+        { type: 'fix', text: 'Hochgeschoben wurde nur beim ausdruecklichen "Speichern". Wer das nie drueckt - und warum sollte man, wenn der Kopf "gespeichert" meldet - hatte alles ausschliesslich auf seinem Geraet. Eine Eingabe wird jetzt vier Sekunden nach der letzten Aenderung von selbst hochgeschoben, wie es Galerie und Befunde seit immer tun.' },
+        { type: 'intern', text: 'Fuenf Pruefungen dazu, jede gegengeprueft. Die erste Fassung einer davon schrieb in genau das Feld, das sie prueft, und eine andere legte ihren Wert nur in den Speicher statt auch in das Feld - ein leeres Feld ueber einem gespeicherten Wert ist aber ein Leeren. Beide Fehlschlaege lagen am Testaufbau; der Befund dahinter war echt.' }
+      ]
+    },
+    {
       version: 'v29',
       date: '2026-10-19',
       time: '16:30',
