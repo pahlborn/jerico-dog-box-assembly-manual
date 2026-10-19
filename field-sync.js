@@ -133,7 +133,26 @@
 
   /**
    * Cloud- und lokalen Datensatz zusammenfuehren. Pro Feld gewinnt der
-   * juengere Zeitstempel - ein geloeschter Wert also auch.
+   * juengere Zeitstempel - mit einer Ausnahme, die teuer erkauft ist:
+   *
+   * **Ein leerer Wert schlaegt nie einen vorhandenen.**
+   *
+   * Vorher galt der Zeitstempel ohne Ansehen des Inhalts. Zusammen mit dem
+   * Fehler, dass jedes angezeigte leere Feld gestempelt wurde (bis v29),
+   * reichte es, auf einem Geraet eine Seite zu oeffnen: dessen frische Leere
+   * schlug beim naechsten Abgleich die echten Werte des anderen Geraets. In
+   * einem echten Fall trugen 171 leere Felder im Cloud-Stand einen neueren
+   * Zeitstempel als die Eintragungen des anderen Geraets - 69 Felder
+   * Dokumentation wurden beim Zusammenfuehren durch Leerstrings ersetzt.
+   *
+   * v30 hat das Stempeln abgestellt, aber die bereits gestempelten leeren
+   * Felder blieben liegen und wirkten weiter. Darum hier die Regel am Inhalt
+   * statt am Datum.
+   *
+   * Der Preis: ein absichtliches Leeren wandert nicht mehr auf das andere
+   * Geraet. Wer einen Wert loescht, muss das dort wiederholen. Das ist die
+   * sichere Richtung - ein zu viel stehengebliebener Wert faellt auf und ist
+   * in zwei Sekunden erneut geloescht, eine ausradierte Dokumentation nicht.
    */
   function mergeRecords(cloudData, localData) {
     cloudData = cloudData || {};
@@ -172,6 +191,16 @@
 
       var ct = fieldTime(cloudData, cloudTimes, k, cloudFallback);
       var lt = fieldTime(localData, localTimes, k, localFallback);
+
+      // Steht nur auf einer Seite ein Wert, gewinnt er - egal wie alt er ist.
+      var cLeer = isBlank(cVal), lLeer = isBlank(lVal);
+      if (cLeer !== lLeer) {
+        if (cLeer) { merged[k] = lVal; mergedTimes[k] = lt; }
+        else { merged[k] = cVal; mergedTimes[k] = ct; }
+        if (merged[k] === undefined) delete merged[k];
+        continue;
+      }
+
       if (ct >= lt) { merged[k] = cVal; mergedTimes[k] = ct; }
       else { merged[k] = lVal; mergedTimes[k] = lt; }
       if (merged[k] === undefined) delete merged[k];
