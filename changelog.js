@@ -13,6 +13,18 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v37',
+      date: '2026-10-25',
+      time: '19:30',
+      title: 'Was nicht hochgeladen wurde, wird nachgeholt',
+      changes: [
+        { type: 'fix', text: 'Scheiterte das Hochladen (GitHub: "Gist cannot be updated" oder "zu viele Anfragen"), wurde es erst bei der naechsten Eingabe wieder versucht - die Anzeige sagte trotzdem "Cloud Sync". Jetzt merkt sich das Geraet "nicht hochgeladen" und wiederholt selbst (nach 5 s, 15 s, 1 min, 2 min, dann alle 5 min), bei "zu viele Anfragen" fruehestens nach einer Minute.' },
+        { type: 'fix', text: 'Speichern und der Abgleich beim Oeffnen oder Zurueckholen liefen unabhaengig voneinander und konnten gleichzeitig schreiben - GitHub lehnte dann einen davon ab. Jetzt laeuft immer nur ein Vorgang; was waehrenddessen dazukommt, geht im naechsten mit.' },
+        { type: 'neu', text: 'Solange etwas nicht in der Cloud ist, steht oben orange "Nicht hochgeladen". Eine Fehlermeldung erscheint einmal pro Fehlerserie; jeder Fehlversuch steht im Protokoll.' },
+        { type: 'intern', text: 'Buendeln (jetzt 3 statt 4 Sekunden), Warteschlange und Wiederholung stehen in field-sync.js, wortgleich mit gt40-engine v105, dazu abgleichen fuer den Abgleich ohne Vormerken. Fuenf Tests; Gegenprobe ohne Anbindung: alle fuenf rot, je Mechanismus abgeschaltet: der zugehoerige rot.' }
+      ]
+    },
+    {
       version: 'v36',
       date: '2026-10-25',
       time: '17:20',
