@@ -1263,6 +1263,23 @@ await test('Speichern zwei Geraete fast gleichzeitig, kommen beide Aenderungen i
   assertEqual(cloud[feldB], 'von Geraet B', 'Aenderung von Geraet B in der Cloud');
 });
 
+// ---------------------------------------------------------------------------
+suite('v40: Felder ohne Zeitstempel (wie gt40-engine v108)');
+
+await test('Ein gestempelter Wert schlaegt Altbestand ohne Stempel - auch wenn der Datensatz juenger ist', async () => {
+  // gt40-engine, 2026-10-25: 29 Felder ohne Stempel; fuer sie galt der
+  // Zeitpunkt des ganzen Datensatzes - ein veralteter Stand gewann.
+  const d = await geraetMitGist('build-log.html');
+  const r = await d.page.evaluate(() => {
+    const gestempelt = { feld: 'neu', _fieldTimes: { feld: Date.parse('2026-10-25T20:00:00Z') }, _savedAt: '2026-10-25T20:00:00Z' };
+    const veraltet = { feld: 'alt', anderes: '1', _fieldTimes: { anderes: Date.parse('2026-10-26T09:00:00Z') }, _savedAt: '2026-10-26T09:00:00Z' };
+    const m = FieldSync.mergeRecords({ x: '', _fieldTimes: { x: 1 } }, { x: 'Altbestand', _savedAt: '2026-10-25T00:00:00Z' });
+    return [FieldSync.mergeRecords(gestempelt, veraltet).feld, FieldSync.mergeRecords(veraltet, gestempelt).feld, m.x, m._fieldTimes.x];
+  });
+  await d.close();
+  assertEqual(r, ['neu', 'neu', 'Altbestand', undefined], 'gestempelt in Cloud / lokal / Altbestand-Wert / kein erfundener Stempel');
+});
+
 await test('Ein Leer-Stempel vor dem Stichtag schlaegt keinen Wert - in beiden Richtungen', async () => {
   // Im Gist liegen 196 leere Felder mit Stempel vom 19.10., je ein
   // Seitenaufruf. Der Wert ist absichtlich AELTER als das Leer: genau dann

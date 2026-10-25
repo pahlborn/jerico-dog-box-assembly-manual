@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v40',
+      date: '2026-10-25',
+      time: '21:55',
+      title: 'Ein veralteter Stand schlaegt keinen gestempelten Wert mehr',
+      changes: [
+        { type: 'fix', text: 'Felder ohne eigenen Zeitstempel wurden nach dem Speicherzeitpunkt des ganzen Datensatzes entschieden: ein Geraet mit veraltetem Stand, das irgendein anderes Feld speicherte, gewann sie. Jetzt gewinnt der gestempelte Wert (wie gt40-engine v108). Im jerico-Gist hat derzeit jedes Feld einen Stempel - die Aenderung schuetzt fuer die Zukunft.' },
+        { type: 'intern', text: 'field-sync.js: mergeRecords ohne Rueckfall auf _savedAt, sobald eine Seite einen Stempel hat; der Gewinner ohne Stempel bekommt keinen erfundenen; fieldTime entfaellt. Ein Test; Gegenprobe mit dem alten Stand rot.' }
+      ]
+    },
+    {
       version: 'v39',
       date: '2026-10-25',
       time: '21:15',
