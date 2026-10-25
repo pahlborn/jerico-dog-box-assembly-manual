@@ -106,6 +106,7 @@ const TINY_JPEG = Buffer.from(
  *   opts.gistFiles - { "<dateiname>": "<inhalt>" } fuer GET /gists/<id>
  *   opts.onGistWrite - Callback fuer PATCH /gists/<id>, bekommt das files-Objekt
  *   opts.gistPatchFehler - { status, body } laesst PATCH /gists/<id> scheitern
+ *   opts.gistGetFehler   - { status, body } laesst GET /gists/<id> scheitern
  *   opts.gistListe       - Antwort auf GET /gists (Default: leere Liste)
  *   opts.gistListeFehler - { status, body } laesst GET /gists scheitern
  *   opts.userLogin       - Kontoname fuer GET /user (Default: pruefkonto)
@@ -202,6 +203,12 @@ export async function stubGitHub(page, opts = {}) {
         });
       }
       return route.fulfill({ status: 200, contentType: 'application/json', headers: CORS, body: '{}' });
+    }
+    if (opts.gistGetFehler) {
+      return route.fulfill({
+        status: opts.gistGetFehler.status, contentType: 'application/json',
+        headers: CORS, body: opts.gistGetFehler.body
+      });
     }
     const files = {};
     for (const [name, content] of Object.entries(opts.gistFiles || {})) {

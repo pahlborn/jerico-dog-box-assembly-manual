@@ -13,6 +13,19 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v33',
+      date: '2026-10-25',
+      time: '06:21',
+      title: 'Abgleich beim Oeffnen, und geleerte Felder bleiben leer',
+      changes: [
+        { type: 'fix', text: 'Hereingeholt wurde bisher nur nach einer eigenen Eingabe: syncFromCloud war an nichts angeschlossen. Ein Geraet zeigte den alten Stand, bis man dort etwas eintrug, und Befunde und Beschriftungen der Galerie vom anderen Geraet kamen nie von selbst an. Jetzt wird beim Oeffnen abgeglichen, beim Zurueckholen der App (hoechstens alle 30 Sekunden) und wenn nach einem Funkloch die Verbindung zurueck ist - Messwerte, Befunde und Galerie-Texte aus einem Abruf.' },
+        { type: 'fix', text: 'War der Cloud-Stand nicht lesbar, wurde trotzdem geschrieben - in allen drei Bereichen der rein lokale Stand. Was nur das andere Geraet kannte, war danach aus der Cloud weg. Jetzt wird ohne gelesenen Stand nichts geschrieben, und der Fehler steht im Protokoll statt nur in der Konsole.' },
+        { type: 'fix', text: 'Seit v32 liess sich ein bewusst geleertes Feld nicht leeren: beim naechsten Speichern holte das Mischen den alten Cloud-Wert zurueck. Jetzt gilt ein Stichtag, den 26.10.2026: Leer-Stempel davor zaehlen nicht, dort gewinnt weiter der Wert - genau die 196 alten Stempel im Cloud-Stand. Was danach bewusst geleert wird, bleibt leer und wandert auf die anderen Geraete. Bis zum Stichtag verhaelt es sich noch wie in v32.' },
+        { type: 'verbessert', text: 'Beschriftungen der Galerie werden nicht mehr aufgeraeumt, wenn die Bildliste aus dem Repository nur gekuerzt ankam - sie galten sonst als verwaist.' },
+        { type: 'intern', text: 'Lesen, mischen, schreiben steht jetzt in field-sync.js (cloudAbgleichen) - wortgleich mit gt40-engine, das in v101 dieselben Fehler hatte. Die Stichtag-Regel gilt in beiden Projekten gleich. Ein Test aus v32 haette ab dem Stichtag rot werden muessen, ohne dass sich am Code etwas aendert: er stempelte die Leere mit Date.now(). Er nimmt jetzt Zeiten vor dem Stichtag, wie im echten Fall. Vor der Aenderung wurde der Gist vollstaendig gesichert.' }
+      ]
+    },
+    {
       version: 'v32',
       date: '2026-10-19',
       time: '23:10',

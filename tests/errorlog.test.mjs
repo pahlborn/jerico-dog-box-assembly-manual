@@ -453,17 +453,21 @@ await test('Beim selben Feld gewinnt der spaetere Eintrag', async () => {
   assertEqual(hoch.p1_len_total, '810', 'Der aeltere Wert wurde hochgeschrieben');
 });
 
-await test('Ein leerer Wert schlaegt nie einen vorhandenen - auch nicht mit neuerem Datum', async () => {
+await test('Ein Leer-Stempel von vor dem Stichtag schlaegt keinen vorhandenen Wert - auch mit neuerem Datum', async () => {
   // Der Fall, der wirklich eingetreten ist. v30 hat das Stempeln leerer
   // Felder abgestellt, aber die bis dahin gestempelten blieben liegen und
   // wirkten weiter: im Cloud-Stand trugen 171 leere Felder einen neueren
   // Zeitstempel als die Eintragungen des anderen Geraets. Beim
   // Zusammenfuehren gewann die Leere - 69 Felder Dokumentation wurden durch
-  // Leerstrings ersetzt. Darum entscheidet jetzt der Inhalt, nicht das Datum.
+  // Leerstrings ersetzt.
+  //
+  // Seit v33 zaehlt ein Leer erst ab dem Stichtag (FieldSync.LEER_STICHTAG).
+  // Die Zeiten hier liegen darum ausdruecklich DAVOR - mit Date.now() wuerde
+  // dieser Test ab dem Stichtag rot, ohne dass sich am Code etwas aendert.
   const p = await oeffne('index.html');
   const r = await p.page.evaluate(() => {
-    const alt = Date.now() - 86400000;   // der echte Wert, einen Tag alt
-    const neu = Date.now();              // die Leere, von gerade
+    const alt = FieldSync.LEER_STICHTAG - 2 * 86400000;   // der echte Wert
+    const neu = FieldSync.LEER_STICHTAG - 86400000;       // die Leere, einen Tag juenger
     const wolke = { p1_case_number: '', p2_topcover: '',
       _fieldTimes: { p1_case_number: neu, p2_topcover: neu },
       _savedAt: new Date(neu).toISOString() };
@@ -878,14 +882,165 @@ await test('Die alte Gist-eigene Protokollfunktion ist weg', async () => {
   }
 });
 
+// ---------------------------------------------------------------------------
+suite('v33: Abgleich beim Oeffnen, nichts ohne Lesen, Stichtag');
+
+const DATEN = 'jerico-build-log-data.json';
+const BEFUNDE = 'jerico-build-findings.json';
+const FOTOS = 'jerico-build-photos.json';
+
+/** Ein Geraet mit verbundenem, nachgebautem Gist, der sich Geschriebenes merkt. */
+async function geraetMitGist(datei, opts = {}, uhr = null) {
+  const ctx = await neuerKontext(browser);
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  if (uhr) await page.clock.setFixedTime(new Date(uhr));
+  const gist = opts.gistFiles || (opts.gistFiles = {});
+  const stub = await stubGitHub(page, Object.assign({
+    onGistWrite: (files) => { for (const [n, f] of Object.entries(files)) gist[n] = f.content; }
+  }, opts));
+  await ctx.addInitScript(() => {
+    localStorage.setItem('gh_token', 'test-token');
+    localStorage.setItem('jerico_gist_id', 'stub');
+  });
+  await page.goto(base + '/' + datei);
+  await page.waitForFunction(() => typeof syncFromCloud === 'function', null, { timeout: 30000 });
+  await page.waitForTimeout(800);   // der Abgleich beim Oeffnen
+  return { ctx, page, errors, stub, gist, close: () => ctx.close() };
+}
+
+/** Name des ersten Messfelds der Seite - aus der Seite, nicht abgeschrieben. */
+async function erstesFeld(datei) {
+  const d = await geraetMitGist(datei);
+  const n = await d.page.evaluate(() =>
+    document.querySelector('input[data-field]:not([readonly]):not([type=checkbox])').dataset.field);
+  await d.close();
+  return n;
+}
+
+const FELD = await erstesFeld('build-log.html');
+
+await test('Beim Oeffnen kommt der Messwert des anderen Geraets an', async () => {
+  // Bis v32 war syncFromCloud an nichts angeschlossen: hereingeholt wurde nur
+  // nach einer eigenen Eingabe.
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [DATEN]: JSON.stringify({ [FELD]: 'vom iPad', _fieldTimes: { [FELD]: Date.now() - 60000 } })
+  } });
+  const wert = await d.page.evaluate((f) => document.querySelector('[data-field="' + f + '"]').value, FELD);
+  const fehler = d.errors.slice();
+  await d.close();
+  assertEqual(fehler, [], 'Fehler auf der Seite');
+  assertEqual(wert, 'vom iPad', 'Wert im Feld nach dem Oeffnen');
+});
+
+await test('Beim Oeffnen kommen Befunde und Galerie-Texte des anderen Geraets an', async () => {
+  // Bis v32 kamen beide nur, wenn man selbst etwas daran aenderte.
+  const foto = 'p1_ident_photos/1700000000000_0.jpg';
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [BEFUNDE]: JSON.stringify({ items: { b_ipad: { ch: 'p1', text: 'vom iPad', status: '', created: 1, m: 1 } } }),
+    [FOTOS]: JSON.stringify({ version: 2, meta: { [foto]: { caption: 'Beschriftung vom iPad', m: 1 } }, videos: {}, hero: {} })
+  } });
+  const r = await d.page.evaluate((k) => ({
+    befund: ((JSON.parse(localStorage.getItem('jericoFindings') || '{}').items || {}).b_ipad || {}).text,
+    text: (_galleryMeta.meta[k] || {}).caption
+  }), foto);
+  await d.close();
+  assertEqual(r.befund, 'vom iPad', 'Befund nach dem Oeffnen');
+  assertEqual(r.text, 'Beschriftung vom iPad', 'Galerie-Text nach dem Oeffnen');
+});
+
+await test('Scheitert das Lesen, wird nichts geschrieben - Messwerte, Befunde, Galerie', async () => {
+  // Bis v32 ging in dem Fall in allen drei Kanaelen der rein lokale Stand
+  // hoch. Was nur das andere Geraet kannte, war danach aus der Cloud weg.
+  const d = await geraetMitGist('build-log.html',
+    { gistGetFehler: { status: 500, body: JSON.stringify({ message: 'Server Error' }) } });
+  const r = await d.page.evaluate(async (f) => {
+    ErrorLog.leeren();
+    document.querySelector('[data-field="' + f + '"]').value = 'lokal';
+    await saveData();
+    await Findings.push();
+    await pushGalleryMeta();
+    return ErrorLog.alle().map((e) => e.nachricht || '');
+  }, FELD);
+  const schreibvorgaenge = d.stub.gistWrites.filter((w) => DATEN in w || BEFUNDE in w || FOTOS in w).length;
+  await d.close();
+  assertEqual(schreibvorgaenge, 0, 'Schreibzugriffe trotz Lesefehler');
+  assert(r.some((m) => /Befunde/.test(m)) && r.some((m) => /Galerie/.test(m)),
+    'Fehler von Befunden/Galerie stehen nicht im Protokoll: ' + r.join(' | '));
+});
+
+await test('Ein bewusst geleertes Feld bleibt leer und wandert mit (nach dem Stichtag)', async () => {
+  // v32 hat "ein Wert schlaegt immer ein Leer" eingefuehrt. Ein bewusst
+  // geleertes Feld liess sich damit nicht leeren: beim naechsten Speichern
+  // holte das Mischen den alten Cloud-Wert zurueck. Seit v33 zaehlt ein Leer,
+  // das nach dem Stichtag gestempelt wurde. Die Uhr steht dafuer auf November.
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [DATEN]: JSON.stringify({ [FELD]: 'alter Wert', _fieldTimes: { [FELD]: Date.parse('2026-10-20T08:00:00Z') } })
+  } }, '2026-11-01T10:00:00Z');
+  const r = await d.page.evaluate(async (f) => {
+    const el = document.querySelector('[data-field="' + f + '"]');
+    const vorher = el.value;
+    el.value = '';
+    await saveData();
+    return { vorher, nachher: el.value };
+  }, FELD);
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(r.vorher, 'alter Wert', 'Ausgangswert aus der Cloud');
+  assertEqual(r.nachher, '', 'Das Feld hat den alten Wert zurueckbekommen');
+  assertEqual(cloud[FELD], '', 'Das Leeren ist nicht in der Cloud angekommen');
+});
+
+await test('Ein Leer-Stempel vor dem Stichtag schlaegt keinen Wert - in beiden Richtungen', async () => {
+  // Im Gist liegen 196 leere Felder mit Stempel vom 19.10., je ein
+  // Seitenaufruf. Der Wert ist absichtlich AELTER als das Leer: genau dann
+  // waere der Fehler sichtbar.
+  const d = await geraetMitGist('build-log.html');
+  const r = await d.page.evaluate(() => {
+    const vor = FieldSync.LEER_STICHTAG - 60000;
+    const wert = { x: '0.18', _fieldTimes: { x: vor - 1000 } };
+    const leer = { x: '', _fieldTimes: { x: vor } };
+    const ohneStempel = FieldSync.mergeRecords(
+      { x: '0.18', _fieldTimes: { x: FieldSync.LEER_STICHTAG + 10 } },
+      { x: '', y: '1', _fieldTimes: { y: FieldSync.LEER_STICHTAG + 99 }, _savedAt: '2030-01-01T00:00:00Z' });
+    return [FieldSync.mergeRecords(leer, wert).x, FieldSync.mergeRecords(wert, leer).x, ohneStempel.x];
+  });
+  await d.close();
+  assertEqual(r, ['0.18', '0.18', '0.18'], 'Cloud leer / lokal leer / Leer ohne eigenen Stempel');
+});
+
+await test('Ein gekuerztes Bild-Listing raeumt keine Beschriftungen weg', async () => {
+  // Das Aufraeumen haelt Beschriftungen ohne Bild im Repo fuer verwaist. Ein
+  // gekuerztes Listing kennt aber nicht alle Bilder.
+  const tree = JSON.parse(fs.readFileSync(path.join(REPO_ROOT, 'tests', 'fixtures', 'tree.json'), 'utf8'));
+  tree.truncated = true;
+  const key = 'p1_ident_photos/1600000000000_9.jpg';     // nicht im (gekuerzten) Listing
+  const d = await geraetMitGist('build-log.html', { tree });
+  await d.page.waitForFunction(() => typeof _treeFetchedAt !== 'undefined' && _treeFetchedAt > 0,
+    null, { timeout: 30000 });
+  await d.page.evaluate(async (k) => {
+    _galleryMeta.meta[k] = { caption: 'Bild jenseits des Listings', m: 1 };
+    saveGalleryMeta();
+    await pushGalleryMeta();
+  }, key);
+  const meta = JSON.parse(d.gist[FOTOS] || '{}').meta || {};
+  await d.close();
+  assert(meta[key], 'Die Beschriftung wurde bei gekuerztem Listing weggeraeumt');
+});
+
 await test('Der Sync-Fehler reicht Statuscode und Rohantwort weiter', async () => {
   // Ohne diese Weitergabe steht im Protokoll nur der Toast-Satz - genau das
   // Manko des Vorgaengers. Geprueft am Code, weil der Weg sonst still
   // verlorengehen kann, ohne dass ein Lauf rot wird.
+  //
+  // Seit v33 liest und schreibt field-sync.js (cloudAbgleichen, wortgleich mit
+  // gt40-engine); app.js reicht dessen detail weiter und setzt die Quelle.
   const app = fs.readFileSync(path.join(REPO_ROOT, 'app.js'), 'utf8');
-  assert(/detail:\s*\{[^}]*quelle:\s*'saveData'/.test(app), 'saveData nennt keine Quelle');
-  assert(/antwort:\s*roh/.test(app), 'Rohantwort wird nicht weitergereicht');
-  assert(/status:\s*res\.status/.test(app), 'Statuscode wird nicht weitergereicht');
+  const fs_ = fs.readFileSync(path.join(REPO_ROOT, 'field-sync.js'), 'utf8');
+  assert(/r\.detail[\s\S]{0,40}quelle:\s*'saveData'/.test(app), 'saveData nennt keine Quelle');
+  assert(/antwort:\s*roh/.test(fs_), 'Rohantwort wird nicht weitergereicht');
+  assert(/status:\s*wr\.status/.test(fs_), 'Statuscode wird nicht weitergereicht');
 });
 
 } finally {

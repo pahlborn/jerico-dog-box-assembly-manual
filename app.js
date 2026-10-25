@@ -237,32 +237,59 @@
         }
     }
 
-    async function syncFromCloud() {
-        if (!isGistConfigured()) { openSettings(); return; }
-        isLoading = true;
-        try {
-            var res = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID,
-                { headers: { 'Authorization': 'Bearer ' + getGistConfig().token } });
-            if (!res.ok) {
-                isLoading = false;
-                showToast('Sync-Fehler: Status ' + res.status, { sticky: true, isError: true });
-                return;
-            }
-            var gist = await res.json();
-            var file = gist.files && gist.files[GIST_FILENAME];
-            if (!file) { isLoading = false; return; }
-            var cloudData = JSON.parse(file.content);
-            var localData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-            var merged = FieldSync.mergeRecords(cloudData, localData);
-            applyData(merged);
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-            if (await Findings.pull(gist, getGistConfig().token)) renderAllFindings();
-            isLoading = false; updateSaveStatus();
-            // Erfolg: kein Toast
-        } catch (err) {
-            isLoading = false;
-            showToast('Sync-Fehler: ' + err.message, { sticky: true, isError: true });
+    /**
+     * Alles abgleichen, was ein anderes Geraet geaendert haben kann:
+     * Messwerte, Befunde und die Beschriftungen der Galerie - aus einem Abruf.
+     *
+     * Bis v32 war diese Funktion an nichts angeschlossen. Hereingeholt wurde
+     * nur nach einer eigenen Eingabe; ein Geraet zeigte den alten Stand, bis
+     * man dort etwas eintrug, und Befunde und Bildtexte des anderen Geraets
+     * kamen nie von selbst an.
+     *
+     * opts.still: Aufruf im Hintergrund (Oeffnen, Zurueckholen, online) -
+     * Fehler ins Protokoll statt als Meldung, sonst meldete jedes Funkloch.
+     */
+    var _letzterAbgleich = 0;
+    async function syncFromCloud(opts) {
+        opts = opts || {};
+        var manuell = !opts.still;
+        if (!isGistConfigured()) { if (manuell) openSettings(); return false; }
+        if (!navigator.onLine) {
+            if (manuell) showToast('Offline - abgeglichen wird, sobald wieder Verbindung besteht.');
+            return false;
         }
+        _letzterAbgleich = Date.now();
+        if (dataLoaded) saveFieldsLocal();      // offene Eingaben zuerst sichern
+        var token = getGistConfig().token;
+        var r = await FieldSync.cloudAbgleichen({ token: token, gistId: window.FIXED_GIST_ID,
+            datei: GIST_FILENAME, speicherKey: STORAGE_KEY });
+        if (!r.ok) {
+            var detail = Object.assign({}, r.detail || {}, { quelle: 'syncFromCloud' });
+            if (manuell) showToast('Sync-Fehler: ' + r.fehler, { sticky: true, isError: true, detail: detail });
+            else if (typeof ErrorLog !== 'undefined') ErrorLog.add('Abgleich: ' + r.fehler, detail);
+            return false;
+        }
+        if (r.lokalGeaendert) { var war = isLoading; isLoading = true; applyData(r.gemischt); isLoading = war; }
+        try {
+            if (await Findings.pull(r.gist, token)) renderAllFindings();
+        } catch (e) {
+            if (typeof ErrorLog !== 'undefined') ErrorLog.add('Befunde nicht abgleichbar: ' + e.message, { quelle: 'syncFromCloud', stack: e.stack });
+        }
+        try {
+            if (typeof pullGalleryMeta === 'function' && await pullGalleryMeta(r.gist, token)
+                && typeof refreshGallery === 'function') refreshGallery(false);
+        } catch (e) {
+            if (typeof ErrorLog !== 'undefined') ErrorLog.add('Galerie-Texte nicht abgleichbar: ' + e.message, { quelle: 'syncFromCloud', stack: e.stack });
+        }
+        updateSaveStatus();
+        return true;
+    }
+
+    /** Im Hintergrund abgleichen, hoechstens alle 30 Sekunden. */
+    function abgleichenWennFaellig() {
+        if (document.hidden) return;
+        if (Date.now() - _letzterAbgleich < 30000) return;
+        syncFromCloud({ still: true });
     }
 
     // ==== AUF- UND ZUKLAPPEN ====
@@ -442,70 +469,29 @@
      * spaetere Eintrag gewinnt. Verschiedene Felder stoeren sich nicht.
      */
     async function saveData() {
-        var merged = saveFieldsLocal();
+        saveFieldsLocal();
         updateSaveStatus();
         // Kein Sync moeglich - still lokal speichern, kein Toast
         if (!isGistConfigured() || !navigator.onLine) return;
-        try {
-            // 1. Cloud-Stand holen und zusammenfuehren.
-            try {
-                var vorher = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID,
-                    { headers: { 'Authorization': 'Bearer ' + getGistConfig().token } });
-                if (vorher.ok) {
-                    var gist = await vorher.json();
-                    var datei = gist.files && gist.files[GIST_FILENAME];
-                    var inhalt = datei ? (typeof _readGistFile === 'function'
-                        ? await _readGistFile(gist, GIST_FILENAME, getGistConfig().token)
-                        : datei.content) : null;
-                    if (inhalt) {
-                        merged = FieldSync.mergeRecords(JSON.parse(inhalt), merged);
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-                        // Was aus der Cloud dazukam, soll auch zu sehen sein.
-                        var war = isLoading; isLoading = true;
-                        applyData(merged);
-                        isLoading = war;
-                    }
-                }
-            } catch (leseFehler) {
-                // Nicht lesbar: lieber den lokalen Stand sichern als nichts.
-                // Ein Hinweis genuegt, der Schreibvorgang laeuft weiter.
-                if (typeof ErrorLog !== 'undefined') {
-                    ErrorLog.add('Cloud-Stand vor dem Speichern nicht lesbar - schreibe lokalen Stand',
-                        { quelle: 'saveData', stack: leseFehler && leseFehler.stack });
-                }
-            }
-
-            // 2. Schreiben.
-            var files = {};
-            files[GIST_FILENAME] = { content: JSON.stringify(merged, null, 2) };
-            var res = await fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID, {
-                method: 'PATCH',
-                headers: { 'Authorization': 'Bearer ' + getGistConfig().token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ files: files })
-            });
-            if (!res.ok) {
-                // Erst den Rohtext, dann der Versuch, ihn als JSON zu lesen:
-                // res.json() verbraucht den Koerper, und genau der Rohtext ist
-                // es, der bei einem unerwarteten Fehler weiterhilft.
-                var roh = ''; try { roh = await res.text(); } catch (e) {}
-                var errText = ''; try { errText = (JSON.parse(roh).message) || ''; } catch (e) {}
-                showToast('Sync-Fehler: ' + (errText || 'Status ' + res.status), {
-                    sticky: true, isError: true,
-                    detail: { quelle: 'saveData', status: res.status, statusText: res.statusText,
-                              antwort: roh, url: res.url }
-                });
-                return false;
-            }
-            updateSaveStatus();
-            return true;
-            // Erfolg: kein Toast - der Sync-Badge zeigt den Status
-        } catch (err) {
-            showToast('Sync-Fehler: ' + err.message, {
+        // Lesen - mischen - schreiben steht in field-sync.js, wortgleich mit
+        // gt40-engine. Anders als bis v32 wird nicht mehr geschrieben, wenn der
+        // Cloud-Stand nicht lesbar ist: dann ging der rein lokale Stand hoch,
+        // und Felder, die nur das andere Geraet kannte, waren aus der Cloud weg.
+        var r = await FieldSync.cloudAbgleichen({ token: getGistConfig().token,
+            gistId: window.FIXED_GIST_ID, datei: GIST_FILENAME, speicherKey: STORAGE_KEY });
+        if (!r.ok) {
+            showToast('Sync-Fehler: ' + r.fehler, {
                 sticky: true, isError: true,
-                detail: { quelle: 'saveData', stack: err && err.stack }
+                detail: Object.assign({}, r.detail || {}, { quelle: 'saveData' })
             });
             return false;
         }
+        // Was aus der Cloud dazukam, soll auch zu sehen sein.
+        if (r.lokalGeaendert) { var war = isLoading; isLoading = true; applyData(r.gemischt); isLoading = war; }
+        _letzterAbgleich = Date.now();
+        updateSaveStatus();
+        return true;
+        // Erfolg: kein Toast - der Sync-Badge zeigt den Status
     }
 
     function loadData() {
@@ -1199,6 +1185,7 @@
     });
     window.addEventListener('pageshow', function (e) {
         if (!e.persisted) return;
+        abgleichenWennFaellig();
         restoreCollapseState();
         if (location.hash && location.hash.length > 1) { scrollToHash(); return; }
         var pos = localStorage.getItem(SCROLL_KEY);
@@ -1225,11 +1212,18 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js').catch(function () { /* offline ist optional */ });
         }
-        // Automatisch syncen, wenn die Verbindung wiederkommt
+        // Beim Oeffnen holen, was andere Geraete eingetragen haben - einen
+        // Takt spaeter, damit die Seite fertig aufgebaut ist.
+        setTimeout(function () { syncFromCloud({ still: true }); }, 0);
+        document.addEventListener('visibilitychange', abgleichenWennFaellig);
+        // Verbindung wieder da: alles nachschieben, nicht nur die Messwerte.
+        // Befunde und Galerie-Texte gingen bis v32 verloren, wenn sie offline
+        // geaendert wurden - bis zur naechsten eigenen Aenderung dort.
         window.addEventListener('online', function () {
-            if (isGistConfigured()) {
-                saveData(); // pusht lokale Aenderungen still hoch
-            }
+            if (!isGistConfigured()) return;
+            saveData();
+            Findings.push();
+            if (typeof pushGalleryMeta === 'function') pushGalleryMeta();
         });
     });
 
