@@ -236,10 +236,14 @@ export async function stubGitHub(page, opts = {}) {
     for (const [name, content] of Object.entries(opts.gistFiles || {})) {
       files[name] = { filename: name, content, truncated: false };
     }
-    return route.fulfill({
+    // opts.gistGetDelayMs: Antwortzeit eines GET - fuer Eingaben waehrend
+    // eines Abgleichs. Wortgleich mit gt40-engine.
+    const antwort = () => route.fulfill({
       status: 200, contentType: 'application/json', headers: CORS,
       body: JSON.stringify({ id: 'stub', files })
     });
+    if (opts.gistGetDelayMs) return new Promise((r) => setTimeout(r, opts.gistGetDelayMs)).then(antwort);
+    return antwort();
   });
 
   return state;

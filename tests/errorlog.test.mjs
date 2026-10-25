@@ -972,27 +972,84 @@ await test('Scheitert das Lesen, wird nichts geschrieben - Messwerte, Befunde, G
     'Fehler von Befunden/Galerie stehen nicht im Protokoll: ' + r.join(' | '));
 });
 
-await test('Solange Leeren ausgesetzt ist, kommt der Cloud-Wert zurueck - auch nach dem Stichtag (v35)', async () => {
-  // v33 liess ein nach dem Stichtag gestempeltes Leer gewinnen. Seit v35 ist
-  // das ausgesetzt (FieldSync.LEER_LOESCHT, Begruendung in field-sync.js):
-  // die Stempel sind noch nicht verlaesslich. Der Test haelt den bekannten
-  // Preis fest - wird der Schalter wieder eingeschaltet, kehrt er sich um:
-  // dann muss das Feld leer bleiben und das Leeren in der Cloud ankommen.
+await test('Ein bewusst geleertes Feld bleibt leer und wandert mit (v41)', async () => {
+  // v32 hat "ein Wert schlaegt immer ein Leer" eingefuehrt, v33 liess ein Leer
+  // nach dem Stichtag gewinnen, v35 setzte das aus (Stempel nicht
+  // verlaesslich). Seit v41 zaehlt ein Leer, das der Nutzer selbst gesetzt
+  // hat - mit dem Eingabe-Ereignis, das der Browser dabei ausloest.
   const d = await geraetMitGist('build-log.html', { gistFiles: {
     [DATEN]: JSON.stringify({ [FELD]: 'alter Wert', _fieldTimes: { [FELD]: Date.parse('2026-10-20T08:00:00Z') } })
   } }, '2026-11-01T10:00:00Z');
   const r = await d.page.evaluate(async (f) => {
     const el = document.querySelector('[data-field="' + f + '"]');
     const vorher = el.value;
-    el.value = '';
+    el.value = ''; el.dispatchEvent(new Event('input', { bubbles: true }));
     await saveData();
     return { vorher, nachher: el.value };
   }, FELD);
   const cloud = JSON.parse(d.gist[DATEN]);
   await d.close();
   assertEqual(r.vorher, 'alter Wert', 'Ausgangswert aus der Cloud');
-  assertEqual(r.nachher, 'alter Wert', 'Feld nach dem Speichern (Leeren ausgesetzt)');
-  assertEqual(cloud[FELD], 'alter Wert', 'Cloud nach dem Speichern (Leeren ausgesetzt)');
+  assertEqual(r.nachher, '', 'Das Feld hat den alten Wert zurueckbekommen');
+  assertEqual(cloud[FELD], '', 'Das Leeren ist nicht in der Cloud angekommen');
+  assert(cloud._geleert && cloud._geleert[FELD] > 0, 'Leeren nicht vermerkt');
+});
+
+await test('Eine Eingabe waehrend eines Abgleichs wird nicht ueberschrieben (v41)', async () => {
+  // Bringt der Abgleich etwas Neues, setzt applyData alle Felder neu - bis
+  // v40 auch das, in das gerade getippt wurde.
+  const SEL = 'input[type="text"][data-field]:not([readonly]), textarea[data-field]';
+  const gist = {};
+  const d = await geraetMitGist('build-log.html', { gistFiles: gist, gistGetDelayMs: 500 });
+  await d.page.waitForTimeout(1500);
+  // Das Feld hat schon einen gespeicherten Wert - den setzte applyData bis
+  // v40 ueber das gerade Getippte.
+  const andere = await d.page.evaluate(async (sel) => {
+    const el = document.querySelector(sel);
+    el.value = 'alt'; el.dispatchEvent(new Event('input', { bubbles: true }));
+    await saveData();
+    return document.querySelectorAll(sel)[1].dataset.field;
+  }, SEL);
+  await d.page.waitForTimeout(2500);        // Nachpruefung nach dem Speichern abwarten
+  // Jetzt traegt ein anderes Geraet etwas ein.
+  const stand = JSON.parse(gist[DATEN]);
+  stand[andere] = 'vom anderen Geraet';
+  stand._fieldTimes = Object.assign({}, stand._fieldTimes, { [andere]: Date.now() + 60000 });
+  gist[DATEN] = JSON.stringify(stand);
+  const r = await d.page.evaluate(async (sel) => {
+    const el = document.querySelector(sel);
+    const lauf = syncFromCloud({ still: true });
+    await new Promise((res) => setTimeout(res, 80));
+    el.value = 'getippt'; el.dispatchEvent(new Event('input', { bubbles: true }));
+    await lauf;
+    const direkt = el.value;
+    await new Promise((res) => setTimeout(res, 1500));
+    return { direkt, imFeld: el.value, lokal: JSON.parse(localStorage.getItem('jericoBuildLog'))[el.dataset.field],
+             anderes: document.querySelectorAll(sel)[1].value };
+  }, SEL);
+  await d.close();
+  assertEqual(r.anderes, 'vom anderen Geraet', 'Testaufbau: der Abgleich hat Neues gebracht');
+  assertEqual(r.direkt, 'getippt', 'Im Feld direkt nach dem Abgleich');
+  assertEqual(r.imFeld, 'getippt', 'Im Feld spaeter');
+  assertEqual(r.lokal, 'getippt', 'Lokal gespeichert');
+});
+
+await test('Ein nur leer angezeigtes Feld loescht nichts (v41)', async () => {
+  // Ohne Eingabe-Ereignis hat niemand geleert - etwa ein spaet erzeugtes
+  // oder nicht darstellbares Feld. Ohne Verbindung wirkt allein die Regel
+  // beim lokalen Speichern.
+  const p = await geraetMitGist('build-log.html');
+  const lokal = await p.page.evaluate(async (f) => {
+    const el = document.querySelector('[data-field="' + f + '"]');
+    el.value = 'vorhanden'; el.dispatchEvent(new Event('input', { bubbles: true }));
+    await saveData();
+    localStorage.removeItem('gh_token');
+    el.value = '';
+    await saveData();
+    return JSON.parse(localStorage.getItem('jericoBuildLog'))[f];
+  }, FELD);
+  await p.close();
+  assertEqual(lokal, 'vorhanden', 'Lokal');
 });
 
 await test('Ein Status-Altwert "false" loescht nach dem Stichtag kein "erledigt" eines anderen Geraets (v35)', async () => {

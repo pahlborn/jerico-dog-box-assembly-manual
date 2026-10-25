@@ -425,6 +425,9 @@
     function applyData(data) {
         isLoading = true;
         document.querySelectorAll('[data-field]').forEach(function (el) {
+            // Was der Nutzer gerade eingibt und noch nicht gespeichert ist,
+            // ueberschreibt ein Abgleich nicht (v41).
+            if (FieldSync.istBeruehrt(el.dataset.field)) return;
             var v = data[el.dataset.field];
             if (v === undefined) return;
             if (el.type === 'checkbox') el.checked = !!v;
@@ -447,7 +450,7 @@
 
     function saveFieldsLocal() {
         var existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-        var merged = FieldSync.mergeIntoExisting(existing, collectData(), { recordClears: dataLoaded });
+        var merged = FieldSync.mergeIntoExisting(existing, collectData(), { recordClears: dataLoaded, beruehrt: FieldSync.beruehrteAbholen() });
         localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
         return merged;
     }
