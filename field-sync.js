@@ -29,6 +29,14 @@
   var TIMES_KEY = '_fieldTimes';
   var DEVICES_KEY = '_devices';
   var DEVICE_KEY = '_lastDevice';
+  // Hoechste App-Version, die je in die Datei geschrieben hat (v106).
+  var VERSION_KEY = '_neuesteVersion';
+
+  /** 'v106' -> 106; unlesbar -> 0. */
+  function versionsNummer(v) {
+    var m = /^v?(\d+)/.exec(String(v || ''));
+    return m ? parseInt(m[1], 10) : 0;
+  }
   var LOCAL_DEVICE_KEY = 'device_id';
   var LOCAL_DEVICE_NAME_KEY = 'device_name';
 
@@ -324,10 +332,24 @@
       }
     }
 
+    // Hat eine neuere App-Version in die Datei geschrieben, schreibt diese
+    // hier nicht mehr - auch nicht in den lokalen Speicher (v106). Am
+    // 2026-10-25 um 04:57 schrieb ein vergessener Tab mit v100 seinen alten
+    // Stand ueber die Werte vom Vorabend. Was lokal eingetragen ist, bleibt
+    // liegen und geht nach dem Neuladen mit dem neuen Code hoch.
+    var eigene = versionsNummer(global.APP_VERSION);
+    var neueste = cloud ? versionsNummer(cloud[VERSION_KEY]) : 0;
+    if (eigene && neueste > eigene) {
+      return { ok: false, veraltet: true, neueste: cloud[VERSION_KEY],
+        fehler: 'Neuere Version ' + cloud[VERSION_KEY] + ' ist im Einsatz - nichts geschrieben',
+        detail: { quelle: 'cloudAbgleichen', eigene: global.APP_VERSION, neueste: cloud[VERSION_KEY] } };
+    }
+
     // Zwischen Lesen des lokalen Stands und Zurueckschreiben liegt kein
     // await - eine Eingabe in dieser Zeit kann nicht verloren gehen.
     var lokal = JSON.parse(localStorage.getItem(o.speicherKey) || '{}');
     var gemischt = cloud ? mergeRecords(cloud, lokal) : lokal;
+    if (eigene) gemischt[VERSION_KEY] = 'v' + Math.max(eigene, neueste);
     var lokalGeaendert = kern(gemischt) !== kern(lokal);
     localStorage.setItem(o.speicherKey, JSON.stringify(gemischt));
 
@@ -411,6 +433,9 @@
         if (localStorage.getItem(merk) === vorher) localStorage.removeItem(merk);
       } catch (e) {}
       if (o.nachher) { try { o.nachher(r); } catch (e) { console.warn('[Hochladen] nachher:', e.message); } }
+    } else if (r.veraltet) {
+      // Kein Wiederholen: dieser Code schreibt nicht mehr. Neu laden.
+      veraltetBehandeln(r);
     } else {
       _hl.versuch++;
       var stufen = einstellung('WIEDERHOLEN_MS', WIEDERHOLEN_MS);
@@ -445,6 +470,41 @@
     } else if (global.ErrorLog) {
       global.ErrorLog.add(text, detail);
     }
+  }
+
+  /**
+   * Eine neuere Version hat geschrieben: einmal Bescheid geben und neu laden,
+   * sobald niemand in ein Feld tippt. Neu laden holt den neuen Code (der
+   * Service Worker fragt zuerst das Netz); Eingetragenes liegt im
+   * Geraetespeicher und geht danach hoch.
+   */
+  var _neuLadenGeplant = false;
+  function veraltetBehandeln(r) {
+    if (_neuLadenGeplant) return;
+    _neuLadenGeplant = true;
+    // Hoechstens einmal je Version und Sitzung. Ist die ausgelieferte Seite
+    // selbst noch aelter als die Cloud (Version zurueckgenommen, Cache), kaeme
+    // sonst nach jedem Neuladen das naechste.
+    var schonNeu = false;
+    try { schonNeu = global.sessionStorage.getItem('fieldsync_neugeladen') === String(r.neueste); } catch (e) {}
+    if (schonNeu) {
+      if (typeof global.showToast === 'function') {
+        global.showToast('Version ' + r.neueste + ' ist hier noch nicht angekommen - Eingetragenes bleibt auf diesem Geraet und wird nicht hochgeladen. Spaeter neu laden.', { sticky: true });
+      }
+      return;
+    }
+    try { global.sessionStorage.setItem('fieldsync_neugeladen', String(r.neueste)); } catch (e) {}
+    try { global.dispatchEvent(new CustomEvent('fieldsync-veraltet', { detail: { neueste: r.neueste } })); } catch (e) {}
+    if (typeof global.showToast === 'function') {
+      global.showToast('Neue Version ' + r.neueste + ' im Einsatz - die Seite wird neu geladen. Eingetragenes bleibt erhalten.', { sticky: true });
+    }
+    if (global.ErrorLog) global.ErrorLog.add('Veraltete Version: ' + r.fehler, r.detail);
+    var neuLaden = einstellung('neuLaden', function () { global.location.reload(); });
+    (function warten() {
+      var a = global.document && global.document.activeElement;
+      if (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) { setTimeout(warten, 2000); return; }
+      setTimeout(neuLaden, 1500);
+    })();
   }
 
   function starten() {
@@ -523,6 +583,8 @@
     jetztHochladen: jetztHochladen,
     nachholen: nachholen,
     abgleichen: abgleichen,
+    VERSION_KEY: VERSION_KEY,
+    versionsNummer: versionsNummer,
     ungesendet: ungesendet,
     collectFields: collectFields,
     mergeIntoExisting: mergeIntoExisting,

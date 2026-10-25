@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v38',
+      date: '2026-10-25',
+      time: '20:25',
+      title: 'Ein alter Tab schreibt nicht mehr ueber Neueres',
+      changes: [
+        { type: 'fix', text: 'Ein vergessener Tab mit altem Code konnte seinen veralteten Stand ueber neuere Eintraege schreiben (in gt40-engine am 25.10. so geschehen). Jetzt traegt jeder Schreibvorgang die Version ein. Hat eine neuere Version geschrieben, schreibt ein aelterer Tab nicht mehr und laedt sich einmal neu, sobald niemand tippt. Was dort eingetragen war, bleibt erhalten und geht danach hoch.' },
+        { type: 'intern', text: 'field-sync.js: _neuesteVersion in der Cloud-Datei, veraltetBehandeln mit Schutz gegen endloses Neuladen (einmal je Version und Sitzung). Hochlade-Block wieder wortgleich mit gt40-engine. Zwei Tests; Gegenprobe ohne Pruefung, ohne Eintrag und ohne Schleifenschutz: je einer rot.' }
+      ]
+    },
+    {
       version: 'v37',
       date: '2026-10-25',
       time: '19:30',
