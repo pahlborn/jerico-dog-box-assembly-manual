@@ -870,15 +870,28 @@
     }
 
     // ==== KAPITELSTATUS ====
+    // "Offen" wird als eigener Wert gespeichert, nicht als leer. Bis v35 war
+    // es leer - und ein Leer schlaegt beim Abgleich keinen Wert (v35,
+    // FieldSync.LEER_LOESCHT). Ein erledigter Schritt liess sich darum nicht
+    // mehr zuruecksetzen: der Abgleich holte "erledigt" sofort zurueck (in
+    // gt40-engine am iPad aufgefallen, 2026-10-25). Als Wert mit eigenem
+    // Zeitstempel gewinnt "offen" wie jede andere Eingabe nach Aktualitaet.
+    // Dieselbe Loesung in gt40-engine v104.
+    var STATUS_OFFEN = 'offen';
     function cycleStepStatus(btn) {
-        btn.value = Findings.nextStatus(btn.value);
+        btn.value = Findings.nextStatus(btn.value) || STATUS_OFFEN;
         paintStepStatus(btn);
         autoSave();
         updateProgress();
     }
+    // Alte Werte ("false", "offen") bleiben, wie sie gespeichert sind. Bis
+    // v35 schrieb das Anzeigen "false" auf leer um, und das naechste
+    // Speichern - egal welches Feld - stempelte daraus ein Leeren, das niemand
+    // gemacht hatte.
     function paintStepStatus(btn) {
-        var s = Findings.normalizeStatus(btn.value);
-        btn.value = s;
+        var roh = btn.value;
+        var s = Findings.normalizeStatus(roh);
+        btn.value = (s === '' && !FieldSync.isBlank(roh)) ? roh : s;
         btn.classList.remove('wip', 'done');
         if (s) btn.classList.add(s);
         btn.textContent = s === 'done' ? '✓' : (s === 'wip' ? '…' : '');
