@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v34',
+      date: '2026-10-25',
+      time: '08:41',
+      title: 'Jetzt abgleichen, und Fehlerprotokolle aller Geraete',
+      changes: [
+        { type: 'neu', text: 'Im Werkzeugmenue jeder Seite steht "Jetzt abgleichen", direkt unter "Speichern". Abgeglichen wird ohnehin beim Oeffnen und beim Zurueckholen der App; der Knopf ist fuer den Moment, in dem man es gleich wissen will - etwa nachdem auf dem anderen Geraet gerade etwas eingetragen wurde.' },
+        { type: 'fix', text: 'Der Spiegel des Fehlerprotokolls in der Cloud ersetzte bei jedem Fehler die Eintraege der anderen Geraete. Dort stand immer nur das Protokoll des Geraets, das zuletzt einen Fehler hatte. Jetzt werden die Protokolle vereinigt, und ohne gelesenen Cloud-Stand wird nicht geschrieben - auf dem Geraet selbst bleibt jeder Eintrag ohnehin erhalten.' }
+      ]
+    },
+    {
       version: 'v33',
       date: '2026-10-25',
       time: '06:21',
