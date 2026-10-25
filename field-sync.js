@@ -132,10 +132,21 @@
   }
 
   /**
+   * Ab wann ein leeres Feld mit Zeitstempel eine Aussage ist. Leer-Stempel
+   * davor stammen ueberwiegend aus dem Fehler, der bis v29 jedes angezeigte
+   * Feld stempelte, und sind von einem bewussten Leeren nicht zu
+   * unterscheiden. Ein Tag nach der Auslieferung von v33, damit ein noch
+   * offener Reiter mit altem Code keine gueltigen Leerstellen erzeugen kann.
+   * Derselbe Tag gilt in gt40-engine.
+   */
+  var LEER_STICHTAG = Date.parse('2026-10-26T00:00:00Z');
+
+  /**
    * Cloud- und lokalen Datensatz zusammenfuehren. Pro Feld gewinnt der
    * juengere Zeitstempel - mit einer Ausnahme, die teuer erkauft ist:
    *
-   * **Ein leerer Wert schlaegt nie einen vorhandenen.**
+   * **Ein leerer Wert schlaegt einen vorhandenen nur als bewusste, datierte
+   * Aussage nach dem Stichtag** (LEER_STICHTAG).
    *
    * Vorher galt der Zeitstempel ohne Ansehen des Inhalts. Zusammen mit dem
    * Fehler, dass jedes angezeigte leere Feld gestempelt wurde (bis v29),
@@ -146,13 +157,17 @@
    * Dokumentation wurden beim Zusammenfuehren durch Leerstrings ersetzt.
    *
    * v30 hat das Stempeln abgestellt, aber die bereits gestempelten leeren
-   * Felder blieben liegen und wirkten weiter. Darum hier die Regel am Inhalt
-   * statt am Datum.
+   * Felder blieben liegen und wirkten weiter. v32 hat darum entschieden:
+   * steht nur auf einer Seite ein Wert, gewinnt er immer.
    *
-   * Der Preis: ein absichtliches Leeren wandert nicht mehr auf das andere
-   * Geraet. Wer einen Wert loescht, muss das dort wiederholen. Das ist die
-   * sichere Richtung - ein zu viel stehengebliebener Wert faellt auf und ist
-   * in zwei Sekunden erneut geloescht, eine ausradierte Dokumentation nicht.
+   * Das hatte einen Preis, der groesser war als gedacht: ein bewusst
+   * geleertes Feld liess sich nicht leeren. Beim naechsten Speichern holte
+   * das Mischen den alten Cloud-Wert zurueck und schrieb ihn wieder ins Feld.
+   *
+   * Seit v33 gilt der Stichtag: Leer-Stempel davor zaehlen nicht (dort
+   * gewinnt weiter der Wert, wie in v32), was danach bewusst geleert wird,
+   * bleibt leer und wandert auf die anderen Geraete. Entscheidung des
+   * Halters, 2026-10-25; dieselbe Regel gilt in gt40-engine.
    */
   function mergeRecords(cloudData, localData) {
     cloudData = cloudData || {};
@@ -192,11 +207,18 @@
       var ct = fieldTime(cloudData, cloudTimes, k, cloudFallback);
       var lt = fieldTime(localData, localTimes, k, localFallback);
 
-      // Steht nur auf einer Seite ein Wert, gewinnt er - egal wie alt er ist.
+      // Steht nur auf einer Seite ein Wert, gewinnt das Leer der anderen Seite
+      // nur, wenn es nach dem Stichtag ausdruecklich gestempelt wurde und
+      // juenger ist als der Wert. Kein Rueckfall auf _savedAt.
       var cLeer = isBlank(cVal), lLeer = isBlank(lVal);
       if (cLeer !== lLeer) {
-        if (cLeer) { merged[k] = lVal; mergedTimes[k] = lt; }
-        else { merged[k] = cVal; mergedTimes[k] = ct; }
+        var leerStempel = cLeer ? cloudTimes[k] : localTimes[k];
+        var wertZeit = cLeer ? lt : ct;
+        var leerZaehlt = leerStempel !== undefined && leerStempel >= LEER_STICHTAG
+          && leerStempel > wertZeit;
+        var nimmCloud = cLeer ? leerZaehlt : !leerZaehlt;
+        if (nimmCloud) { merged[k] = cVal; mergedTimes[k] = ct; }
+        else { merged[k] = lVal; mergedTimes[k] = lt; }
         if (merged[k] === undefined) delete merged[k];
         continue;
       }
@@ -223,6 +245,100 @@
     return merged;
   }
 
+  /** Vergleichbarer Kern eines Datensatzes: ohne Verwaltungsangaben. */
+  function kern(d) {
+    var out = {};
+    Object.keys(d || {}).sort().forEach(function (k) {
+      if (k.charAt(0) !== '_') out[k] = d[k];
+    });
+    return JSON.stringify(out);
+  }
+
+  /**
+   * Den Datensatz der Messwerte mit dem Gist abgleichen: lesen - mischen -
+   * lokal speichern - nur wenn noetig schreiben.
+   *
+   * Dieselbe Funktion steht wortgleich in gt40-engine (dort seit v101). Bis
+   * v32 schrieb saveData() auch dann, wenn der Cloud-Stand nicht lesbar war -
+   * dann eben den rein lokalen Stand. Felder, die nur das andere Geraet
+   * kannte, waren danach aus der Cloud weg.
+   *
+   * Hier gilt: scheitert das Lesen, wird nicht geschrieben.
+   *
+   * @param {{token, gistId, datei, speicherKey}} o
+   * @returns {Promise<{ok, gemischt, lokalGeaendert, fehler, detail}>}
+   */
+  async function cloudAbgleichen(o) {
+    var api = 'https://api.github.com/gists/' + o.gistId;
+    var auth = { 'Authorization': 'Bearer ' + o.token };
+    function fehler(text, detail) { return { ok: false, fehler: text, detail: detail || null }; }
+    async function rohtext(r) { try { return await r.text(); } catch (e) { return ''; } }
+
+    var res, gist;
+    try {
+      res = await fetch(api, { headers: auth, cache: 'no-store' });
+      if (!res.ok) {
+        return fehler('Status ' + res.status + ' beim Lesen - nichts geschrieben',
+          { quelle: 'cloudAbgleichen', status: res.status, antwort: await rohtext(res) });
+      }
+      gist = await res.json();
+    } catch (e) {
+      return fehler(e.message + ' - nichts geschrieben', { quelle: 'cloudAbgleichen', stack: e.stack });
+    }
+
+    var f = gist.files && gist.files[o.datei];
+    var cloud = null;
+    if (f) {
+      var inhalt = f.content;
+      if (f.truncated) {
+        // Ab 1 MB liefert die API nur einen Anfang. Den zu mischen hiesse,
+        // den Rest fuer geloescht zu halten.
+        try {
+          var rr = await fetch(f.raw_url, { headers: auth, cache: 'no-store' });
+          if (!rr.ok) return fehler('Gekuerzte Cloud-Datei nicht nachladbar - nichts geschrieben',
+            { quelle: 'cloudAbgleichen', status: rr.status });
+          inhalt = await rr.text();
+        } catch (e) {
+          return fehler('Gekuerzte Cloud-Datei nicht nachladbar - nichts geschrieben', { quelle: 'cloudAbgleichen', stack: e.stack });
+        }
+      }
+      try { cloud = JSON.parse(inhalt); }
+      catch (e) {
+        return fehler('Cloud-Datei unlesbar - nichts geschrieben',
+          { quelle: 'cloudAbgleichen', antwort: String(inhalt).slice(0, 300) });
+      }
+    }
+
+    // Zwischen Lesen des lokalen Stands und Zurueckschreiben liegt kein
+    // await - eine Eingabe in dieser Zeit kann nicht verloren gehen.
+    var lokal = JSON.parse(localStorage.getItem(o.speicherKey) || '{}');
+    var gemischt = cloud ? mergeRecords(cloud, lokal) : lokal;
+    var lokalGeaendert = kern(gemischt) !== kern(lokal);
+    localStorage.setItem(o.speicherKey, JSON.stringify(gemischt));
+
+    if (!cloud || kern(gemischt) !== kern(cloud)) {
+      var files = {};
+      files[o.datei] = { content: JSON.stringify(gemischt, null, 2) };
+      try {
+        var wr = await fetch(api, {
+          method: 'PATCH',
+          headers: { 'Authorization': 'Bearer ' + o.token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ files: files })
+        });
+        if (!wr.ok) {
+          var roh = await rohtext(wr);
+          var msg = ''; try { msg = JSON.parse(roh).message || ''; } catch (e) {}
+          return fehler('Status ' + wr.status + (msg ? ': ' + msg : '') + ' beim Schreiben',
+            { quelle: 'cloudAbgleichen', status: wr.status, antwort: roh });
+        }
+      } catch (e) {
+        return fehler(e.message, { quelle: 'cloudAbgleichen', stack: e.stack });
+      }
+    }
+    // gist mitgeben: Befunde und Galerie mischen aus demselben Abruf.
+    return { ok: true, gemischt: gemischt, lokalGeaendert: lokalGeaendert, gist: gist };
+  }
+
   /** Feldwerte der aktuellen Seite einsammeln. */
   function collectFields(root) {
     var out = {};
@@ -236,7 +352,10 @@
     TIMES_KEY: TIMES_KEY,
     DEVICES_KEY: DEVICES_KEY,
     DEVICE_KEY: DEVICE_KEY,
+    LEER_STICHTAG: LEER_STICHTAG,
     isBlank: isBlank,
+    kern: kern,
+    cloudAbgleichen: cloudAbgleichen,
     collectFields: collectFields,
     mergeIntoExisting: mergeIntoExisting,
     mergeRecords: mergeRecords,
