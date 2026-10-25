@@ -970,11 +970,12 @@ await test('Scheitert das Lesen, wird nichts geschrieben - Messwerte, Befunde, G
     'Fehler von Befunden/Galerie stehen nicht im Protokoll: ' + r.join(' | '));
 });
 
-await test('Ein bewusst geleertes Feld bleibt leer und wandert mit (nach dem Stichtag)', async () => {
-  // v32 hat "ein Wert schlaegt immer ein Leer" eingefuehrt. Ein bewusst
-  // geleertes Feld liess sich damit nicht leeren: beim naechsten Speichern
-  // holte das Mischen den alten Cloud-Wert zurueck. Seit v33 zaehlt ein Leer,
-  // das nach dem Stichtag gestempelt wurde. Die Uhr steht dafuer auf November.
+await test('Solange Leeren ausgesetzt ist, kommt der Cloud-Wert zurueck - auch nach dem Stichtag (v35)', async () => {
+  // v33 liess ein nach dem Stichtag gestempeltes Leer gewinnen. Seit v35 ist
+  // das ausgesetzt (FieldSync.LEER_LOESCHT, Begruendung in field-sync.js):
+  // die Stempel sind noch nicht verlaesslich. Der Test haelt den bekannten
+  // Preis fest - wird der Schalter wieder eingeschaltet, kehrt er sich um:
+  // dann muss das Feld leer bleiben und das Leeren in der Cloud ankommen.
   const d = await geraetMitGist('build-log.html', { gistFiles: {
     [DATEN]: JSON.stringify({ [FELD]: 'alter Wert', _fieldTimes: { [FELD]: Date.parse('2026-10-20T08:00:00Z') } })
   } }, '2026-11-01T10:00:00Z');
@@ -988,8 +989,27 @@ await test('Ein bewusst geleertes Feld bleibt leer und wandert mit (nach dem Sti
   const cloud = JSON.parse(d.gist[DATEN]);
   await d.close();
   assertEqual(r.vorher, 'alter Wert', 'Ausgangswert aus der Cloud');
-  assertEqual(r.nachher, '', 'Das Feld hat den alten Wert zurueckbekommen');
-  assertEqual(cloud[FELD], '', 'Das Leeren ist nicht in der Cloud angekommen');
+  assertEqual(r.nachher, 'alter Wert', 'Feld nach dem Speichern (Leeren ausgesetzt)');
+  assertEqual(cloud[FELD], 'alter Wert', 'Cloud nach dem Speichern (Leeren ausgesetzt)');
+});
+
+await test('Ein Status-Altwert "false" loescht nach dem Stichtag kein "erledigt" eines anderen Geraets (v35)', async () => {
+  // In gt40-engine nachgerechnet am 2026-10-25: Die Seite zeigt "false" als
+  // offen ('') an. Speichert das Geraet danach irgendein anderes Feld, wird
+  // daraus ein frisch gestempeltes Leer, das ab dem Stichtag das "done" eines
+  // anderen Geraets geschlagen haette.
+  const d = await geraetMitGist('build-log.html');
+  const r = await d.page.evaluate(() => {
+    const sept = Date.parse('2026-09-20T00:00:00Z');
+    const laptop = FieldSync.mergeIntoExisting(
+      { schritt_1: 'false', _fieldTimes: { schritt_1: sept } },
+      { schritt_1: '', anderes_feld: '42' },
+      { now: FieldSync.LEER_STICHTAG + 8 * 3600000 });
+    const ipad = { schritt_1: 'done', _fieldTimes: { schritt_1: sept }, _savedAt: '2026-10-24T18:00:00Z' };
+    return [FieldSync.mergeRecords(laptop, ipad).schritt_1, FieldSync.mergeRecords(ipad, laptop).schritt_1];
+  });
+  await d.close();
+  assertEqual(r, ['done', 'done'], 'Status nach dem Mischen (Laptop in der Cloud / iPad in der Cloud)');
 });
 
 await test('Ein Leer-Stempel vor dem Stichtag schlaegt keinen Wert - in beiden Richtungen', async () => {
