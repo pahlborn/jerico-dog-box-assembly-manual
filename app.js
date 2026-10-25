@@ -849,6 +849,9 @@
                 var merged = FieldSync.mergeRecords(felder, existing);
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
                 applyData(merged);
+                // Bis v41 blieb der Import auf diesem Geraet, bis zufaellig
+                // ein Abgleich lief - und das Merkzeichen fehlte.
+                if (isGistConfigured()) FieldSync.vormerken(hochladeAuftrag());
                 if (parsed.befunde && parsed.befunde.items) {
                     Findings._set(Findings.merge(parsed.befunde, Findings._raw()));
                     Findings.save();

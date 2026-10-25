@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v42',
+      date: '2026-10-25',
+      time: '00:05',
+      title: 'Ein Import kommt in die Cloud',
+      changes: [
+        { type: 'fix', text: 'Ein Import blieb auf diesem Geraet, bis zufaellig ein Abgleich lief. Jetzt geht er wie jede Eingabe gebuendelt in die Cloud und ist bis dahin als "Nicht hochgeladen" vermerkt. Gemischt wird wie bisher je Feld nach dem neueren Eintrag - eine aeltere Sicherung ueberschreibt nichts Neueres (gt40-engine hat das in v110 nachgezogen).' },
+        { type: 'intern', text: 'importJSON merkt das Hochladen vor. Ein Test; Gegenprobe ohne die Zeile: der Wert aus der Datei fehlt in der Cloud.' }
+      ]
+    },
+    {
       version: 'v41',
       date: '2026-10-25',
       time: '23:20',

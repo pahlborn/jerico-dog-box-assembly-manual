@@ -1034,6 +1034,32 @@ await test('Eine Eingabe waehrend eines Abgleichs wird nicht ueberschrieben (v41
   assertEqual(r.lokal, 'getippt', 'Lokal gespeichert');
 });
 
+await test('Ein Import kommt in die Cloud, eine aeltere Sicherung ueberschreibt nichts Neueres (v42)', async () => {
+  // Gemischt wird seit jeher nach Zeitstempel. Bis v41 blieb das Ergebnis
+  // aber auf dem Geraet, bis zufaellig ein Abgleich lief.
+  const SEL = 'input[type="text"][data-field]:not([readonly]), textarea[data-field]';
+  const d = await geraetMitGist('build-log.html');
+  const r = await d.page.evaluate(async (sel) => {
+    FieldSync.BUENDELN_MS = 500;
+    const el = document.querySelector(sel);
+    const f = el.dataset.field;
+    el.value = 'neu'; el.dispatchEvent(new Event('input', { bubbles: true }));
+    await saveData();
+    await new Promise((res) => setTimeout(res, 2500));      // Nachpruefung abwarten
+    const frueher = Date.now() - 3600000;
+    const sicherung = { felder: { [f]: 'alt', nur_in_der_datei: 'aus der Sicherung',
+      _fieldTimes: { [f]: frueher, nur_in_der_datei: frueher } } };
+    importJSON({ target: { files: [new File([JSON.stringify(sicherung)], 'sicherung.json')], value: '' } });
+    await new Promise((res) => setTimeout(res, 2000));
+    return { f, imFeld: el.value };
+  }, SEL);
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(r.imFeld, 'neu', 'Neuere Eingabe im Feld');
+  assertEqual(cloud[r.f], 'neu', 'Neuere Eingabe in der Cloud');
+  assertEqual(cloud.nur_in_der_datei, 'aus der Sicherung', 'Wert aus der Datei in der Cloud');
+});
+
 await test('Ein nur leer angezeigtes Feld loescht nichts (v41)', async () => {
   // Ohne Eingabe-Ereignis hat niemand geleert - etwa ein spaet erzeugtes
   // oder nicht darstellbares Feld. Ohne Verbindung wirkt allein die Regel
