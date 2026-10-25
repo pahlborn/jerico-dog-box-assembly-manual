@@ -1189,6 +1189,53 @@ await test('Liegengebliebenes wird beim Oeffnen hochgeladen, das Merkzeichen ver
   assertEqual(merk, false, 'Merkzeichen nach dem Hochladen');
 });
 
+// ---------------------------------------------------------------------------
+suite('v38: Alte offene Tabs - eine neuere Version hat geschrieben (wie gt40-engine v106)');
+
+await test('Hat eine neuere Version geschrieben, schreibt dieser Tab nicht und laedt genau einmal neu', async () => {
+  // gt40-engine, 2026-10-25, 04:57: ein vergessener Tab mit altem Code
+  // schrieb seinen Stand ueber die Werte vom Vorabend.
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [DATEN]: JSON.stringify({ fremdes_feld: 'vom neueren Geraet', _neuesteVersion: 'v999',
+      _fieldTimes: { fremdes_feld: Date.now() - 60000 } }) } });
+  let ladevorgaenge = 1;
+  d.page.on('load', () => { ladevorgaenge++; });
+  await d.page.waitForTimeout(4000);           // Abgleich beim Oeffnen -> einmal neu laden
+  await d.page.waitForFunction(() => typeof saveData === 'function', null, { timeout: 30000 });
+  await d.page.waitForTimeout(1500);           // Abgleich nach dem Neuladen - kein zweites Mal
+  const r = await d.page.evaluate(async (sel) => {
+    const el = document.querySelector(sel);
+    el.value = 'im alten Tab';
+    await saveData();
+    await new Promise((res) => setTimeout(res, 2500));
+    return { lokal: JSON.parse(localStorage.getItem('jericoBuildLog'))[el.dataset.field],
+             merk: FieldSync.ungesendet('jericoBuildLog'),
+             sitzung: sessionStorage.getItem('fieldsync_neugeladen') };
+  }, TIPPFELD);
+  const schreibvorgaenge = d.stub.gistWrites.filter((f) => DATEN in f).length;
+  await d.close();
+  assertEqual(schreibvorgaenge, 0, 'Schreibvorgaenge des veralteten Tabs');
+  assertEqual(ladevorgaenge, 2, 'Ladevorgaenge (erstes Laden + genau einmal neu)');
+  assertEqual(r.sitzung, 'v999', 'Neu geladen fuer');
+  assertEqual(r.lokal, 'im alten Tab', 'Eingabe lokal erhalten');
+  assertEqual(r.merk, true, 'Merkzeichen bleibt');
+});
+
+await test('Jeder Schreibvorgang traegt die eigene Version ein, eine aeltere blockiert nicht', async () => {
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [DATEN]: JSON.stringify({ fremdes_feld: 'alt', _neuesteVersion: 'v1',
+      _fieldTimes: { fremdes_feld: Date.now() - 60000 } }) } });
+  const eigene = await d.page.evaluate(async (sel) => {
+    document.querySelector(sel).value = 'neuer Wert';
+    await saveData();
+    return APP_VERSION;
+  }, TIPPFELD);
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(cloud._neuesteVersion, eigene, 'Version in der Cloud-Datei');
+  assertEqual(cloud.fremdes_feld, 'alt', 'Fremdes Feld erhalten');
+});
+
 await test('Ein Leer-Stempel vor dem Stichtag schlaegt keinen Wert - in beiden Richtungen', async () => {
   // Im Gist liegen 196 leere Felder mit Stempel vom 19.10., je ein
   // Seitenaufruf. Der Wert ist absichtlich AELTER als das Leer: genau dann
