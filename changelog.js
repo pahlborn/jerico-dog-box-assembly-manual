@@ -13,6 +13,17 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v41',
+      date: '2026-10-25',
+      time: '23:20',
+      title: 'Leeren geht wieder, Eingaben waehrend des Abgleichs bleiben',
+      changes: [
+        { type: 'fix', text: 'Ein Feld bewusst zu leeren geht wieder: Es bleibt leer und wandert auf die anderen Geraete. Seit v35 holte der Abgleich den alten Wert zurueck. Jetzt zaehlt ein Leeren nur bei einem Feld, das man selbst beruehrt hat - durch Tippen, Auswaehlen oder Antippen (wie gt40-engine v109).' },
+        { type: 'fix', text: 'Brachte ein Abgleich etwas Neues, waehrend man gerade tippte, sprang das Feld auf den alten Wert zurueck. Jetzt ueberschreibt der Abgleich nichts, was gerade eingegeben wird.' },
+        { type: 'intern', text: 'field-sync.js wie gt40-engine v109: beruehrte Felder, _geleert als Vermerk fuer bewusstes Leeren, LEER_LOESCHT wieder an. app.js: Speichern gibt die beruehrten Felder mit, applyData laesst sie aus. Drei Tests neu, zwei umgestellt; Gegenprobe je Mechanismus rot.' }
+      ]
+    },
+    {
       version: 'v40',
       date: '2026-10-25',
       time: '21:55',

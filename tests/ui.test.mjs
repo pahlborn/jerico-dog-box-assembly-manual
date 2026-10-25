@@ -1374,7 +1374,9 @@ await test('geleertes Feld bleibt geleert', async () => {
   await p.page.waitForTimeout(800);
   await p.page.evaluate(() => {
     const el = document.querySelector('[data-field="p3_runout_front"]');
-    el.value = ''; autoSave();
+    // Wie der Nutzer: mit dem Eingabe-Ereignis des Browsers (seit v41 zaehlt
+    // ein Leeren nur bei einem beruehrten Feld).
+    el.value = ''; el.dispatchEvent(new Event('input', { bubbles: true })); autoSave();
   });
   await p.page.waitForTimeout(800);
   await p.page.reload();
