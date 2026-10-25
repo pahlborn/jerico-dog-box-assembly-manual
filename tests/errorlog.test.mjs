@@ -1012,6 +1012,73 @@ await test('Ein Status-Altwert "false" loescht nach dem Stichtag kein "erledigt"
   assertEqual(r, ['done', 'done'], 'Status nach dem Mischen (Laptop in der Cloud / iPad in der Cloud)');
 });
 
+await test('Ein erledigter Schritt laesst sich wieder auf offen und in Arbeit stellen - auch mit Cloud (v36)', async () => {
+  // In gt40-engine am 2026-10-25 am iPad aufgefallen (Schritt 27): "offen"
+  // war ein leerer Wert. Seit v35 schlaegt ein Leer keinen Wert, also holte
+  // der Abgleich sofort "erledigt" zurueck - der Knopf liess sich nicht mehr
+  // umstellen.
+  const vorhin = Date.now() - 60000;
+  const d0 = await geraetMitGist('build-log.html');
+  const status = await d0.page.evaluate(() => document.querySelector('.step-status[data-field]').dataset.field);
+  await d0.close();
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [DATEN]: JSON.stringify({ [status]: 'done', _fieldTimes: { [status]: vorhin } })
+  } });
+  const r = await d.page.evaluate(async (f) => {
+    const btn = document.querySelector('.step-status[data-field="' + f + '"]');
+    const stand = [Findings.normalizeStatus(btn.value) || 'offen'];
+    for (let i = 0; i < 3; i++) {
+      cycleStepStatus(btn);
+      await saveData();
+      stand.push(Findings.normalizeStatus(btn.value) || 'offen');
+    }
+    return stand;
+  }, status);
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(r, ['done', 'offen', 'wip', 'done'], 'Knopf: aus der Cloud, dann nach drei Tipps');
+  assertEqual(cloud[status], 'done', 'Cloud nach drei Tipps');
+});
+
+await test('Offen kommt in der Cloud an und schlaegt dort ein aelteres erledigt (v36)', async () => {
+  const vorhin = Date.now() - 60000;
+  const d0 = await geraetMitGist('build-log.html');
+  const status = await d0.page.evaluate(() => document.querySelector('.step-status[data-field]').dataset.field);
+  await d0.close();
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [DATEN]: JSON.stringify({ [status]: 'done', _fieldTimes: { [status]: vorhin } })
+  } });
+  const r = await d.page.evaluate(async (f) => {
+    const btn = document.querySelector('.step-status[data-field="' + f + '"]');
+    cycleStepStatus(btn);
+    await saveData();
+    return [Findings.normalizeStatus(btn.value), btn.classList.contains('done'), btn.classList.contains('wip')];
+  }, status);
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(r, ['', false, false], 'Knopf nach einem Tipp (Status / Klasse done / Klasse wip)');
+  assertEqual(['done', 'wip', true, 'true', 'on'].includes(cloud[status]), false,
+    'Status in der Cloud noch erledigt/in Arbeit: ' + JSON.stringify(cloud[status]));
+});
+
+await test('Ein alter Status "false" bleibt beim Speichern eines anderen Felds unberuehrt (v36)', async () => {
+  // Bis v35 schrieb das Anzeigen "false" auf leer um; das naechste Speichern
+  // stempelte daraus ein Leeren, das niemand gemacht hatte.
+  const d = await geraetMitGist('build-log.html');
+  const r = await d.page.evaluate(async (feld) => {
+    const sept = Date.parse('2026-09-20T00:00:00Z');
+    const btn = document.querySelector('.step-status[data-field]');
+    const status = btn.dataset.field;
+    btn.value = 'false';
+    renderAllStepStatus();
+    document.querySelector('[data-field="' + feld + '"]').value = '0.18';
+    const eingesammelt = FieldSync.collectFields(document);
+    return [btn.value, eingesammelt[status], /offen|open/.test(btn.title)];
+  }, FELD);
+  await d.close();
+  assertEqual(r, ['false', 'false', true], 'Wert im Knopf / eingesammelter Wert / Anzeige offen');
+});
+
 await test('Ein Leer-Stempel vor dem Stichtag schlaegt keinen Wert - in beiden Richtungen', async () => {
   // Im Gist liegen 196 leere Felder mit Stempel vom 19.10., je ein
   // Seitenaufruf. Der Wert ist absichtlich AELTER als das Leer: genau dann

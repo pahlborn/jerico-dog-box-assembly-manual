@@ -1296,7 +1296,10 @@ await test('Status durchlaeuft offen, in Arbeit, erledigt', async () => {
     for (let i = 0; i < 3; i++) { btn.click(); out.push(btn.value); }
     return out;
   });
-  assertEqual(werte, ['', 'wip', 'done', ''], 'Statusfolge stimmt nicht');
+  // Seit v36 ist "offen" nach einem Tipp ein eigener Wert ('offen'), kein
+  // leerer: ein Leer schlaegt beim Abgleich keinen Wert (v35), und der
+  // Schritt liess sich sonst nicht mehr zuruecksetzen. Unberuehrt bleibt er ''.
+  assertEqual(werte, ['', 'wip', 'done', 'offen'], 'Statusfolge stimmt nicht');
   await p.close();
 });
 
