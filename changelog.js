@@ -13,9 +13,19 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v42',
+      date: '2026-10-25',
+      time: '22:04',
+      title: 'Ein Import kommt in die Cloud',
+      changes: [
+        { type: 'fix', text: 'Ein Import blieb auf diesem Geraet, bis zufaellig ein Abgleich lief. Jetzt geht er wie jede Eingabe gebuendelt in die Cloud und ist bis dahin als "Nicht hochgeladen" vermerkt. Gemischt wird wie bisher je Feld nach dem neueren Eintrag - eine aeltere Sicherung ueberschreibt nichts Neueres (gt40-engine hat das in v110 nachgezogen).' },
+        { type: 'intern', text: 'importJSON merkt das Hochladen vor. Ein Test; Gegenprobe ohne die Zeile: der Wert aus der Datei fehlt in der Cloud.' }
+      ]
+    },
+    {
       version: 'v41',
       date: '2026-10-25',
-      time: '23:20',
+      time: '21:35',
       title: 'Leeren geht wieder, Eingaben waehrend des Abgleichs bleiben',
       changes: [
         { type: 'fix', text: 'Ein Feld bewusst zu leeren geht wieder: Es bleibt leer und wandert auf die anderen Geraete. Seit v35 holte der Abgleich den alten Wert zurueck. Jetzt zaehlt ein Leeren nur bei einem Feld, das man selbst beruehrt hat - durch Tippen, Auswaehlen oder Antippen (wie gt40-engine v109).' },
@@ -26,7 +36,7 @@
     {
       version: 'v40',
       date: '2026-10-25',
-      time: '21:55',
+      time: '20:31',
       title: 'Ein veralteter Stand schlaegt keinen gestempelten Wert mehr',
       changes: [
         { type: 'fix', text: 'Felder ohne eigenen Zeitstempel wurden nach dem Speicherzeitpunkt des ganzen Datensatzes entschieden: ein Geraet mit veraltetem Stand, das irgendein anderes Feld speicherte, gewann sie. Jetzt gewinnt der gestempelte Wert (wie gt40-engine v108). Im jerico-Gist hat derzeit jedes Feld einen Stempel - die Aenderung schuetzt fuer die Zukunft.' },
@@ -36,7 +46,7 @@
     {
       version: 'v39',
       date: '2026-10-25',
-      time: '21:15',
+      time: '20:08',
       title: 'Zwei Geraete gleichzeitig verlieren nichts mehr',
       changes: [
         { type: 'fix', text: 'Speicherten zwei Geraete fast gleichzeitig, konnte die Aenderung des einen in der Cloud fehlen - sie kam erst an, wenn dieses Geraet wieder etwas speicherte. Jetzt prueft jedes Geraet zwei Sekunden nach dem Hochladen nach und schreibt erneut, falls dabei etwas verloren ging. Wird gerade getippt, uebernimmt das das ohnehin anstehende Hochladen.' },
@@ -46,7 +56,7 @@
     {
       version: 'v38',
       date: '2026-10-25',
-      time: '20:25',
+      time: '19:43',
       title: 'Ein alter Tab schreibt nicht mehr ueber Neueres',
       changes: [
         { type: 'fix', text: 'Ein vergessener Tab mit altem Code konnte seinen veralteten Stand ueber neuere Eintraege schreiben (in gt40-engine am 25.10. so geschehen). Jetzt traegt jeder Schreibvorgang die Version ein. Hat eine neuere Version geschrieben, schreibt ein aelterer Tab nicht mehr und laedt sich einmal neu, sobald niemand tippt. Was dort eingetragen war, bleibt erhalten und geht danach hoch.' },
