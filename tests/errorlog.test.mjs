@@ -812,9 +812,11 @@ await test('Ein Versionswechsel laesst die erfassten Daten unberuehrt', async ()
 
 await test('Kein Code entfernt die erfassten Daten', async () => {
   // Statisch geprueft, weil es keinen Fall geben darf, in dem es passiert.
-  // Erlaubt sind genau drei Schluessel: Token und Gist-Id beim Trennen, und
-  // das Fehlerprotokoll beim Leeren.
-  const erlaubt = ['gh_token', 'GIST_ID_KEY', 'SCHLUESSEL'];
+  // Erlaubt sind genau vier Schluessel: Token und Gist-Id beim Trennen, das
+  // Fehlerprotokoll beim Leeren und seit v37 das Merkzeichen "nicht
+  // hochgeladen" (field-sync.js, merk) nach gelungenem Hochladen - es haelt
+  // keine Eingabe, nur die Tatsache, dass eine noch nicht in der Cloud ist.
+  const erlaubt = ['gh_token', 'GIST_ID_KEY', 'SCHLUESSEL', 'merk'];
   const dateien = fs.readdirSync(REPO_ROOT).filter((f) => f.endsWith('.js'));
   const verstoesse = [];
   for (const d of dateien) {
@@ -1079,6 +1081,114 @@ await test('Ein alter Status "false" bleibt beim Speichern eines anderen Felds u
   assertEqual(r, ['false', 'false', true], 'Wert im Knopf / eingesammelter Wert / Anzeige offen');
 });
 
+// ---------------------------------------------------------------------------
+suite('v37: Hochladen buendeln, nacheinander, nachholen (wie gt40-engine v105)');
+
+const TIPPFELD = 'input[type="text"][data-field]:not([readonly]), textarea[data-field]';
+
+await test('Fuenf Eingaben in Folge ergeben einen Schreibvorgang', async () => {
+  const d = await geraetMitGist('build-log.html');
+  const vorher = d.stub.gistWrites.filter((f) => DATEN in f).length;
+  const feld = await d.page.evaluate(async (sel) => {
+    FieldSync.BUENDELN_MS = 1200;
+    const el = document.querySelector(sel);
+    for (let i = 1; i <= 5; i++) {
+      el.value = 'Eintrag ' + i;
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise((r) => setTimeout(r, 700));
+    }
+    await new Promise((r) => setTimeout(r, 2500));
+    return el.dataset.field;
+  }, TIPPFELD);
+  const schreibvorgaenge = d.stub.gistWrites.filter((f) => DATEN in f).length - vorher;
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(schreibvorgaenge, 1, 'Schreibvorgaenge fuer fuenf Eingaben');
+  assertEqual(cloud[feld], 'Eintrag 5', 'Letzter Wert in der Cloud');
+});
+
+await test('Gleichzeitiges Speichern schreibt nie gleichzeitig', async () => {
+  const d = await geraetMitGist('build-log.html', { gistWriteDelayMs: 400 });
+  const feld = await d.page.evaluate(async (sel) => {
+    const el = document.querySelector(sel);
+    el.value = 'eins'; const a = saveData();
+    el.value = 'zwei'; const b = saveData();
+    el.value = 'drei'; const c = saveData();
+    await Promise.all([a, b, c]);
+    return el.dataset.field;
+  }, TIPPFELD);
+  const max = d.stub.maxGleichzeitig;
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(max, 1, 'Gleichzeitig offene Schreibvorgaenge');
+  assertEqual(cloud[feld], 'drei', 'Letzter Wert in der Cloud');
+});
+
+await test('Abgleich und Speichern ueberschneiden sich nicht', async () => {
+  // Der Abgleich beim Oeffnen/Zurueckholen schreibt ebenfalls, wenn lokal
+  // etwas fehlt - bis v36 lief er unabhaengig vom Speichern.
+  const d = await geraetMitGist('build-log.html', { gistWriteDelayMs: 400 });
+  await d.page.evaluate(async (sel) => {
+    const el = document.querySelector(sel);
+    el.value = 'beim Abgleich';
+    await Promise.all([syncFromCloud({ still: true }), saveData(), syncFromCloud({ still: true })]);
+  }, TIPPFELD);
+  const max = d.stub.maxGleichzeitig;
+  await d.close();
+  assertEqual(max, 1, 'Gleichzeitig offene Schreibvorgaenge');
+});
+
+await test('Nach einer Ablehnung wird nachgeholt, die Anzeige sagt es', async () => {
+  // Abgelehnt wird der erste Schreibvorgang NACH dem Oeffnen - der Abgleich
+  // beim Oeffnen schreibt die Vorgabewerte der Felder selbst einmal hoch.
+  let scharf = false, abgelehnt = false;
+  const d = await geraetMitGist('build-log.html', {
+    gistWriteStatus: () => (scharf && !abgelehnt ? (abgelehnt = true, 409) : 200) });
+  scharf = true;
+  const r = await d.page.evaluate(async (sel) => {
+    FieldSync.WIEDERHOLEN_MS = [600];
+    const el = document.querySelector(sel);
+    el.value = 'nach 409';
+    await saveData();
+    const badge = () => (document.getElementById('syncBadge') || {}).textContent || '';
+    const direkt = [FieldSync.ungesendet('jericoBuildLog'), badge()];
+    await new Promise((res) => setTimeout(res, 2000));
+    return { feld: el.dataset.field, direkt, spaeter: [FieldSync.ungesendet('jericoBuildLog'), badge()] };
+  }, TIPPFELD);
+  const cloud = JSON.parse(d.gist[DATEN]);
+  await d.close();
+  assertEqual(r.direkt[0], true, 'Merkzeichen nach der Ablehnung');
+  assert(/Nicht hochgeladen/.test(r.direkt[1]), 'Anzeige nach der Ablehnung: ' + r.direkt[1]);
+  assertEqual(cloud[r.feld], 'nach 409', 'Wert in der Cloud nach dem Nachholen');
+  assertEqual(r.spaeter[0], false, 'Merkzeichen nach dem Nachholen');
+  assert(!/Nicht hochgeladen/.test(r.spaeter[1]), 'Anzeige nach dem Nachholen: ' + r.spaeter[1]);
+});
+
+await test('Liegengebliebenes wird beim Oeffnen hochgeladen, das Merkzeichen verschwindet', async () => {
+  const ctx = await neuerKontext(browser);
+  await ctx.addInitScript(() => {
+    if (sessionStorage.getItem('vorbereitet')) return;
+    sessionStorage.setItem('vorbereitet', '1');
+    localStorage.setItem('gh_token', 'test-token');
+    localStorage.setItem('jerico_gist_id', 'stub');
+    localStorage.setItem('jericoBuildLog', JSON.stringify({
+      liegengeblieben: 'vom iPad', _fieldTimes: { liegengeblieben: Date.now() - 5000 } }));
+    localStorage.setItem('jericoBuildLog_ungesendet', '1');
+  });
+  const gist = {};
+  const page = await ctx.newPage();
+  await stubGitHub(page, { gistFiles: gist, onGistWrite: (files) => {
+    for (const [n, f] of Object.entries(files)) gist[n] = f.content;
+  } });
+  await page.goto(base + '/build-log.html');
+  await page.waitForFunction(() => typeof syncFromCloud === 'function', null, { timeout: 30000 });
+  await page.waitForTimeout(1500);
+  const merk = await page.evaluate(() => FieldSync.ungesendet('jericoBuildLog'));
+  await ctx.close();
+  assertEqual(JSON.parse(gist[DATEN] || '{}').liegengeblieben, 'vom iPad', 'Liegengebliebener Wert in der Cloud');
+  assertEqual(merk, false, 'Merkzeichen nach dem Hochladen');
+});
+
 await test('Ein Leer-Stempel vor dem Stichtag schlaegt keinen Wert - in beiden Richtungen', async () => {
   // Im Gist liegen 196 leere Felder mit Stempel vom 19.10., je ein
   // Seitenaufruf. Der Wert ist absichtlich AELTER als das Leer: genau dann
@@ -1122,10 +1232,10 @@ await test('Der Sync-Fehler reicht Statuscode und Rohantwort weiter', async () =
   // verlorengehen kann, ohne dass ein Lauf rot wird.
   //
   // Seit v33 liest und schreibt field-sync.js (cloudAbgleichen, wortgleich mit
-  // gt40-engine); app.js reicht dessen detail weiter und setzt die Quelle.
-  const app = fs.readFileSync(path.join(REPO_ROOT, 'app.js'), 'utf8');
+  // gt40-engine). Seit v37 meldet dort auch fehlerMelden den Fehler und setzt
+  // die Quelle - eine Meldung pro Fehlerserie, jeder Versuch im Protokoll.
   const fs_ = fs.readFileSync(path.join(REPO_ROOT, 'field-sync.js'), 'utf8');
-  assert(/r\.detail[\s\S]{0,40}quelle:\s*'saveData'/.test(app), 'saveData nennt keine Quelle');
+  assert(/r\.detail[\s\S]{0,40}quelle:\s*'saveData'/.test(fs_), 'saveData nennt keine Quelle');
   assert(/antwort:\s*roh/.test(fs_), 'Rohantwort wird nicht weitergereicht');
   assert(/status:\s*wr\.status/.test(fs_), 'Statuscode wird nicht weitergereicht');
 });

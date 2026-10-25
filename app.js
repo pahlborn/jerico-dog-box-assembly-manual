@@ -208,7 +208,10 @@
         var b = document.getElementById('syncBadge');
         if (!b) return;
         var sb = document.getElementById('syncBtn');
-        if (isGistConfigured()) {
+        if (isGistConfigured() && FieldSync.ungesendet(STORAGE_KEY)) {
+            b.innerHTML = '<span class="sync-badge offline" style="background:#dd6b20;color:#fff" title="Noch nicht in der Cloud - wird automatisch nachgeholt"><span class="sync-dot offline"></span>Nicht hochgeladen</span>';
+            if (sb) sb.disabled = false;
+        } else if (isGistConfigured()) {
             b.innerHTML = '<span class="sync-badge online"><span class="sync-dot online"></span>Cloud Sync</span>';
             if (sb) sb.disabled = false;
         } else {
@@ -261,15 +264,16 @@
         _letzterAbgleich = Date.now();
         if (dataLoaded) saveFieldsLocal();      // offene Eingaben zuerst sichern
         var token = getGistConfig().token;
-        var r = await FieldSync.cloudAbgleichen({ token: token, gistId: window.FIXED_GIST_ID,
-            datei: GIST_FILENAME, speicherKey: STORAGE_KEY });
-        if (!r.ok) {
-            var detail = Object.assign({}, r.detail || {}, { quelle: 'syncFromCloud' });
-            if (manuell) showToast('Sync-Fehler: ' + r.fehler, { sticky: true, isError: true, detail: detail });
-            else if (typeof ErrorLog !== 'undefined') ErrorLog.add('Abgleich: ' + r.fehler, detail);
-            return false;
-        }
-        if (r.lokalGeaendert) { var war = isLoading; isLoading = true; applyData(r.gemischt); isLoading = war; }
+        // Seit v37 durch dieselbe Warteschlange wie das Hochladen (field-sync.js):
+        // Holen und Schreiben ueberschneiden sich nicht mehr.
+        var auftrag = hochladeAuftrag();
+        auftrag.fehler = function (f) {
+            var detail = Object.assign({}, f.detail || {}, { quelle: 'syncFromCloud' });
+            if (manuell) showToast('Sync-Fehler: ' + f.fehler, { sticky: true, isError: true, detail: detail });
+            else if (typeof ErrorLog !== 'undefined') ErrorLog.add('Abgleich: ' + f.fehler, detail);
+        };
+        var r = await FieldSync.abgleichen(auftrag);
+        if (!r || !r.ok || !r.gist) return false;
         try {
             if (await Findings.pull(r.gist, token)) renderAllFindings();
         } catch (e) {
@@ -471,28 +475,31 @@
     async function saveData() {
         saveFieldsLocal();
         updateSaveStatus();
-        // Kein Sync moeglich - still lokal speichern, kein Toast
-        if (!isGistConfigured() || !navigator.onLine) return;
+        if (!isGistConfigured()) return;
+        // Offline: vormerken - nachgeholt wird, sobald es wieder geht.
+        if (!navigator.onLine) { FieldSync.vormerken(hochladeAuftrag()); return false; }
         // Lesen - mischen - schreiben steht in field-sync.js, wortgleich mit
         // gt40-engine. Anders als bis v32 wird nicht mehr geschrieben, wenn der
         // Cloud-Stand nicht lesbar ist: dann ging der rein lokale Stand hoch,
         // und Felder, die nur das andere Geraet kannte, waren aus der Cloud weg.
-        var r = await FieldSync.cloudAbgleichen({ token: getGistConfig().token,
-            gistId: window.FIXED_GIST_ID, datei: GIST_FILENAME, speicherKey: STORAGE_KEY });
-        if (!r.ok) {
-            showToast('Sync-Fehler: ' + r.fehler, {
-                sticky: true, isError: true,
-                detail: Object.assign({}, r.detail || {}, { quelle: 'saveData' })
-            });
-            return false;
-        }
-        // Was aus der Cloud dazukam, soll auch zu sehen sein.
-        if (r.lokalGeaendert) { var war = isLoading; isLoading = true; applyData(r.gemischt); isLoading = war; }
-        _letzterAbgleich = Date.now();
-        updateSaveStatus();
-        return true;
+        // Seit v37 nacheinander, mit Wiederholung; die Fehlermeldung kommt
+        // aus field-sync.js, einmal pro Fehlerserie.
+        var r = await FieldSync.jetztHochladen(hochladeAuftrag());
+        return !!(r && r.ok);
         // Erfolg: kein Toast - der Sync-Badge zeigt den Status
     }
+
+    /** Auftrag fuer field-sync.js: was hochgeladen wird und was danach passiert. */
+    function hochladeAuftrag() {
+        return { token: getGistConfig().token, gistId: window.FIXED_GIST_ID, datei: GIST_FILENAME,
+            speicherKey: STORAGE_KEY, nachher: function (r) {
+                // Was aus der Cloud dazukam, soll auch zu sehen sein.
+                if (r.lokalGeaendert) { var war = isLoading; isLoading = true; applyData(r.gemischt); isLoading = war; }
+                _letzterAbgleich = Date.now();
+                updateSaveStatus();
+            } };
+    }
+    window.addEventListener('fieldsync-stand', function () { updateSyncBadge(); });
 
     function loadData() {
         try {
@@ -513,7 +520,6 @@
      * Hier etwas traeger, weil Tippen laufend Aenderungen erzeugt und jeder
      * Vorgang zwei Aufrufe kostet (lesen und schreiben).
      */
-    var pushTimer = null;
     function autoSave() {
         if (isLoading) return;
         clearTimeout(autoSaveTimer);
@@ -522,9 +528,9 @@
             updateSaveStatus();
             updateProgress();
 
-            if (!isGistConfigured() || !navigator.onLine) return;
-            clearTimeout(pushTimer);
-            pushTimer = setTimeout(function () { saveData(); }, 4000);
+            // Hochladen gebuendelt nach einigen Sekunden Ruhe, nacheinander und
+            // mit Wiederholung (field-sync.js, seit v37; vorher 4 s ohne beides).
+            if (isGistConfigured()) FieldSync.vormerken(hochladeAuftrag());
         }, 600);
     }
 

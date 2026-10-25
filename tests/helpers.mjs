@@ -113,7 +113,10 @@ const TINY_JPEG = Buffer.from(
  *   opts.userFehler      - { status, body } laesst GET /user scheitern
  */
 export async function stubGitHub(page, opts = {}) {
-  const state = { treeRequests: 0, gistWrites: [] };
+  // patchVersuche / offen / maxGleichzeitig: fuer opts.gistWriteStatus und
+  // opts.gistWriteDelayMs - Ablehnung des n-ten PATCH (ab 1) und Antwortzeit,
+  // um Ueberlappung sichtbar zu machen. Wortgleich mit gt40-engine.
+  const state = { treeRequests: 0, gistWrites: [], patchVersuche: 0, offen: 0, maxGleichzeitig: 0 };
 
   // Alles andere Externe blocken, damit kein Test versehentlich ins Netz geht.
   await page.route('**://**', (route) => {
@@ -184,6 +187,25 @@ export async function stubGitHub(page, opts = {}) {
     const req = route.request();
     if (req.method() === 'OPTIONS') {
       return route.fulfill({ status: 204, headers: CORS, body: '' });
+    }
+    if (req.method() === 'PATCH' && (opts.gistWriteStatus || opts.gistWriteDelayMs)) {
+      const files = JSON.parse(req.postData() || '{}').files || {};
+      const n = ++state.patchVersuche;
+      const status = opts.gistWriteStatus ? opts.gistWriteStatus(n) : 200;
+      state.offen++;
+      state.maxGleichzeitig = Math.max(state.maxGleichzeitig, state.offen);
+      const antworten = () => {
+        state.offen--;
+        if (status >= 200 && status < 300) {
+          state.gistWrites.push(files);
+          if (opts.onGistWrite) opts.onGistWrite(files);
+          return route.fulfill({ status, contentType: 'application/json', headers: CORS, body: '{}' });
+        }
+        return route.fulfill({ status, contentType: 'application/json', headers: CORS,
+                               body: JSON.stringify({ message: 'Gist cannot be updated.' }) });
+      };
+      if (opts.gistWriteDelayMs) return new Promise((r) => setTimeout(r, opts.gistWriteDelayMs)).then(antworten);
+      return antworten();
     }
     if (req.method() === 'PATCH') {
       const files = JSON.parse(req.postData() || '{}').files || {};
