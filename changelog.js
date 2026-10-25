@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v39',
+      date: '2026-10-25',
+      time: '21:15',
+      title: 'Zwei Geraete gleichzeitig verlieren nichts mehr',
+      changes: [
+        { type: 'fix', text: 'Speicherten zwei Geraete fast gleichzeitig, konnte die Aenderung des einen in der Cloud fehlen - sie kam erst an, wenn dieses Geraet wieder etwas speicherte. Jetzt prueft jedes Geraet zwei Sekunden nach dem Hochladen nach und schreibt erneut, falls dabei etwas verloren ging. Wird gerade getippt, uebernimmt das das ohnehin anstehende Hochladen.' },
+        { type: 'intern', text: 'field-sync.js wie gt40-engine v107: Nachpruefung nach jedem Schreibvorgang (hoechstens dreimal in Folge), cloudAbgleichen meldet geschrieben; dazu: keine eigene Nachpruefung, solange ein gebuendeltes Hochladen ansteht. Ein Test mit zwei Geraeten; Gegenproben: ohne Nachpruefung fehlt eine Aenderung, ohne die Ausnahme werden aus fuenf Eingaben drei Schreibvorgaenge.' }
+      ]
+    },
+    {
       version: 'v38',
       date: '2026-10-25',
       time: '20:25',
