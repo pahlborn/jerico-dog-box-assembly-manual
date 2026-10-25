@@ -1043,6 +1043,54 @@ await test('Der Sync-Fehler reicht Statuscode und Rohantwort weiter', async () =
   assert(/status:\s*wr\.status/.test(fs_), 'Statuscode wird nicht weitergereicht');
 });
 
+// ---------------------------------------------------------------------------
+suite('v34: Knopf zum Abgleichen, Fehlerprotokolle mehrerer Geraete');
+
+const FEHLER = 'jerico-build-log-data-errors.json';
+
+await test('Jede Seite hat im Werkzeugmenue "Jetzt abgleichen", und er gleicht ab', async () => {
+  // syncFromCloud gab es, aber nirgends einen Weg, es von Hand auszuloesen.
+  const ohne = ['index.html', 'specs.html', 'build-log.html', 'performance.html'].filter((d) =>
+    !/onclick="syncFromCloud\(\);closeToolMenu\(\)"[^>]*>[^<]*Jetzt abgleichen/.test(
+      fs.readFileSync(path.join(REPO_ROOT, d), 'utf8')));
+  assertEqual(ohne, [], 'Seiten ohne den Knopf');
+
+  const d = await geraetMitGist('index.html');
+  const n = await d.page.evaluate(async () => {
+    let n = 0;
+    const echt = window.syncFromCloud;
+    window.syncFromCloud = function () { n++; return echt.apply(this, arguments); };
+    document.querySelector('button[onclick^="syncFromCloud"]').click();
+    await new Promise((r) => setTimeout(r, 300));
+    return n;
+  });
+  await d.close();
+  assertEqual(n, 1, 'Der Knopf hat nicht abgeglichen');
+});
+
+await test('Der Fehlerspiegel vereinigt die Protokolle der Geraete', async () => {
+  // Bis v33 ersetzte jeder Spiegel die Eintraege der anderen Geraete.
+  const vomIpad = { zeit: '2026-10-20T08:00:00.000Z', geraet: 'iPad', nachricht: 'Fehler vom iPad' };
+  const d = await geraetMitGist('index.html', { gistFiles: { [FEHLER]: JSON.stringify([vomIpad]) } });
+  await d.page.evaluate(() => ErrorLog.add('Fehler vom Laptop'));
+  await d.page.waitForTimeout(1500);
+  const cloud = JSON.parse(d.gist[FEHLER] || '[]').map((e) => e.nachricht);
+  await d.close();
+  assert(cloud.includes('Fehler vom iPad'), 'Der Eintrag des anderen Geraets fehlt: ' + cloud.join(' | '));
+  assert(cloud.includes('Fehler vom Laptop'), 'Der eigene Eintrag fehlt: ' + cloud.join(' | '));
+});
+
+await test('Der Fehlerspiegel schreibt nicht ohne gelesenen Stand', async () => {
+  const d = await geraetMitGist('index.html', { gistGetFehler: { status: 500, body: '{}' } });
+  await d.page.evaluate(() => ErrorLog.add('Fehler bei Lesefehler'));
+  await d.page.waitForTimeout(1500);
+  const geschrieben = d.stub.gistWrites.filter((w) => FEHLER in w).length;
+  const lokal = await d.page.evaluate(() => ErrorLog.alle().some((e) => e.nachricht === 'Fehler bei Lesefehler'));
+  await d.close();
+  assertEqual(geschrieben, 0, 'Spiegel trotz Lesefehler geschrieben');
+  assertEqual(lokal, true, 'Der Eintrag fehlt lokal');
+});
+
 } finally {
   await browser.close();
   server.close();

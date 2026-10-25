@@ -602,17 +602,43 @@
      * Antworttext der API. Jetzt liegt der Puffer lokal in errorlog.js;
      * schlaegt der Spiegel fehl, bleibt der Eintrag trotzdem erhalten.
      */
-    function spiegleProtokollInGist(eintraege) {
+    async function spiegleProtokollInGist(eintraege) {
         if (!isGistConfigured() || !navigator.onLine) return;
         var cfg = getGistConfig();
         var logFile = GIST_FILENAME.replace('.json', '-errors.json');
-        var files = {};
-        files[logFile] = { content: JSON.stringify(eintraege, null, 2) };
-        return fetch('https://api.github.com/gists/' + window.FIXED_GIST_ID, {
-            method: 'PATCH',
-            headers: { 'Authorization': 'Bearer ' + cfg.token, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ files: files })
-        }).catch(function () { /* lokal ist der Eintrag bereits sicher */ });
+        var api = 'https://api.github.com/gists/' + window.FIXED_GIST_ID;
+        try {
+            // Erst lesen und vereinigen: jedes Geraet fuehrt sein eigenes
+            // Protokoll. Bis v33 ersetzte jeder Spiegel die Eintraege der
+            // anderen Geraete in der Cloud - gesehen hat man dort immer nur
+            // das Geraet, das zuletzt einen Fehler hatte. Ohne gelesenen Stand
+            // wird nicht geschrieben; lokal ist jeder Eintrag ohnehin sicher.
+            var res = await fetch(api, { headers: { 'Authorization': 'Bearer ' + cfg.token }, cache: 'no-store' });
+            if (!res.ok) return;
+            var gist = await res.json();
+            var f = gist.files && gist.files[logFile];
+            var cloud = [];
+            if (f && f.content) {
+                try { cloud = JSON.parse(f.content); } catch (e) { return; }
+                if (!Array.isArray(cloud)) return;
+            }
+            var gesehen = {}, alle = [];
+            cloud.concat(eintraege || []).forEach(function (e) {
+                if (!e) return;
+                var k = e.zeit + '|' + (e.geraet || '') + '|' + e.nachricht;
+                if (gesehen[k]) return;
+                gesehen[k] = 1;
+                alle.push(e);
+            });
+            alle.sort(function (a, b) { return String(a.zeit).localeCompare(String(b.zeit)); });
+            var files = {};
+            files[logFile] = { content: JSON.stringify(alle.slice(-200), null, 2) };
+            await fetch(api, {
+                method: 'PATCH',
+                headers: { 'Authorization': 'Bearer ' + cfg.token, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ files: files })
+            });
+        } catch (e) { /* lokal ist der Eintrag bereits sicher */ }
     }
     if (typeof ErrorLog !== 'undefined') ErrorLog.spiegelSetzen(spiegleProtokollInGist);
 
