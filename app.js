@@ -503,6 +503,9 @@
             } };
     }
     window.addEventListener('fieldsync-stand', function () { updateSyncBadge(); });
+    // Befunde, Foto-Beschriftungen und Fehlerprotokoll laufen seit v43 durch
+    // denselben Lauf - so laden sie hoch (field-sync.js).
+    FieldSync.auftragSetzen(function () { return isGistConfigured() ? hochladeAuftrag() : null; });
 
     function loadData() {
         try {
@@ -601,55 +604,12 @@
         if (opts.isError && typeof ErrorLog !== 'undefined') ErrorLog.add(msg, opts.detail);
     }
 
-    /**
-     * Optionaler Gist-Spiegel des Fehlerprotokolls.
-     *
-     * Der Vorgaenger schrieb den Eintrag ausschliesslich in den Gist - und
-     * las ihn vorher von dort. Beim Sync-Fehler, dem haeufigsten Fall,
-     * schlug beides fehl und es wurde nichts protokolliert. Ausserdem
-     * behielt er nur den Satz aus dem Toast und verwarf Statuscode und
-     * Antworttext der API. Jetzt liegt der Puffer lokal in errorlog.js;
-     * schlaegt der Spiegel fehl, bleibt der Eintrag trotzdem erhalten.
-     */
-    async function spiegleProtokollInGist(eintraege) {
-        if (!isGistConfigured() || !navigator.onLine) return;
-        var cfg = getGistConfig();
-        var logFile = GIST_FILENAME.replace('.json', '-errors.json');
-        var api = 'https://api.github.com/gists/' + window.FIXED_GIST_ID;
-        try {
-            // Erst lesen und vereinigen: jedes Geraet fuehrt sein eigenes
-            // Protokoll. Bis v33 ersetzte jeder Spiegel die Eintraege der
-            // anderen Geraete in der Cloud - gesehen hat man dort immer nur
-            // das Geraet, das zuletzt einen Fehler hatte. Ohne gelesenen Stand
-            // wird nicht geschrieben; lokal ist jeder Eintrag ohnehin sicher.
-            var res = await fetch(api, { headers: { 'Authorization': 'Bearer ' + cfg.token }, cache: 'no-store' });
-            if (!res.ok) return;
-            var gist = await res.json();
-            var f = gist.files && gist.files[logFile];
-            var cloud = [];
-            if (f && f.content) {
-                try { cloud = JSON.parse(f.content); } catch (e) { return; }
-                if (!Array.isArray(cloud)) return;
-            }
-            var gesehen = {}, alle = [];
-            cloud.concat(eintraege || []).forEach(function (e) {
-                if (!e) return;
-                var k = e.zeit + '|' + (e.geraet || '') + '|' + e.nachricht;
-                if (gesehen[k]) return;
-                gesehen[k] = 1;
-                alle.push(e);
-            });
-            alle.sort(function (a, b) { return String(a.zeit).localeCompare(String(b.zeit)); });
-            var files = {};
-            files[logFile] = { content: JSON.stringify(alle.slice(-200), null, 2) };
-            await fetch(api, {
-                method: 'PATCH',
-                headers: { 'Authorization': 'Bearer ' + cfg.token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ files: files })
-            });
-        } catch (e) { /* lokal ist der Eintrag bereits sicher */ }
-    }
-    if (typeof ErrorLog !== 'undefined') ErrorLog.spiegelSetzen(spiegleProtokollInGist);
+    // Fehlerprotokoll: Spiegel in den Gist ueber den gemeinsamen Lauf
+    // (ErrorLog.gistKanal, field-sync.js) - kein eigener Schreibvorgang,
+    // vereinigt mit den Eintraegen der anderen Geraete, spaetestens nach 5
+    // Minuten. Bis v42 stand hier ein eigener Spiegel, der bei jedem Fehler
+    // las und schrieb - neben Messwerten, Befunden und Galerie (v43).
+    if (typeof ErrorLog !== 'undefined') ErrorLog.gistKanal(GIST_FILENAME.replace('.json', '-errors.json'));
 
     /** Zaehlt, was in der Sicherung steckt - damit man es sieht, nicht glaubt. */
     function sicherungUmfang(payload) {

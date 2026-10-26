@@ -13,6 +13,17 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v43',
+      date: '2026-10-26',
+      time: '15:57',
+      title: 'Ein Schreiber fuer alle Dateien',
+      changes: [
+        { type: 'fix', text: 'Messwerte, Befunde, Foto-Beschriftungen und Fehlerprotokoll schrieben jeder fuer sich in den Gist. Zwei Schreibvorgaenge zur selben Zeit lehnt GitHub ab (409), auch fuer verschiedene Dateien. Jetzt gehen alle Dateien eines Geraets in einem Lauf hoch: einmal lesen, je Datei mischen, einmal schreiben - mit Buendeln, Nachholen und Wiederholen fuer alle (wie gt40-engine v112).' },
+        { type: 'fix', text: 'Das Fehlerprotokoll loest keinen eigenen Schreibvorgang mehr aus. Es geht mit dem naechsten Lauf mit, spaetestens nach 5 Minuten, und vereinigt weiterhin die Eintraege aller Geraete.' },
+        { type: 'intern', text: 'field-sync.js: cloudAbgleichen und Hochlade-Block wortgleich mit gt40-engine v112 (weitere Dateien, Marke je Datei, auftragSetzen). findings.js, gallery.js und errorlog.js (gistKanal) laufen darueber; der eigene Spiegel in app.js entfaellt. Fuenf Tests; Gegenprobe mit dem alten Stand und je Mechanismus rot.' }
+      ]
+    },
+    {
       version: 'v42',
       date: '2026-10-25',
       time: '22:04',
