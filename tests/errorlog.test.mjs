@@ -968,8 +968,10 @@ await test('Scheitert das Lesen, wird nichts geschrieben - Messwerte, Befunde, G
   const schreibvorgaenge = d.stub.gistWrites.filter((w) => DATEN in w || BEFUNDE in w || FOTOS in w).length;
   await d.close();
   assertEqual(schreibvorgaenge, 0, 'Schreibzugriffe trotz Lesefehler');
-  assert(r.some((m) => /Befunde/.test(m)) && r.some((m) => /Galerie/.test(m)),
-    'Fehler von Befunden/Galerie stehen nicht im Protokoll: ' + r.join(' | '));
+  // Seit v43 laufen Befunde und Galerie durch den gemeinsamen Lauf - der
+  // meldet den Lesefehler fuer alle Dateien.
+  assert(r.some((m) => /beim Lesen - nichts geschrieben/.test(m)),
+    'Lesefehler steht nicht im Protokoll: ' + r.join(' | '));
 });
 
 await test('Ein bewusst geleertes Feld bleibt leer und wandert mit (v41)', async () => {
@@ -1460,6 +1462,98 @@ await test('Der Fehlerspiegel schreibt nicht ohne gelesenen Stand', async () => 
   await d.close();
   assertEqual(geschrieben, 0, 'Spiegel trotz Lesefehler geschrieben');
   assertEqual(lokal, true, 'Der Eintrag fehlt lokal');
+});
+
+// ---------------------------------------------------------------------------
+suite('v43: Ein Schreiber pro Geraet - alle Dateien in einem Lauf (wie gt40-engine v112)');
+
+const TIPP = 'input[type="text"][data-field]:not([readonly]), textarea[data-field]';
+
+await test('Messwert, Befund und Galerie gehen in einem Schreibvorgang hoch', async () => {
+  // Bis v42 schrieb jede Datei fuer sich - drei Schreibvorgaenge, die sich
+  // gegenseitig 409 bescherten.
+  const d = await geraetMitGist('build-log.html');
+  await d.page.waitForTimeout(3000);           // Abgleich und Nachpruefung beim Oeffnen
+  const vorher = d.stub.gistWrites.length;
+  await d.page.evaluate(async (sel) => {
+    FieldSync.BUENDELN_MS = 800;
+    const el = document.querySelector(sel);
+    el.value = 'ein Lauf'; el.dispatchEvent(new Event('input', { bubbles: true }));
+    Findings.add('p1_ident', 'Befund im selben Lauf');
+    _galleryMeta.hero.p1_ident_photos = { type: 'default', idx: 0, m: Date.now() };
+    scheduleMetaPush();
+    await new Promise((r) => setTimeout(r, 2500));
+  }, TIPP);
+  const schreib = d.stub.gistWrites.slice(vorher);
+  await d.close();
+  assertEqual(schreib.length, 1, 'Schreibvorgaenge');
+  assertEqual(Object.keys(schreib[0] || {}).sort(), [DATEN, BEFUNDE, FOTOS].sort(), 'Dateien im Schreibvorgang');
+});
+
+await test('Messwerte, Befunde und Galerie schreiben nie gleichzeitig', async () => {
+  const d = await geraetMitGist('build-log.html', { gistWriteDelayMs: 400 });
+  await d.page.evaluate(async (sel) => {
+    document.querySelector(sel).value = 'gleichzeitig';
+    Findings.add('p1_ident', 'gleichzeitig');
+    _galleryMeta.hero.p1_ident_photos = { type: 'default', idx: 0, m: Date.now() };
+    await Promise.all([saveData(), Findings.push(), pushGalleryMeta()]);
+  }, TIPP);
+  const max = d.stub.maxGleichzeitig;
+  const befunde = JSON.parse(d.gist[BEFUNDE] || '{"items":{}}');
+  await d.close();
+  assertEqual(max, 1, 'Gleichzeitig offene Schreibvorgaenge');
+  assert(Object.values(befunde.items).some((it) => it.text === 'gleichzeitig'), 'Befund nicht in der Cloud');
+});
+
+await test('Das Fehlerprotokoll schreibt nicht selbst und geht mit dem naechsten Lauf', async () => {
+  // Bis v42 las und schrieb jeder Fehler sofort - neben allen anderen Dateien.
+  const d = await geraetMitGist('build-log.html', { gistFiles: {
+    [FEHLER]: JSON.stringify([{ zeit: '2026-10-20T10:00:00.000Z', geraet: 'dev-anderes', nachricht: 'vom anderen Geraet' }])
+  } });
+  await d.page.waitForTimeout(3000);
+  const vorher = d.stub.gistWrites.filter((w) => FEHLER in w).length;
+  await d.page.evaluate(async () => {
+    for (let i = 0; i < 5; i++) ErrorLog.add('Testfehler ' + i);
+    await new Promise((r) => setTimeout(r, 800));
+  });
+  const ohneLauf = d.stub.gistWrites.filter((w) => FEHLER in w).length - vorher;
+  await d.page.evaluate(() => saveData());
+  const proto = JSON.parse(d.gist[FEHLER]);
+  await d.close();
+  assertEqual(ohneLauf, 0, 'Schreibvorgaenge nur durch Fehler');
+  assert(proto.some((e) => e.nachricht === 'vom anderen Geraet'), 'Eintrag des anderen Geraets verloren');
+  assertEqual(proto.filter((e) => /^Testfehler/.test(e.nachricht)).length, 5, 'Eigene Eintraege im Spiegel');
+});
+
+await test('Das Fehlerprotokoll geht spaetestens nach PROTOKOLL_MS hoch', async () => {
+  const d = await geraetMitGist('build-log.html');
+  await d.page.waitForTimeout(3000);
+  await d.page.evaluate(async () => {
+    FieldSync.PROTOKOLL_MS = 300;
+    ErrorLog.add('allein');
+    await new Promise((r) => setTimeout(r, 1500));
+  });
+  const proto = d.gist[FEHLER] ? JSON.parse(d.gist[FEHLER]) : [];
+  await d.close();
+  assert(proto.some((e) => e.nachricht === 'allein'), 'Fehlerprotokoll wurde nicht nachgereicht');
+});
+
+await test('Ein Befund, der waehrend eines Laufs dazukommt, geht nicht verloren', async () => {
+  const d = await geraetMitGist('build-log.html', { gistWriteDelayMs: 500 });
+  await d.page.waitForTimeout(3000);
+  await d.page.evaluate(async () => {
+    FieldSync.BUENDELN_MS = 300;
+    Findings.add('p1_ident', 'erster');
+    const lauf = Findings.push();
+    await new Promise((r) => setTimeout(r, 200));
+    Findings.add('p1_ident', 'zweiter');
+    await lauf;
+    await new Promise((r) => setTimeout(r, 2500));
+  });
+  const befunde = JSON.parse(d.gist[BEFUNDE] || '{"items":{}}');
+  await d.close();
+  const texte = Object.values(befunde.items).filter((it) => !it.del).map((it) => it.text).sort();
+  assertEqual(texte, ['erster', 'zweiter'], 'Befunde in der Cloud');
 });
 
 } finally {
