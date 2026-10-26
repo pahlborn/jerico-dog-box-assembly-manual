@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v44',
+      date: '2026-10-26',
+      time: '17:48',
+      title: 'Neue Versionen kommen von selbst',
+      changes: [
+        { type: 'verbessert', text: 'Eine offene Seite laedt eine neue Version jetzt von selbst - bisher erst, wenn man sie von Hand neu lud. Sie fragt jede Minute und beim Zurueckkehren, etwa am iPad aus einer anderen App, und laedt erst neu, wenn kein Feld in Arbeit ist; beim allerersten Besuch gar nicht.' },
+        { type: 'intern', text: 'aktualisieren.js, wortgleich mit gt40-engine v114 und alignment; nur dort wird der Service Worker angemeldet, app.js tut es nicht mehr. Fuenf Tests; Gegenprobe mit dem alten Stand rot.' }
+      ]
+    },
+    {
       version: 'v43',
       date: '2026-10-26',
       time: '15:57',

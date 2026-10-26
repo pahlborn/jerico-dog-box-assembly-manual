@@ -1220,9 +1220,9 @@
         if (typeof initUnifiedSearch === 'function') initUnifiedSearch();
         scrollToHash();
         if (currentLang === 'en') setTimeout(function () { setLang('en'); }, 100);
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(function () { /* offline ist optional */ });
-        }
+        // Service Worker und neue Versionen: aktualisieren.js (seit v44). Bis
+        // dahin wurde hier nur angemeldet - eine offene Seite behielt ihren
+        // Code, bis man sie von Hand neu lud.
         // Beim Oeffnen holen, was andere Geraete eingetragen haben - einen
         // Takt spaeter, damit die Seite fertig aufgebaut ist.
         setTimeout(function () { syncFromCloud({ still: true }); }, 0);
