@@ -77,105 +77,28 @@
         var sm = document.getElementById('settingsModal');
         if (sm) sm.style.display = 'none';
     }
-    /**
-     * Antwort von GitHub auf einen Fehlschlag einlesen.
-     *
-     * Beide Gist-Aufrufe gaben vorher bei jedem Fehler null zurueck. Damit war
-     * "kein Gist gefunden" nicht von "darf nicht an Gists heran" zu
-     * unterscheiden - und genau dieser Unterschied ist der, auf den es
-     * ankommt: ein Token, der Fotos ins Repository schreiben darf, aber nicht
-     * an Gists kommt, laesst die Fotos erscheinen und die Inhalte liegen.
-     */
-    async function fehlerAus(res) {
-        var roh = ''; try { roh = await res.text(); } catch (e) {}
-        var meldung = ''; try { meldung = (JSON.parse(roh).message) || ''; } catch (e) {}
-        return { status: res.status, statusText: res.statusText, antwort: roh, meldung: meldung, url: res.url };
-    }
+    // Pruefen, suchen, anlegen und speichern macht github-zugang.js - wortgleich
+    // in gt40, jerico und alignment (v45). Hier steht nur, was jerico braucht:
+    // "gist" fuer den Cloud-Sync, "public_repo" fuer die Fotos im Repository.
+    // Seit v28 nannte die App den Grund eines Fehlschlags; seit v45 prueft sie
+    // vorher Konto und Haken und speichert den Token erst nach Erfolg.
+    GithubZugang.einrichten({
+        app: 'jerico',
+        datei: GIST_FILENAME,
+        beschreibung: 'Jerico RH02374 - Geraeteabgleich',
+        gistIdKey: GIST_ID_KEY,
+        pflicht: ['gist'],
+        zusatz: { public_repo: 'Fotos hochladen' },
+        startInhalt: function () { return localStorage.getItem(STORAGE_KEY) || '{}'; }
+    });
 
-    /** Sagt bei 401/403 auf einem Gist-Aufruf, was das bedeutet. */
-    function gistZugriffHinweis(f) {
-        if (f.status !== 401 && f.status !== 403 && f.status !== 404) return '';
-        return ' Der Token kommt an GitHub durch, aber nicht an die Gists heran.'
-            + ' Fotos liegen im Repository und brauchen das nicht - die Inhalte'
-            + ' dieser App liegen im Gist. Pruefe die Gist-Berechtigung des Tokens;'
-            + ' die genaue Antwort steht im Fehlerprotokoll.';
-    }
-
-    // Sucht einen bestehenden Gist anhand des Dateinamens.
-    // Gibt { id } oder { fehler } zurueck - nie stillschweigend nichts.
-    async function findGistByFilename(token) {
-        var page = 1;
-        while (page <= 5) { // max 5 Seiten = 500 Gists
-            var res = await fetch('https://api.github.com/gists?per_page=100&page=' + page,
-                { headers: { 'Authorization': 'Bearer ' + token } });
-            if (!res.ok) return { fehler: await fehlerAus(res) };
-            var gists = await res.json();
-            if (gists.length === 0) break;
-            for (var i = 0; i < gists.length; i++) {
-                if (gists[i].files && gists[i].files[GIST_FILENAME]) return { id: gists[i].id };
-            }
-            page++;
-        }
-        return {};   // durchgesucht, nichts gefunden - kein Fehler
-    }
-    // Erstellt einen neuen Gist fuer dieses Projekt.
-    async function createGist(token) {
-        var files = {};
-        var localData = localStorage.getItem(STORAGE_KEY);
-        files[GIST_FILENAME] = { content: localData || '{}' };
-        var res = await fetch('https://api.github.com/gists', {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ description: 'Jerico RH02374 - Geraeteabgleich', public: false, files: files })
-        });
-        if (!res.ok) return { fehler: await fehlerAus(res) };
-        var gist = await res.json();
-        return { id: gist.id };
-    }
     async function saveSettings() {
         var tokEl = document.getElementById('ghToken');
-        var token = tokEl ? tokEl.value.trim() : '';
-        if (!token) { showToast('Bitte Token eingeben!', { sticky: true, isError: true }); return; }
-        try {
-            showToast('Verbinde...');
-            var res = await fetch('https://api.github.com/user', { headers: { 'Authorization': 'Bearer ' + token } });
-            if (!res.ok) { showToast('Token ungueltig!', { sticky: true, isError: true }); return; }
-            var user = await res.json();
-            localStorage.setItem('gh_token', token);
-            showToast('Suche Datenspeicher...');
-            var gefunden = await findGistByFilename(token);
-            if (gefunden.fehler) {
-                var f = gefunden.fehler;
-                showToast('Gist-Liste nicht lesbar (' + f.status + (f.meldung ? ': ' + f.meldung : '') + ').'
-                    + gistZugriffHinweis(f), { sticky: true, isError: true,
-                    detail: { quelle: 'findGistByFilename', status: f.status, statusText: f.statusText,
-                              antwort: f.antwort, url: f.url } });
-                return;
-            }
-            var gid = gefunden.id;
-            if (!gid) {
-                showToast('Lege Datenspeicher an...');
-                var erzeugt = await createGist(token);
-                if (erzeugt.fehler) {
-                    var g = erzeugt.fehler;
-                    showToast('Datenspeicher konnte nicht angelegt werden (' + g.status
-                        + (g.meldung ? ': ' + g.meldung : '') + ').' + gistZugriffHinweis(g),
-                        { sticky: true, isError: true,
-                          detail: { quelle: 'createGist', status: g.status, statusText: g.statusText,
-                                    antwort: g.antwort, url: g.url } });
-                    return;
-                }
-                gid = erzeugt.id;
-            }
-            localStorage.setItem(GIST_ID_KEY, gid);
-            window.FIXED_GIST_ID = gid;
-            updateSyncBadge(); updateConnectionStatus(); closeSettings();
-            // Der Erfolg war bisher stumm - nur das Abzeichen wechselte die
-            // Farbe. Wer gerade einen Token eingetragen hat, will aber lesen,
-            // dass es geklappt hat, und unter welchem Konto.
-            showToast('Verbunden als ' + (user && user.login ? user.login : 'GitHub')
-                + ' - Abgleich aktiv.');
-        } catch (err) { showToast('Verbindungsfehler: ' + err.message, { sticky: true, isError: true }); }
+        var r = await GithubZugang.verbinden(tokEl ? tokEl.value : '', { melden: showToast });
+        updateConnectionStatus();
+        if (!r.ok) return;
+        window.FIXED_GIST_ID = r.gistId;
+        updateSyncBadge(); updateConnectionStatus(); closeSettings();
     }
     function disconnectGist() {
         localStorage.removeItem('gh_token');

@@ -13,6 +13,19 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v45',
+      date: '2026-10-30',
+      time: '18:18',
+      title: 'Ein Token, vorher geklaert',
+      changes: [
+        { type: 'neu', text: 'Der Cloud-Dialog nennt vorher den richtigen Token: einen klassischen Token mit den Haken gist (Cloud-Sync) und public_repo (Fotos) - derselbe fuer gt40, jerico und alignment. Die bisherige Anleitung fuer einen fine-grained Token ist ersetzt.' },
+        { type: 'neu', text: 'Beim Verbinden prueft die App zuerst Konto, Token-Art und Haken. Fehlt gist, sagt sie sofort, was fehlt und wo man es setzt; fehlt public_repo, verbindet sie und sagt, dass das Hochladen von Fotos damit nicht geht.' },
+        { type: 'fix', text: 'Der Token wird erst gespeichert, wenn die Verbindung steht. Bisher blieb auch ein falscher Token haengen - und weil sich gt40, jerico und alignment in Safari den Token teilen, haette er allen dreien den Abgleich genommen.' },
+        { type: 'fix', text: 'Einen neuen Datenspeicher legt die App nur nach Rueckfrage an; ein Datenspeicher eines anderen Kontos wird erkannt und genannt.' },
+        { type: 'intern', text: 'github-zugang.js, wortgleich mit gt40 und alignment, ersetzt findGistByFilename/createGist/saveSettings in app.js. tests/github-zugang.test.mjs (16 Tests, Pruefsumme), Verbinden-Tests in errorlog.test.mjs angepasst; elf Gegenproben rot; Probe gegen das echte GitHub bestanden.' }
+      ]
+    },
+    {
       version: 'v44',
       date: '2026-10-26',
       time: '17:48',
