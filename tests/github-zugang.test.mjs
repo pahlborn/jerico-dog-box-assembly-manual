@@ -264,7 +264,11 @@ await test('der Dialog verbindet ueber den Baustein, ohne Seitenfehler', async (
     const json = (status, body, extra = {}) => route.fulfill({ status, headers: { ...CORS, ...extra }, contentType: 'application/json', body: JSON.stringify(body) });
     if (u.pathname === '/user') return json(200, { login: 'pahlborn' }, { 'x-oauth-scopes': 'gist, public_repo' });
     if (u.pathname === '/gists' && req.method() === 'GET') return json(200, u.searchParams.get('page') === '1' ? [{ id: 'VORHANDEN', files: { [CFG.datei]: {} } }] : []);
-    if (u.pathname.startsWith('/gists/') && req.method() === 'GET') return json(200, { id: 'VORHANDEN', owner: { login: 'pahlborn' }, files: {} });
+    if (u.pathname.startsWith('/gists/') && req.method() === 'GET') {
+      // Eine bekannte ID (gt40) wird direkt gefunden; der Inhalt ist leer.
+      return json(200, { id: u.pathname.split('/')[2], owner: { login: 'pahlborn' },
+                         files: { [CFG.datei]: { filename: CFG.datei, content: '{}' } } });
+    }
     return route.abort();
   });
   const page = await ctx.newPage();
