@@ -246,6 +246,12 @@ suite('Verbinden sagt, was schiefgeht');
 // stillschweigend null zurueck - nicht unterscheidbar von "kein Gist
 // gefunden". Die App legte dann einen an, scheiterte auch daran und meldete
 // nur "Gist konnte nicht erstellt werden", ohne Grund und ohne Statuscode.
+//
+// Seit v45 verbindet github-zugang.js (wortgleich mit gt40 und alignment).
+// Die Meldung nennt jetzt den fehlenden Haken direkt; den Unterschied zu den
+// Fotos erklaert der Dialog. Neu angelegt wird nur nach Rueckfrage - die
+// Tests, die das Anlegen pruefen, bestaetigen sie. Ausfuehrlich geprueft
+// wird der Baustein in tests/github-zugang.test.mjs.
 
 async function verbinde(p, token) {
   return p.page.evaluate(async (t) => {
@@ -274,15 +280,13 @@ await test('Ein verweigerter Zugriff auf die Gist-Liste wird benannt', async () 
 
   assert(/403/.test(r.meldung), 'Statuscode fehlt in der Meldung: ' + r.meldung);
   assert(/not accessible/.test(r.meldung), 'GitHubs Antwort fehlt: ' + r.meldung);
-  assert(/Gist/.test(r.meldung), 'Kein Hinweis auf die Gist-Berechtigung: ' + r.meldung);
-  assert(/Fotos/.test(r.meldung),
-    'Der Unterschied zu den Fotos wird nicht erklaert: ' + r.meldung);
+  assert(/"gist"/.test(r.meldung), 'Kein Hinweis auf die Gist-Berechtigung: ' + r.meldung);
   assertEqual(r.gistId, '', 'Trotz Fehlschlag wurde eine Gist-Id gespeichert');
 
   const e = r.protokoll[r.protokoll.length - 1];
   assert(e, 'Nichts protokolliert');
   assertEqual(e.status, 403, 'Statuscode nicht protokolliert');
-  assertEqual(e.quelle, 'findGistByFilename', 'Quelle nicht protokolliert: ' + e.quelle);
+  assertEqual(e.quelle, 'suchen liste', 'Quelle nicht protokolliert: ' + e.quelle);
   assert(/not accessible/.test(e.antwort || ''), 'Rohantwort nicht protokolliert');
 });
 
@@ -302,16 +306,17 @@ await test('Ein verweigertes Anlegen wird benannt, nicht als "nicht erstellt" ab
       body: JSON.stringify({ message: 'Resource not accessible by personal access token' })
     });
   });
+  page.on('dialog', (d) => d.accept());     // "Neu anlegen?" - ja
   await page.goto(base + '/index.html');
   await page.waitForFunction(() => typeof saveSettings === 'function', null, { timeout: 30000 });
   const r = await verbinde({ page: page }, 'testtoken');
   await ctx.close();
 
   assert(/403/.test(r.meldung), 'Statuscode fehlt: ' + r.meldung);
-  assert(/Gist/.test(r.meldung), 'Kein Hinweis auf die Gist-Berechtigung: ' + r.meldung);
+  assert(/"gist"/.test(r.meldung), 'Kein Hinweis auf die Gist-Berechtigung: ' + r.meldung);
   assertEqual(r.gistId, '', 'Trotz Fehlschlag wurde eine Gist-Id gespeichert');
   const e = r.protokoll[r.protokoll.length - 1];
-  assertEqual(e.quelle, 'createGist', 'Quelle nicht protokolliert: ' + e.quelle);
+  assertEqual(e.quelle, 'anlegen', 'Quelle nicht protokolliert: ' + e.quelle);
 });
 
 await test('Ein gefundener Datenspeicher wird uebernommen und gemeldet', async () => {

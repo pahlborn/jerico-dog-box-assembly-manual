@@ -26,6 +26,7 @@
     <script src="glossar.js"></script>
     <script src="kuehlkreis.js"></script>
     <script src="errorlog.js"></script>
+    <script src="github-zugang.js"></script>
     <script src="app.js"></script>
     <script src="perf-charts.js" defer></script>
 </head>
@@ -314,9 +315,9 @@
         <label for="deviceName" style="font-size:0.78rem;font-weight:600;">Ger&auml;tename</label>
         <input type="text" id="deviceName" placeholder="z.B. iPad Werkstatt" style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0 0.5rem;" oninput="if(typeof FieldSync!=='undefined')FieldSync.setDeviceName(this.value)">
         <label for="ghToken" style="font-size:0.78rem;font-weight:600;">GitHub Personal Access Token</label>
-        <input type="password" id="ghToken" placeholder="github_pat_..." style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
-        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.5rem;">GitHub &rarr; Settings &rarr; Developer settings &rarr; Personal access tokens &rarr; Fine-grained tokens<br>Berechtigung: <strong>Gists (Read and Write)</strong> und <strong>Contents (Read and Write)</strong> f&uuml;r dieses Repository (Foto-Upload).</div>
-        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.75rem;">Der Datenspeicher wird beim Verbinden automatisch gefunden oder angelegt &ndash; kein manuelles Einrichten noetig. Auf einem zweiten Ger&auml;t denselben Token eingeben, die Daten werden automatisch abgeglichen.</div>
+        <input type="password" id="ghToken" placeholder="ghp_..." style="width:100%;padding:0.4rem 0.5rem;border:1px solid var(--border);border-radius:6px;font-size:0.82rem;margin:0.3rem 0;">
+        <div data-token-vorgabe style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.5rem;"></div>
+        <div style="font-size:0.7rem;color:var(--text-light);margin-bottom:0.75rem;">Der Datenspeicher wird beim Verbinden gefunden; neu angelegt wird er nur nach R&uuml;ckfrage &ndash; das ist nur beim allerersten Ger&auml;t richtig. Auf einem zweiten Ger&auml;t denselben Token eingeben, die Daten werden automatisch abgeglichen.</div>
         <div style="font-size:0.7rem;color:var(--text-light);background:#ebf8ff;border:1px solid #bee3f8;border-radius:6px;padding:0.4rem 0.5rem;margin-bottom:0.75rem;">
             <strong>Fotos und Inhalte gehen getrennte Wege.</strong><br>
             <em>Fotos</em> landen im Repository und sind damit auf jedem Ger&auml;t sichtbar, auch ohne Token &ndash; sie geh&ouml;ren zur Seite selbst.<br>

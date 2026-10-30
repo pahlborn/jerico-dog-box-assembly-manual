@@ -69,6 +69,11 @@ abgeschrieben:
 - Spezifikationswerte aus dem Build Log: `befund.js`
 - Browserstart und Testkontext: `tests/helpers.mjs`
 - Spezifikationswerte aus Messungen: `befund.js` mit `data-befund`
+- Token pruefen und mit dem Gist verbinden: `github-zugang.js`, wortgleich
+  mit gt40 und alignment. Die Pruefsumme steht in
+  `tests/github-zugang.test.mjs`; wer den Baustein aendert, zieht alle drei
+  Repos nach (v45, Peters Vorgabe vom 2026-10-30: Token-Anforderungen stehen
+  fest, bevor eine App auf einen Fehler stoesst)
 
 Und jede dieser Stellen hat einen Test, der rot wird, wenn sie divergiert.
 
