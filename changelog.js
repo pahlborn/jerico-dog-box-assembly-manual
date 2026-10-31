@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v46',
+      date: '2026-10-31',
+      time: '06:07',
+      title: 'Der Pfeil zeigt, ob ein Schritt offen ist',
+      changes: [
+        { type: 'fix', text: 'Der Pfeil an jedem Schritt zeigt jetzt, ob die Anleitung auf- oder zugeklappt ist: zugeklappt nach unten, aufgeklappt nach oben. Bisher zeigte er immer nach unten - dass sich ein Schritt aufklappen laesst, war so nicht zu erkennen.' },
+        { type: 'intern', text: 'Ursache: transform wirkt nicht auf ein inline-Element, und ::after ist ohne Angabe inline. Neuer Test misst jeden drehenden ::after-Pfeil auf allen Seiten (mit sichtbaren Schritten und Zaehlung, sonst mass er nichts); Gegenprobe rot. In gt40-engine stand an derselben Stelle statt des Pfeils "BC".' }
+      ]
+    },
+    {
       version: 'v45',
       date: '2026-10-30',
       time: '18:18',
