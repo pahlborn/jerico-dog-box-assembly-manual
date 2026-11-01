@@ -1,5 +1,5 @@
 /**
- * findings.js - Befunde pro Kapitel und der Kapitelstatus.
+ * findings.js - Notizen pro Kapitel und der Kapitelstatus.
  *
  * Wird von build-log.html benutzt. Muss VOR dem Inline-Script geladen werden.
  *
@@ -23,7 +23,7 @@
   var STORAGE_KEY = 'jericoFindings';
   var GIST_FILE = 'jerico-build-findings.json';
 
-  // Kapitelstatus - dieselben Stufen wie ein Befund, damit die Anzeige
+  // Kapitelstatus - dieselben Stufen wie eine Notiz, damit die Anzeige
   // ueberall dasselbe bedeutet.
   var STATUS = ['', 'wip', 'done'];
   var STATUS_LABEL = {
@@ -67,14 +67,14 @@
         var parsed = JSON.parse(raw);
         if (parsed && parsed.items) _data = { version: 1, items: parsed.items, savedAt: parsed.savedAt };
       }
-    } catch (e) { console.warn('[Befunde] Lesefehler:', e.message); }
+    } catch (e) { console.warn('[Notizen] Lesefehler:', e.message); }
     return _data;
   }
 
   function save() {
     _data.savedAt = now();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(_data)); }
-    catch (e) { console.error('[Befunde] Speicherfehler:', e.message); }
+    catch (e) { console.error('[Notizen] Speicherfehler:', e.message); }
   }
 
   /** Pro Schluessel gewinnt der juengere Eintrag. Ein Grabstein bleibt ein Grabstein. */
@@ -156,13 +156,13 @@
     try {
       var res = await fetch('https://api.github.com/gists/' + FIXED_GIST_ID,
         { headers: { 'Authorization': 'Bearer ' + cfg.token }, cache: 'no-store' });
-      if (!res.ok) { melden('Befunde: Cloud-Stand nicht lesbar (Status ' + res.status + ') - nichts geschrieben', { status: res.status }); return false; }
+      if (!res.ok) { melden('Notizen: Cloud-Stand nicht lesbar (Status ' + res.status + ') - nichts geschrieben', { status: res.status }); return false; }
       var gist = await res.json();
       var content = typeof _readGistFile === 'function'
         ? await _readGistFile(gist, GIST_FILE, cfg.token)
         : (gist.files && gist.files[GIST_FILE] ? gist.files[GIST_FILE].content : null);
       if (content) _data = merge(JSON.parse(content), _data);
-    } catch (e) { melden('Befunde: Cloud-Stand nicht lesbar - nichts geschrieben: ' + e.message, { stack: e.stack }); return false; }
+    } catch (e) { melden('Notizen: Cloud-Stand nicht lesbar - nichts geschrieben: ' + e.message, { stack: e.stack }); return false; }
     save();
     try {
       var files = {};
@@ -172,14 +172,14 @@
         headers: { 'Authorization': 'Bearer ' + cfg.token, 'Content-Type': 'application/json' },
         body: JSON.stringify({ files: files })
       });
-      if (!wr.ok) { melden('Befunde: Schreiben fehlgeschlagen (Status ' + wr.status + ')', { status: wr.status }); return false; }
+      if (!wr.ok) { melden('Notizen: Schreiben fehlgeschlagen (Status ' + wr.status + ')', { status: wr.status }); return false; }
       return true;
-    } catch (e) { melden('Befunde: Schreiben fehlgeschlagen: ' + e.message, { stack: e.stack }); return false; }
+    } catch (e) { melden('Notizen: Schreiben fehlgeschlagen: ' + e.message, { stack: e.stack }); return false; }
   }
 
   /** Fehler ins Protokoll - bis v32 standen sie nur in der Konsole. */
   function melden(text, detail) {
-    console.error('[Befunde] ' + text);
+    console.error('[Notizen] ' + text);
     if (typeof ErrorLog !== 'undefined') ErrorLog.add(text, Object.assign({ quelle: 'findings.js' }, detail || {}));
   }
 
@@ -194,7 +194,7 @@
       _data = merge(JSON.parse(content), _data);
       save();
       return JSON.stringify(_data.items) !== before;
-    } catch (e) { console.error('[Befunde] Parse-Fehler:', e.message); return false; }
+    } catch (e) { console.error('[Notizen] Parse-Fehler:', e.message); return false; }
   }
 
   // ---- Zugriff ----

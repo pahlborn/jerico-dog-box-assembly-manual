@@ -15,7 +15,7 @@
  * Speicher (alles unter eigener Kennung - die Seiten des Motor-Builds liegen
  * auf derselben Origin und wuerden sich sonst gegenseitig ueberschreiben):
  *   jericoBuildLog        Messwerte und Eingabefelder
- *   jericoFindings        Befunde je Kapitel (findings.js)
+ *   jericoFindings        Notizen je Kapitel (findings.js)
  *   jericoGalleryMeta     Bildbeschriftungen (gallery.js)
  *   jericoLang            zuletzt gewaehlte Sprache
  *   jerico_gist_id        Gist fuer den Geraeteabgleich
@@ -200,7 +200,7 @@
         try {
             if (await Findings.pull(r.gist, token)) renderAllFindings();
         } catch (e) {
-            if (typeof ErrorLog !== 'undefined') ErrorLog.add('Befunde nicht abgleichbar: ' + e.message, { quelle: 'syncFromCloud', stack: e.stack });
+            if (typeof ErrorLog !== 'undefined') ErrorLog.add('Notizen nicht abgleichbar: ' + e.message, { quelle: 'syncFromCloud', stack: e.stack });
         }
         try {
             if (typeof pullGalleryMeta === 'function' && await pullGalleryMeta(r.gist, token)
@@ -644,7 +644,7 @@
         };
         var text = JSON.stringify(payload, null, 2);
         var umfang = sicherungUmfang(payload);
-        var bilanz = umfang.felder + ' Werte, ' + umfang.befunde + ' Befunde, '
+        var bilanz = umfang.felder + ' Werte, ' + umfang.befunde + ' Notizen, '
             + umfang.bilder + ' Foto-Beschriftungen';
         var name = 'jerico-rh02374-' + new Date().toISOString().slice(0, 10) + '.json';
 
@@ -716,7 +716,7 @@
         };
         var u = sicherungUmfang(payload);
         sicherungAnzeigen(JSON.stringify(payload, null, 2),
-            'Sicherung mit ' + u.felder + ' Werten, ' + u.befunde + ' Befunden und '
+            'Sicherung mit ' + u.felder + ' Werten, ' + u.befunde + ' Notizen und '
             + u.bilder + ' Foto-Beschriftungen.');
     }
 
@@ -796,7 +796,7 @@
         document.querySelectorAll('.step-status[data-field]').forEach(paintStepStatus);
     }
 
-    // ==== BEFUNDE ====
+    // ==== NOTIZEN (intern weiter "findings") ====
     var FINDINGS_OPEN_KEY = 'jericoFindingsOpen';
     function findingsOpenSet() {
         try { return JSON.parse(localStorage.getItem(FINDINGS_OPEN_KEY) || '{}'); } catch (e) { return {}; }
@@ -827,14 +827,14 @@
             return '<div class="fx-row">'
                 + '<button type="button" class="fx-status fx-pill ' + (s || 'open') + '" onclick="cycleFinding(\'' + esc(chapter) + '\',\'' + it.id + '\')">'
                 + esc(Findings.statusLabel(s, currentLang)) + '</button>'
-                + '<input class="fx-text" type="text" value="' + esc(it.text) + '" oninput="editFinding(\'' + it.id + '\', this.value)" placeholder="Befund...">'
+                + '<input class="fx-text" type="text" value="' + esc(it.text) + '" oninput="editFinding(\'' + it.id + '\', this.value)" placeholder="Notiz...">'
                 + '<button type="button" class="fx-del" onclick="deleteFinding(\'' + esc(chapter) + '\',\'' + it.id + '\')" title="Entfernen">&times;</button>'
                 + '</div>';
         }).join('');
         box.innerHTML = '<div class="findings-head" onclick="toggleFindings(\'' + esc(chapter) + '\')">'
-            + '<span class="fx-caret">&#9656;</span><span>Befunde</span>' + badge + '</div>'
+            + '<span class="fx-caret">&#9656;</span><span><span class="de">Notizen</span><span class="en">Notes</span></span>' + badge + '</div>'
             + '<div class="findings-body">' + rows
-            + '<button type="button" class="fx-add" onclick="addFinding(\'' + esc(chapter) + '\')">+ Befund</button></div>';
+            + '<button type="button" class="fx-add" onclick="addFinding(\'' + esc(chapter) + '\')">+ <span class="de">Notiz</span><span class="en">Note</span></button></div>';
         if (findingsOpenSet()[chapter]) box.classList.add('open');
     }
     function renderAllFindings() {
@@ -872,7 +872,7 @@
         renderFindingsOverview();
     }
     function deleteFinding(chapter, id) {
-        if (!confirm('Befund entfernen?')) return;
+        if (!confirm('Notiz entfernen?')) return;
         Findings.remove(id);
         renderFindings(chapter);
         renderFindingsOverview();
@@ -885,7 +885,7 @@
         if (cnt) cnt.textContent = items.length ? '(' + items.length + ')' : '(0)';
         var body = box.querySelector('.fo-body');
         if (!body) return;
-        if (!items.length) { body.innerHTML = '<div class="fo-empty">Keine offenen Befunde.</div>'; return; }
+        if (!items.length) { body.innerHTML = '<div class="fo-empty">Keine offenen Notizen.</div>'; return; }
         body.innerHTML = items.map(function (it) {
             var s = Findings.normalizeStatus(it.status);
             var titel = chapterTitle(it.ch);
@@ -960,8 +960,10 @@
         'Abbrechen': 'Cancel',
         'Speichern': 'Save',
         'Drucken': 'Print',
-        'Befunde': 'Findings',
-        'Offene Befunde': 'Open findings',
+        // "Notizen" allein steht hier nicht: als Teilwort wuerde es
+        // "Notizen zum Projekt" halb uebersetzen. Kopf und Knopf der
+        // Notizen tragen darum eigene de/en-Spans (renderFindings).
+        'Notiz...': 'Note...',
         'Gesamtfortschritt': 'Overall progress',
         'erledigt': 'completed',
         'in Arbeit': 'in progress',

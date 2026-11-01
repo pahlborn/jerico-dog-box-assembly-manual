@@ -24,7 +24,7 @@
  *
  * Zwei Zustaende, beide ehrlich:
  *
- *   eingetragen  ->  26 Spline  B        (Ist-Befund, keine Warnung)
+ *   eingetragen  ->  26 Spline  B        (Ist-Zustand, keine Warnung)
  *   leer         ->  offen - Vorgabe 26 Spline, im Build Log eintragen  F
  *
  * Der leere Zustand nennt den Weg nach vorn, statt nur zu mahnen. Das war

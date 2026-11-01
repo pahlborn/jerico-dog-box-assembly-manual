@@ -98,7 +98,7 @@
     Bei Widerspr&uuml;chen zwischen deutscher &Uuml;bersetzung und englischem Original gilt das <strong>englische Original</strong>.
 </div>
 <div class="info-box">
-    <strong>Was hier Vorgabe ist und was nicht.</strong> Arbeitsschritte, Anzugsmomente, Einbaurichtungen, Schmierstellen, Nadelz&auml;hlungen und Verschlei&szlig;grenzen stammen aus der Prim&auml;rliteratur. Davon zu unterscheiden sind Angaben zu <em>diesem</em> Getriebe (Ist-Befunde), eigene Messwerte, Ableitungen und noch offene Punkte &ndash; diese sind im Text benannt und auf der Seite <a href="specs.html#sec-open">Spezifikationen</a> mit Quellenklasse gef&uuml;hrt. Phase 1 besteht fast vollst&auml;ndig aus solchen offenen Punkten.
+    <strong>Was hier Vorgabe ist und was nicht.</strong> Arbeitsschritte, Anzugsmomente, Einbaurichtungen, Schmierstellen, Nadelz&auml;hlungen und Verschlei&szlig;grenzen stammen aus der Prim&auml;rliteratur. Davon zu unterscheiden sind Angaben zu <em>diesem</em> Getriebe (Ist-Zustand), eigene Messwerte, Ableitungen und noch offene Punkte &ndash; diese sind im Text benannt und auf der Seite <a href="specs.html#sec-open">Spezifikationen</a> mit Quellenklasse gef&uuml;hrt. Phase 1 besteht fast vollst&auml;ndig aus solchen offenen Punkten.
 </div>
 <div class="info-box">
     <strong>Die Reihenfolge ist verbindlich</strong> &ndash; kein Schritt ohne Abschluss des vorherigen. Der Fortschritt je Phase steht auf der <a href="index.html">&Uuml;bersicht</a>; gerechnet wird er aus den Status-Knoepfen hier.
@@ -450,7 +450,7 @@
             <div class="guide-block"><h4 class="prereq">Vorgehensweise (Procedure)</h4>
                 <ol>
                 <li><span class="de">Alle Baugruppen ohne Schmierstoff und ohne Dichtmittel zusammenstecken</span><span class="en">Assemble all groups without lubricant and without sealant</span></li>
-                <li><span class="de">Jedes fehlende oder besch&auml;digte Teil als Befund anlegen</span><span class="en">Log every missing or damaged part as a finding</span></li>
+                <li><span class="de">Jedes fehlende oder besch&auml;digte Teil als Notiz anlegen</span><span class="en">Log every missing or damaged part as a note</span></li>
                 <li><span class="de">Schaltgestänge probeweise anlegen: Bohrmuster Jerico &ne; Toploader</span><span class="en">Trial-fit the shift linkage: Jerico bolt pattern differs from the Toploader</span></li>
                 </ol>
             </div>
@@ -600,7 +600,7 @@
             <div class="guide-block"><h4 class="prereq">Vorgehensweise (Procedure)</h4>
                 <ol>
                 <li><span class="de">Oberen Deckel entfernen und Getriebefl&uuml;ssigkeit ablassen</span><span class="en">Remove top cover and drain lubricating fluid</span></li>
-                <li><span class="de">Altes &Ouml;l auf Sp&auml;ne und Metallpartikel pr&uuml;fen &ndash; das ist der erste Befund &uuml;ber den Zustand</span><span class="en">Check the old oil for chips and metal &ndash; it is the first evidence of internal condition</span></li>
+                <li><span class="de">Altes &Ouml;l auf Sp&auml;ne und Metallpartikel pr&uuml;fen &ndash; das ist der erste Hinweis auf den Zustand</span><span class="en">Check the old oil for chips and metal &ndash; it is the first evidence of internal condition</span></li>
                 </ol>
             </div>
             <div class="guide-block"><h4 class="photo">Fotodokumentation (Photo Documentation)</h4>
@@ -1156,10 +1156,10 @@
             </div>
             <div class="guide-block"><h4 class="measure">Sollwerte &amp; Messwerte (Target Values)</h4>
                 <div class="guide-input-row" style="margin-top:0.4rem;">
-                    <div><label>1. Gang Zustand:</label><input type="text" data-field="p3_gear1" placeholder="io / Befund" oninput="autoSave()" style="width:110px;"></div>
-                    <div><label>2. Gang Zustand:</label><input type="text" data-field="p3_gear2" placeholder="io / Befund" oninput="autoSave()" style="width:110px;"></div>
-                    <div><label>3. Gang Zustand:</label><input type="text" data-field="p3_gear3" placeholder="io / Befund" oninput="autoSave()" style="width:110px;"></div>
-                    <div><label>Main Drive Zustand:</label><input type="text" data-field="p3_gear_md" placeholder="io / Befund" oninput="autoSave()" style="width:110px;"></div>
+                    <div><label>1. Gang Zustand:</label><input type="text" data-field="p3_gear1" placeholder="io / Notiz" oninput="autoSave()" style="width:110px;"></div>
+                    <div><label>2. Gang Zustand:</label><input type="text" data-field="p3_gear2" placeholder="io / Notiz" oninput="autoSave()" style="width:110px;"></div>
+                    <div><label>3. Gang Zustand:</label><input type="text" data-field="p3_gear3" placeholder="io / Notiz" oninput="autoSave()" style="width:110px;"></div>
+                    <div><label>Main Drive Zustand:</label><input type="text" data-field="p3_gear_md" placeholder="io / Notiz" oninput="autoSave()" style="width:110px;"></div>
                 </div>
             </div>
             <div class="guide-block"><h4 class="photo">Fotodokumentation (Photo Documentation)</h4>
@@ -1208,7 +1208,7 @@
             </div>
             <div class="guide-block guide-full"><h4 class="measure">Gegenprobe und Messwerte (Cross-check)</h4>
                 <ul>
-                <li><span class="de">Jede gez&auml;hlte Paarung muss im Chart (A-03) vorkommen. Taucht sie dort nicht auf, ist entweder verz&auml;hlt oder ein Satz verbaut, den Jerico so nicht listet &ndash; beides ist ein Befund, kein Rundungsfehler.</span><span class="en">Every counted pair must appear in the chart (A-03). If it does not, either the count is wrong or a set is fitted that Jerico does not list &ndash; both are findings, not rounding errors.</span></li>
+                <li><span class="de">Jede gez&auml;hlte Paarung muss im Chart (A-03) vorkommen. Taucht sie dort nicht auf, ist entweder verz&auml;hlt oder ein Satz verbaut, den Jerico so nicht listet &ndash; beides ist eine Notiz wert, kein Rundungsfehler.</span><span class="en">Every counted pair must appear in the chart (A-03). If it does not, either the count is wrong or a set is fitted that Jerico does not list &ndash; both are worth a note, not rounding errors.</span></li>
                 <li><span class="de">Die Auswahlfelder in Kapitel 2 enthalten nur die Paarungen aus dem Chart. Was sich dort nicht ausw&auml;hlen l&auml;sst, steht auch nicht im Chart.</span><span class="en">The dropdowns in chapter 2 contain only the chart pairings. What cannot be selected there is not in the chart either.</span></li>
                 <li><span class="de">Die im Chart grau hinterlegten Paare im 1. Gang (30/20, 30/21) verlangen Geh&auml;usebearbeitung &ndash; <em>Special Case Modification Required</em>. Wer eines davon z&auml;hlt, sollte das Geh&auml;use darauf ansehen.</span><span class="en">The shaded first gear pairs (30/20, 30/21) require case modification &ndash; <em>special case modification required</em>. If you count one of those, check the case for it.</span></li>
                 </ul>
@@ -1388,7 +1388,7 @@
         <div class="guide-grid">
             <div class="guide-block"><h4 class="prereq">Vorgehensweise (Procedure)</h4>
                 <ul>
-                <li><span class="de">Alle Befunde dieser Phase durchgehen und in eine Bestellliste &uuml;berf&uuml;hren</span><span class="en">Walk through all findings of this phase and turn them into an order list</span></li>
+                <li><span class="de">Alle Notizen dieser Phase durchgehen und in eine Bestellliste &uuml;berf&uuml;hren</span><span class="en">Walk through all notes of this phase and turn them into an order list</span></li>
                 <li><span class="de">Grunds&auml;tzlich neu: Spirolox-Ringe, Schaltfingerdichtungen, Hinterdichtung, O-Ring der Vorgelegewelle, 9/16&quot; Stopfen</span><span class="en">Always new: Spirolox rings, shift finger seals, rear seal, countershaft O-ring, 9/16&quot; plug</span></li>
                 </ul>
             </div>
@@ -2364,7 +2364,7 @@
         <div style="font-size:0.7rem;color:var(--text-light);background:#ebf8ff;border:1px solid #bee3f8;border-radius:6px;padding:0.4rem 0.5rem;margin-bottom:0.75rem;">
             <strong>Fotos und Inhalte gehen getrennte Wege.</strong><br>
             <em>Fotos</em> landen im Repository und sind damit auf jedem Ger&auml;t sichtbar, auch ohne Token &ndash; sie geh&ouml;ren zur Seite selbst.<br>
-            <em>Inhalte</em> &ndash; Messwerte, Bemerkungen, Befunde, Schrittstatus &ndash; liegen im Gist und brauchen diese Verbindung. Ohne sie bleiben sie auf diesem Ger&auml;t.<br>
+            <em>Inhalte</em> &ndash; Messwerte, Bemerkungen, Notizen, Schrittstatus &ndash; liegen im Gist und brauchen diese Verbindung. Ohne sie bleiben sie auf diesem Ger&auml;t.<br>
             Sichtbare Fotos sind also <strong>kein</strong> Beleg daf&uuml;r, dass der Abgleich l&auml;uft. Daf&uuml;r z&auml;hlt nur das Abzeichen oben: <em>Cloud Sync</em> statt <em>Lokal</em>.
         </div>
         <div style="display:flex;gap:0.4rem;justify-content:flex-end;">

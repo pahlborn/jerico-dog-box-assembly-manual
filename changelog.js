@@ -13,6 +13,16 @@
   // Neueste Version zuerst.
   var RELEASES = [
     {
+      version: 'v48',
+      date: '2026-11-01',
+      time: '06:55',
+      title: 'Befund heißt jetzt Notiz',
+      changes: [
+        { type: 'verbessert', text: 'Was an einem Schritt auffällt, heißt jetzt überall „Notiz" statt „Befund", auf Englisch „Note" statt „Finding": Kopf und Knopf an jedem Schritt („Notizen", „+ Notiz"), Platzhalter, Rückfrage beim Entfernen, Meldungen bei Sicherung und Abgleich, Hinweis im Verbinden-Dialog. Wo „Befund" den Ist-Zustand am Getriebe meinte, steht jetzt genau das („Ist-Zustand", „wie am Gerät vorgefunden").' },
+        { type: 'intern', text: 'Nur sichtbare Texte geändert. findings.js, data-findings, Speicherschlüssel und Gist-Dateiname bleiben, damit gespeicherte Notizen erhalten bleiben. Kopf und Knopf tragen eigene de/en-Spans statt eines Wörterbucheintrags (sonst würde „Notizen zum Projekt" halb übersetzt). Neuer Test prüft Text, Platzhalter und Titel aller Seiten in beiden Sprachen; Gegenprobe rot (Befund zurück, en-Span fehlt, Finding im englischen Text).' }
+      ]
+    },
+    {
       version: 'v47',
       date: '2026-10-31',
       time: '07:40',

@@ -1265,7 +1265,7 @@ await test('sechs Phasen mit je eigenem Fortschrittsbalken', async () => {
   await p.close();
 });
 
-await test('jedes Kapitel hat Status, Befunde und Anleitung', async () => {
+await test('jedes Kapitel hat Status, Notizen und Anleitung', async () => {
   const p = await open('build-log.html');
   const zahlen = await p.page.evaluate(() => ({
     karten: document.querySelectorAll('.step-card').length,
@@ -1275,7 +1275,7 @@ await test('jedes Kapitel hat Status, Befunde und Anleitung', async () => {
   }));
   assert(zahlen.karten > 40, 'Zu wenige Kapitel: ' + zahlen.karten);
   assertEqual(zahlen.status, zahlen.karten, 'Nicht jedes Kapitel hat einen Status');
-  assertEqual(zahlen.befunde, zahlen.karten, 'Nicht jedes Kapitel hat eine Befundliste');
+  assertEqual(zahlen.befunde, zahlen.karten, 'Nicht jedes Kapitel hat eine Notizliste');
   assertEqual(zahlen.anleitung, zahlen.karten, 'Nicht jedes Kapitel hat eine Anleitung');
   await p.close();
 });
@@ -1322,7 +1322,7 @@ await test('"in Arbeit" zaehlt halb im Fortschritt', async () => {
   await p.close();
 });
 
-await test('Befund anlegen, umschalten und entfernen', async () => {
+await test('Notiz anlegen, umschalten und entfernen', async () => {
   const p = await open('build-log.html');
   p.page.on('dialog', (d) => d.accept());
   const ergebnis = await p.page.evaluate(() => {
@@ -1336,10 +1336,66 @@ await test('Befund anlegen, umschalten und entfernen', async () => {
     Findings.remove(id);
     return { nachAnlegen, status, nachLoeschen: Findings.forChapter(kapitel).length };
   });
-  assertEqual(ergebnis.nachAnlegen, 1, 'Befund wurde nicht angelegt');
+  assertEqual(ergebnis.nachAnlegen, 1, 'Notiz wurde nicht angelegt');
   assertEqual(ergebnis.status, 'wip', 'Status wurde nicht weitergeschaltet');
-  assertEqual(ergebnis.nachLoeschen, 0, 'Befund wurde nicht entfernt');
+  assertEqual(ergebnis.nachLoeschen, 0, 'Notiz wurde nicht entfernt');
   await p.close();
+});
+
+await test('Notizen heissen Notiz - nirgends steht noch Befund oder Finding', async () => {
+  // Peters Vorgabe (v48): "Befund" ist kein gutes Wort, ueberall Notiz.
+  // Intern bleiben findings.js, data-findings und die Speicherschluessel,
+  // sonst gingen gespeicherte Eintraege verloren - geprueft wird nur, was
+  // man sieht: Text, Platzhalter, Titel, in beiden Sprachen.
+  const sichtbar = (sprache) => {
+    const kopie = document.body.cloneNode(true);
+    kopie.querySelectorAll('script, style, span.' + (sprache === 'de' ? 'en' : 'de')).forEach((e) => e.remove());
+    const attr = [...kopie.querySelectorAll('[placeholder], [title]')]
+      .map((e) => (e.getAttribute('placeholder') || '') + ' ' + (e.getAttribute('title') || ''));
+    return kopie.textContent + ' ' + attr.join(' ');
+  };
+  for (const datei of PAGES) {
+    const p = await open(datei);
+    const r = await p.page.evaluate((sichtbarSrc) => {
+      const sichtbar = eval('(' + sichtbarSrc + ')');
+      const box = document.querySelector('.findings[data-findings]');
+      if (box) addFinding(box.dataset.findings);
+      const de = sichtbar('de');
+      setLang('en');
+      const en = sichtbar('en');
+      // innerText hilft hier nicht: die Phase ist eingeklappt, dann liefert
+      // es den ganzen Text. Gezaehlt wird, was die berechnete Anzeige zeigt.
+      const zeigt = (wurzel) => {
+        const out = [];
+        const w = document.createTreeWalker(wurzel, NodeFilter.SHOW_TEXT);
+        while (w.nextNode()) {
+          let el = w.currentNode.parentElement, an = true;
+          for (; el && el !== wurzel.parentElement; el = el.parentElement) {
+            if (getComputedStyle(el).display === 'none') { an = false; break; }
+          }
+          if (an) out.push(w.currentNode.textContent);
+        }
+        return out.join('').trim();
+      };
+      const kopf = box ? zeigt(box.querySelector('.findings-head')) : '';
+      const knopf = box ? zeigt(box.querySelector('.fx-add')) : '';
+      const platz = box ? box.querySelector('.fx-text').placeholder : '';
+      setLang('de');
+      return {
+        de: (de.match(/.{0,30}befund.{0,20}/gi) || []),
+        en: (en.match(/.{0,30}finding.{0,20}/gi) || []),
+        kopf, knopf, platz, mitBox: !!box
+      };
+    }, sichtbar.toString());
+    assertEqual(r.de, [], datei + ': deutscher Text sagt noch Befund');
+    assertEqual(r.en, [], datei + ': englischer Text sagt noch Finding');
+    if (r.mitBox) {
+      assert(/^.\s*Notes/.test(r.kopf), datei + ': Kopf der Notizen auf Englisch: ' + r.kopf);
+      assertEqual(r.knopf, '+ Note', datei + ': Knopf auf Englisch');
+      assertEqual(r.platz, 'Note...', datei + ': Platzhalter auf Englisch');
+    }
+    await p.close();
+  }
 });
 
 // ---------------------------------------------------------------------------

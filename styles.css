@@ -190,7 +190,7 @@ html[lang="de"] .guide-block .en, html[lang="de"] .warning-box .en,
 .step-status[value="wip"]::after { content: '\25D0'; }
 .step-status[value="done"] { border-color: var(--success); background: var(--success); }
 .step-status[value="done"]::after { content: '\2713'; }
-/* ---- Befunde je Kapitel ---- */
+/* ---- Notizen je Kapitel ---- */
         .findings { margin: 0.3rem 0 0.2rem; }
 .findings-head {
             display: flex; align-items: center; gap: 0.5rem; cursor: pointer;
@@ -233,7 +233,7 @@ html[lang="de"] .guide-block .en, html[lang="de"] .warning-box .en,
             border-radius: 5px; background: none; cursor: pointer; color: var(--primary-light); margin-top: 0.2rem;
         }
 .fx-add:hover { border-color: var(--primary-light); background: #ebf4ff; }
-/* ---- Uebersicht aller offenen Befunde ---- */
+/* ---- Uebersicht aller offenen Notizen ---- */
         .findings-overview { margin: 0.6rem 0; border: 1px solid var(--border); border-radius: 8px; background: #fff; overflow: hidden; }
 .findings-overview > summary { padding: 0.6rem 0.8rem; cursor: pointer; font-size: 0.82rem; font-weight: 600; color: var(--text); list-style: none; display: flex; align-items: center; gap: 0.5rem; }
 .findings-overview > summary::-webkit-details-marker { display: none; }
@@ -742,7 +742,7 @@ html[lang="en"] span.de { display: none; }
 
 /* ---- Quellenklassen ----
    Nicht jede Angabe in einer Werkstattdokumentation hat dasselbe Gewicht. Das
-   Zeichen hinter einer Aussage sagt, worauf sie beruht: OEM-Vorgabe, Befund am
+   Zeichen hinter einer Aussage sagt, worauf sie beruht: OEM-Vorgabe, Ist-Zustand am
    Getriebe, eigener Messwert, Ableitung, Sekundaerquelle oder noch offen. */
 .src {
     display: inline-block; min-width: 1.15rem; padding: 0 0.28rem; margin-left: 0.3rem;
@@ -750,7 +750,7 @@ html[lang="en"] span.de { display: none; }
     text-align: center; vertical-align: middle; cursor: help;
 }
 .src-a { background: #c6f6d5; color: #22543d; }   /* OEM-Vorgabe */
-.src-b { background: #bee3f8; color: #2a4365; }   /* Ist-Befund */
+.src-b { background: #bee3f8; color: #2a4365; }   /* Ist-Zustand */
 .src-c { background: #e9d8fd; color: #44337a; }   /* Messwert */
 .src-d { background: #feebc8; color: #7b341e; }   /* Ableitung */
 .src-e { background: #e2e8f0; color: #2d3748; }   /* Sekundaerquelle */
